@@ -1,4 +1,12 @@
+import { useState, useEffect, useCallback } from 'react';
+import { reverseGeocode } from '../data/api';
+
 function MapView({ drones, selectedDrone, onDroneClick }) {
+  const [locationNames, setLocationNames] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
+
   // Map boundaries (approximate area around Ho Chi Minh City)
   const mapBounds = {
     latMin: 10.70,
@@ -25,7 +33,46 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     }
   };
 
-  // Generate grid lines for the map
+  // Reverse geocode all drone positions
+  useEffect(() => {
+    let cancelled = false;
+    const fetchLocations = async () => {
+      const names = {};
+      for (const drone of drones) {
+        if (drone.status === 'offline') {
+          names[drone.id] = 'Offline';
+          continue;
+        }
+        try {
+          const result = await reverseGeocode(drone.gps.lat, drone.gps.lng);
+          if (!cancelled && result) {
+            names[drone.id] = result.city || result.name || result.label;
+          } else if (!cancelled) {
+            names[drone.id] = `${drone.gps.lat.toFixed(2)}, ${drone.gps.lng.toFixed(2)}`;
+          }
+        } catch {
+          if (!cancelled) names[drone.id] = `${drone.gps.lat.toFixed(2)}, ${drone.gps.lng.toFixed(2)}`;
+        }
+      }
+      if (!cancelled) setLocationNames(names);
+    };
+    fetchLocations();
+    return () => { cancelled = true; };
+  }, [drones]);
+
+  const handleSearch = useCallback(async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const { forwardGeocode } = await import('../data/api');
+      const results = await forwardGeocode(searchQuery);
+      setSearchResults(results);
+      setShowSearch(true);
+    } catch (err) {
+      console.error('Search error:', err);
+    }
+  }, [searchQuery]);
+
+  // Generate grid lines
   const gridLines = [];
   for (let i = 0; i <= 4; i++) {
     const y = (mapHeight / 4) * i;
@@ -40,7 +87,45 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
 
   return (
     <div className="map-container">
-      <h3 className="map-title">🗺️ Bản đồ vị trí Drone</h3>
+      <div className="map-header">
+        <h3 className="map-title">🗺️ Bản đồ vị trí Drone</h3>
+        {/* Search bar */}
+        <div className="map-search">
+          <input
+            type="text"
+            className="map-search-input"
+            placeholder="Tìm địa điểm..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button className="map-search-btn" onClick={handleSearch}>🔍</button>
+        </div>
+      </div>
+
+      {/* Search results dropdown */}
+      {showSearch && searchResults.length > 0 && (
+        <div className="map-search-results">
+          {searchResults.map((r, i) => (
+            <div
+              key={i}
+              className="map-search-result-item"
+              onClick={() => {
+                setSearchQuery(r.label);
+                setShowSearch(false);
+              }}
+            >
+              📍 {r.label}
+            </div>
+          ))}
+        </div>
+      )}
+      {showSearch && searchResults.length === 0 && searchQuery && (
+        <div className="map-search-results">
+          <div className="map-search-result-item no-result">Không tìm thấy kết quả</div>
+        </div>
+      )}
+
       <div className="map-wrapper">
         <svg
           viewBox={`0 0 ${mapWidth} ${mapHeight}`}
@@ -54,14 +139,15 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
           {gridLines}
 
           {/* Map labels */}
-          <text x={2} y={6} fill="#555" fontSize="2.5" fontFamily="monospace">HCMC North</text>
-          <text x={2} y={mapHeight - 2} fill="#555" fontSize="2.5" fontFamily="monospace">HCMC South</text>
+          <text x={2} y={6} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Bắc</text>
+          <text x={2} y={mapHeight - 2} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Nam</text>
 
           {/* Drone markers */}
           {drones.map((drone) => {
             const pos = toMapPosition(drone.gps.lat, drone.gps.lng);
             const isSelected = selectedDrone && selectedDrone.id === drone.id;
             const color = getStatusColor(drone.status);
+            const location = locationNames[drone.id];
 
             return (
               <g
@@ -118,11 +204,37 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 >
                   {drone.name}
                 </text>
+
+                {/* Location name from Position Stack API */}
+                {location && (
+                  <text
+                    x={pos.x}
+                    y={pos.y + 4}
+                    textAnchor="middle"
+                    fill="#8b949e"
+                    fontSize="2"
+                    fontFamily="monospace"
+                  >
+                    {location.length > 18 ? location.substring(0, 16) + '..' : location}
+                  </text>
+                )}
               </g>
             );
           })}
         </svg>
       </div>
+
+      {/* Coordinates info for selected drone */}
+      {selectedDrone && (
+        <div className="map-coords-info">
+          <span>📍 {selectedDrone.name}: </span>
+          <span className="coord-value">{selectedDrone.gps.lat.toFixed(4)}, {selectedDrone.gps.lng.toFixed(4)}</span>
+          {locationNames[selectedDrone.id] && (
+            <span className="coord-location"> - {locationNames[selectedDrone.id]}</span>
+          )}
+        </div>
+      )}
+
       <div className="map-legend">
         <div className="legend-item">
           <span className="legend-dot" style={{ backgroundColor: '#4CAF50' }}></span>
@@ -135,6 +247,10 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
         <div className="legend-item">
           <span className="legend-dot" style={{ backgroundColor: '#F44336' }}></span>
           <span>Offline</span>
+        </div>
+        <div className="legend-item" style={{ color: '#8b949e', fontSize: '10px' }}>
+          <span>🌐</span>
+          <span>PositionStack</span>
         </div>
       </div>
     </div>

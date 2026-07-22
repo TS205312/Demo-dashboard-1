@@ -3,16 +3,19 @@ import dronesData from '../data/droneData';
 import DroneCard from './DroneCard';
 import DroneDetail from './DroneDetail';
 import MapView from './MapView';
+import CommandCenter from './CommandCenter';
 import '../styles/dashboard.css';
 
-function Dashboard() {
+function Dashboard({ user, onLogout }) {
+  const [activeTab, setActiveTab] = useState('fleet'); // 'fleet' | 'commandcenter'
   const [selectedDrone, setSelectedDrone] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [filter, setFilter] = useState('all'); // all | online | warning | offline
 
   const handleDroneClick = (drone) => {
     setSelectedDrone(drone);
-    setShowDetail(true);
+    setActiveTab('commandcenter');
+    setShowDetail(false);
   };
 
   const handleMapDroneClick = (drone) => {
@@ -35,26 +38,13 @@ function Dashboard() {
     offline: dronesData.filter((d) => d.status === 'offline').length,
   };
 
-  return (
-    <div className="dashboard">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div className="header-left">
-          <h1 className="header-title">🚁 SAH Drone Dashboard</h1>
-          <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
-        </div>
-        <div className="header-right">
-          <div className="header-datetime">
-            {new Date().toLocaleDateString('vi-VN', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </div>
-        </div>
-      </header>
+  const handleBackToFleet = () => {
+    setActiveTab('fleet');
+  };
 
+  // Render Fleet tab content
+  const renderFleetTab = () => (
+    <>
       {/* Stats bar */}
       <div className="stats-bar">
         <div className="stat-item stat-total">
@@ -121,6 +111,58 @@ function Dashboard() {
           drone={selectedDrone}
           onClose={handleCloseDetail}
         />
+      )}
+    </>
+  );
+
+  return (
+    <div className="dashboard">
+      {/* Header */}
+      <header className="dashboard-header">
+        <div className="header-left">
+          <h1 className="header-title">🚁 SAH Drone Dashboard</h1>
+          <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
+        </div>
+        <div className="header-right">
+          <div className="header-datetime">
+            {new Date().toLocaleDateString('vi-VN', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </div>
+          {user && (
+            <div className="header-user">
+              <span className="header-user-avatar">👤</span>
+              <span className="header-user-name">{user.name}</span>
+              <button className="header-logout-btn" onClick={onLogout} title="Đăng xuất">
+                🚪
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Tab Navigation */}
+      <div className="tab-bar">
+        <button
+          className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
+          onClick={() => setActiveTab('fleet')}
+        >
+          <i className="fa-solid fa-helicopter"></i> 🚁 Fleet
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
+          onClick={() => setActiveTab('commandcenter')}
+        >
+          <i className="fa-solid fa-tower-broadcast"></i> 🏭 Command Center
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'fleet' ? renderFleetTab() : (
+        <CommandCenter drones={dronesData} onBackToFleet={handleBackToFleet} />
       )}
     </div>
   );

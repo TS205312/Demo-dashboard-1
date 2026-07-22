@@ -104,11 +104,24 @@ function DroneCard({ drone, onClick, isSelected }) {
         </div>
 
         <div className="drone-card-right">
+          {/* Arm/Disarm badge */}
+          <div className={`arm-badge ${drone.armed ? 'armed' : 'disarmed'}`}>
+            {drone.armed ? '🔒 ARM' : '🔓 DIS'}
+          </div>
+          {/* Mode badge */}
+          <div className={`mode-badge ${drone.mode}`}>
+            {drone.mode === 'vtol' ? '🛸 VTOL' : '✈️ PLANE'}
+          </div>
           <div className="horizon-thumbnail">
             <ArtificialHorizon
               pitch={drone.pitch}
               roll={drone.roll}
               size={80}
+              armed={drone.armed}
+              mode={drone.mode}
+              heading={drone.heading}
+              airspeed={drone.airspeed}
+              altitude={drone.altitude}
             />
           </div>
           <div className="drone-altitude">

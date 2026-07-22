@@ -112,17 +112,36 @@ function DroneDetail({ drone, onClose }) {
 
           {/* Right column - Artificial Horizon */}
           <div className="detail-horizon-section">
-            <h4 className="metric-group-title">🎯 Artificial Horizon</h4>
+            <h4 className="metric-group-title">🎯 PFD - Primary Flight Display</h4>
             <div className="detail-horizon-large">
               <ArtificialHorizon
                 pitch={drone.pitch}
                 roll={drone.roll}
                 size={200}
+                armed={drone.armed}
+                mode={drone.mode}
+                heading={drone.heading}
+                airspeed={drone.airspeed}
+                altitude={drone.altitude}
               />
             </div>
 
-            {/* Quick status indicators */}
+            {/* Arm/Disarm indicator */}
             <div className="detail-quick-status">
+              <div className="quick-status-item">
+                <div className={`quick-status-dot ${drone.armed ? 'dot-armed' : 'dot-disarmed'}`} style={{
+                  backgroundColor: drone.armed ? '#4CAF50' : '#F44336'
+                }} />
+                <span style={{ fontWeight: 600, color: drone.armed ? '#4CAF50' : '#F44336' }}>
+                  {drone.armed ? '🔒 ARMED' : '🔓 DISARMED'}
+                </span>
+              </div>
+              <div className="quick-status-item">
+                <div className="quick-status-dot" style={{ backgroundColor: '#58a6ff' }} />
+                <span style={{ fontWeight: 600, color: '#58a6ff' }}>
+                  {drone.mode === 'vtol' ? '🛸 VTOL Mode' : '✈️ PLANE Mode'}
+                </span>
+              </div>
               <div className="quick-status-item">
                 <div className="quick-status-dot" style={{
                   backgroundColor: drone.temperature < 40 ? '#4CAF50' : '#FF9800'
@@ -142,6 +161,50 @@ function DroneDetail({ drone, onClose }) {
                 <span>Pin {drone.battery > 25 ? 'đủ' : 'yếu'}</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Control buttons bar */}
+        <div className="detail-controls">
+          <div className="detail-controls-title">🎮 Điều khiển</div>
+          <div className="detail-controls-grid">
+            <button
+              className="ctrl-btn ctrl-continue"
+              onClick={() => alert(`✅ ${drone.name}: Tiếp tục bay theo hành trình`)}
+              title="Tiếp tục bay theo hành trình đã lập trình"
+            >
+              <span className="ctrl-icon">▶️</span>
+              <span className="ctrl-text">Tiếp tục bay</span>
+            </button>
+
+            <button
+              className="ctrl-btn ctrl-path"
+              onClick={() => alert(`🗺️ ${drone.name}: Đang điều chỉnh đúng hành trình bay`)}
+              title="Điều chỉnh drone bay đúng hành trình"
+            >
+              <span className="ctrl-icon">🗺️</span>
+              <span className="ctrl-text">Đúng hành trình</span>
+            </button>
+
+            <button
+              className="ctrl-btn ctrl-rth"
+              onClick={() => alert(`🏠 ${drone.name}: Kích hoạt RTH - Return To Home`)}
+              title="Kích hoạt chế độ tự động quay về điểm xuất phát"
+            >
+              <span className="ctrl-icon">🏠</span>
+              <span className="ctrl-text">RTH</span>
+              <span className="ctrl-badge">Mất động cơ</span>
+            </button>
+
+            <button
+              className={`ctrl-btn ctrl-gps ${drone.status === 'offline' ? 'ctrl-pulse' : ''}`}
+              onClick={() => alert(`📡 ${drone.name}: Đang phát tín hiệu GPS tìm kiếm...`)}
+              title="Phát tín hiệu GPS để định vị máy bay khi mất tín hiệu"
+            >
+              <span className="ctrl-icon">📡</span>
+              <span className="ctrl-text">Phát GPS</span>
+              <span className="ctrl-badge">Tìm máy bay</span>
+            </button>
           </div>
         </div>
       </div>

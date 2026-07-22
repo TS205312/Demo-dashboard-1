@@ -13,6 +13,10 @@ const drones = [
     altitude: 120, // m
     lastMaintenance: '2025-03-15',
     flightHours: 245,
+    armed: true,
+    mode: 'vtol',
+    heading: 45,
+    airspeed: 18.5,
   },
   {
     id: 2,
@@ -28,6 +32,10 @@ const drones = [
     altitude: 85,
     lastMaintenance: '2025-04-01',
     flightHours: 412,
+    armed: true,
+    mode: 'plane',
+    heading: 270,
+    airspeed: 22.3,
   },
   {
     id: 3,
@@ -43,6 +51,10 @@ const drones = [
     altitude: 200,
     lastMaintenance: '2025-02-20',
     flightHours: 567,
+    armed: false,
+    mode: 'vtol',
+    heading: 180,
+    airspeed: 0,
   },
   {
     id: 4,
@@ -58,6 +70,10 @@ const drones = [
     altitude: 0,
     lastMaintenance: '2025-03-28',
     flightHours: 189,
+    armed: false,
+    mode: 'plane',
+    heading: 0,
+    airspeed: 0,
   },
   {
     id: 5,
@@ -73,6 +89,10 @@ const drones = [
     altitude: 150,
     lastMaintenance: '2025-04-10',
     flightHours: 321,
+    armed: true,
+    mode: 'vtol',
+    heading: 90,
+    airspeed: 25.0,
   },
   {
     id: 6,
@@ -88,6 +108,10 @@ const drones = [
     altitude: 95,
     lastMaintenance: '2025-03-05',
     flightHours: 298,
+    armed: false,
+    mode: 'plane',
+    heading: 135,
+    airspeed: 15.7,
   },
 ];
 
