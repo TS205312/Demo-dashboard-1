@@ -341,9 +341,6 @@ function CommandCenter({ onBackToFleet }) {
         }
       }
     } else if (state === "DELIVERING") {
-      newSpeed = 0;
-      newAlt = 45;
-      newBattery = battery - 0.1;
       updateActiveSqlItemStatus(targetHospital, "ĐANG THẢ HÀNG");
       setTimeout(() => {
         updateActiveSqlItemStatus(targetHospital, "ĐÃ GIAO");
@@ -388,9 +385,6 @@ function CommandCenter({ onBackToFleet }) {
       setIotGear("ĐANG KHÓA NHANH...");
       setIotCharge("KẾT NỐI SẠC");
       setIotPower("0.0 kW");
-      void newSpeed;
-      void newAlt;
-      void newBattery;
       setTimeout(() => {
         setCurrentState("STANDBY");
         const cc = document.querySelector('.command-center');
