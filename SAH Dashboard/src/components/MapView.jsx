@@ -7,12 +7,9 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
 
-  // Map boundaries (approximate area around Ho Chi Minh City)
   const mapBounds = {
-    latMin: 10.70,
-    latMax: 10.90,
-    lngMin: 106.55,
-    lngMax: 106.75,
+    latMin: 10.70, latMax: 10.90,
+    lngMin: 106.55, lngMax: 106.75,
   };
 
   const mapWidth = 100;
@@ -33,7 +30,6 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     }
   };
 
-  // Reverse geocode all drone positions
   useEffect(() => {
     let cancelled = false;
     const fetchLocations = async () => {
@@ -72,7 +68,6 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     }
   }, [searchQuery]);
 
-  // Generate grid lines
   const gridLines = [];
   for (let i = 0; i <= 4; i++) {
     const y = (mapHeight / 4) * i;
@@ -89,7 +84,6 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     <div className="map-container">
       <div className="map-header">
         <h3 className="map-title">🗺️ Bản đồ vị trí Drone</h3>
-        {/* Search bar */}
         <div className="map-search">
           <input
             type="text"
@@ -103,7 +97,6 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
         </div>
       </div>
 
-      {/* Search results dropdown */}
       {showSearch && searchResults.length > 0 && (
         <div className="map-search-results">
           {searchResults.map((r, i) => (
@@ -132,17 +125,11 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
           className="map-svg"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Map background */}
           <rect x={0} y={0} width={mapWidth} height={mapHeight} fill="#1a2332" rx="2" />
-
-          {/* Grid lines */}
           {gridLines}
-
-          {/* Map labels */}
           <text x={2} y={6} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Bắc</text>
           <text x={2} y={mapHeight - 2} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Nam</text>
 
-          {/* Drone markers */}
           {drones.map((drone) => {
             const pos = toMapPosition(drone.gps.lat, drone.gps.lng);
             const isSelected = selectedDrone && selectedDrone.id === drone.id;
@@ -156,64 +143,38 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 onClick={() => onDroneClick(drone)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Pulse ring for online drones */}
                 {drone.status === 'online' && (
                   <circle
-                    cx={pos.x}
-                    cy={pos.y}
+                    cx={pos.x} cy={pos.y}
                     r={isSelected ? 6 : 4}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth="0.4"
-                    opacity="0.4"
+                    fill="none" stroke={color}
+                    strokeWidth="0.4" opacity="0.4"
                   >
-                    <animate
-                      attributeName="r"
-                      values="3;7;3"
-                      dur="2s"
-                      repeatCount="indefinite"
-                    />
-                    <animate
-                      attributeName="opacity"
-                      values="0.6;0;0.6"
-                      dur="2s"
-                      repeatCount="indefinite"
-                    />
+                    <animate attributeName="r" values="3;7;3" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
                   </circle>
                 )}
-
-                {/* Drone dot */}
                 <circle
-                  cx={pos.x}
-                  cy={pos.y}
+                  cx={pos.x} cy={pos.y}
                   r={isSelected ? 3 : 2}
                   fill={color}
                   stroke={isSelected ? '#fff' : 'none'}
                   strokeWidth="0.5"
                 />
-
-                {/* Drone name label */}
                 <text
-                  x={pos.x}
-                  y={pos.y - 4}
+                  x={pos.x} y={pos.y - 4}
                   textAnchor="middle"
                   fill={isSelected ? '#fff' : '#aaa'}
-                  fontSize="2.5"
-                  fontFamily="monospace"
+                  fontSize="2.5" fontFamily="monospace"
                   fontWeight={isSelected ? 'bold' : 'normal'}
                 >
                   {drone.name}
                 </text>
-
-                {/* Location name from Position Stack API */}
                 {location && (
                   <text
-                    x={pos.x}
-                    y={pos.y + 4}
-                    textAnchor="middle"
-                    fill="#8b949e"
-                    fontSize="2"
-                    fontFamily="monospace"
+                    x={pos.x} y={pos.y + 4}
+                    textAnchor="middle" fill="#8b949e"
+                    fontSize="2" fontFamily="monospace"
                   >
                     {location.length > 18 ? location.substring(0, 16) + '..' : location}
                   </text>
@@ -224,7 +185,6 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
         </svg>
       </div>
 
-      {/* Coordinates info for selected drone */}
       {selectedDrone && (
         <div className="map-coords-info">
           <span>📍 {selectedDrone.name}: </span>
@@ -258,4 +218,3 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
 }
 
 export default MapView;
-
