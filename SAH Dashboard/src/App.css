@@ -1,3 +1,23 @@
+/* ===== CSS VARIABLES - ZIPLINE-INSPIRED DARK THEME ===== */
+:root {
+  --bg-main: #0d1117;
+  --bg-panel: #161b22;
+  --bg-card: #1c2128;
+  --bg-hover: #21262d;
+  --accent: #58a6ff;
+  --accent-rgb: 88, 166, 255;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --text-main: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+  --border: #30363d;
+  --border-light: #21262d;
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
 /* ===== RESET & GLOBAL ===== */
 *,
 *::before,
@@ -14,11 +34,11 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0d1117;
-  color: #e6edf3;
+  background: var(--bg-main);
+  color: var(--text-main);
 }
 
 #root {
@@ -32,21 +52,21 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d1117;
+  background: var(--bg-main);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: var(--text-muted);
 }
 
 /* ===== SELECTION ===== */
 ::selection {
-  background: rgba(88, 166, 255, 0.3);
+  background: rgba(var(--accent-rgb), 0.3);
   color: #fff;
 }
 

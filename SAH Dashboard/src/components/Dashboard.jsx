@@ -120,7 +120,7 @@ function Dashboard({ user, onLogout }) {
       {/* Header */}
       <header className="dashboard-header">
         <div className="header-left">
-          <h1 className="header-title">🚁 SAH Drone Dashboard</h1>
+          <h1 className="header-title">SAH Drone Dashboard</h1>
           <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
         </div>
         <div className="header-right">
@@ -134,10 +134,10 @@ function Dashboard({ user, onLogout }) {
           </div>
           {user && (
             <div className="header-user">
-              <span className="header-user-avatar">👤</span>
+              <i className="fa-regular fa-user header-user-avatar"></i>
               <span className="header-user-name">{user.name}</span>
               <button className="header-logout-btn" onClick={onLogout} title="Đăng xuất">
-                🚪
+                <i className="fa-solid fa-right-from-bracket"></i>
               </button>
             </div>
           )}
@@ -150,13 +150,13 @@ function Dashboard({ user, onLogout }) {
           className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
           onClick={() => setActiveTab('fleet')}
         >
-          <i className="fa-solid fa-helicopter"></i> 🚁 Fleet
+          <i className="fa-solid fa-helicopter"></i> Fleet
         </button>
         <button
           className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
           onClick={() => setActiveTab('commandcenter')}
         >
-          <i className="fa-solid fa-tower-broadcast"></i> 🏭 Command Center
+          <i className="fa-solid fa-tower-broadcast"></i> Command Center
         </button>
       </div>
 

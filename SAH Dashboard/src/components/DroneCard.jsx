@@ -1,4 +1,3 @@
-import React from 'react';
 import ArtificialHorizon from './ArtificialHorizon';
 
 function DroneCard({ drone, onClick, isSelected }) {
@@ -48,7 +47,7 @@ function DroneCard({ drone, onClick, isSelected }) {
         <div className="drone-card-left">
           {/* Temperature */}
           <div className="drone-metric">
-            <span className="metric-icon">🌡️</span>
+            <i className="metric-icon fa-regular fa-temperature-high"></i>
             <div className="metric-data">
               <span className="metric-value">{drone.temperature}°C</span>
               <span className="metric-label">Nhiệt độ</span>
@@ -57,7 +56,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* GPS */}
           <div className="drone-metric">
-            <span className="metric-icon">📍</span>
+            <i className="metric-icon fa-regular fa-location-dot"></i>
             <div className="metric-data">
               <span className="metric-value">{drone.gps.lat.toFixed(2)}, {drone.gps.lng.toFixed(2)}</span>
               <span className="metric-label">GPS</span>
@@ -66,7 +65,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Distance */}
           <div className="drone-metric">
-            <span className="metric-icon">📏</span>
+            <i className="metric-icon fa-regular fa-route"></i>
             <div className="metric-data">
               <span className="metric-value">{drone.distance} km</span>
               <span className="metric-label">Quãng đường</span>
@@ -75,7 +74,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Wind Speed */}
           <div className="drone-metric">
-            <span className="metric-icon">💨</span>
+            <i className="metric-icon fa-regular fa-wind"></i>
             <div className="metric-data">
               <span className="metric-value">{drone.windSpeed} km/h</span>
               <span className="metric-label">Tốc độ gió</span>
@@ -84,7 +83,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Battery */}
           <div className="drone-metric">
-            <span className="metric-icon">🔋</span>
+            <i className="metric-icon fa-regular fa-battery-three-quarters"></i>
             <div className="metric-data">
               <div className="battery-bar-container">
                 <div
@@ -106,11 +105,11 @@ function DroneCard({ drone, onClick, isSelected }) {
         <div className="drone-card-right">
           {/* Arm/Disarm badge */}
           <div className={`arm-badge ${drone.armed ? 'armed' : 'disarmed'}`}>
-            {drone.armed ? '🔒 ARM' : '🔓 DIS'}
+            {drone.armed ? 'ARM' : 'DIS'}
           </div>
           {/* Mode badge */}
           <div className={`mode-badge ${drone.mode}`}>
-            {drone.mode === 'vtol' ? '🛸 VTOL' : '✈️ PLANE'}
+            {drone.mode === 'vtol' ? 'VTOL' : 'PLANE'}
           </div>
           <div className="horizon-thumbnail">
             <ArtificialHorizon
@@ -125,7 +124,7 @@ function DroneCard({ drone, onClick, isSelected }) {
             />
           </div>
           <div className="drone-altitude">
-            <span className="metric-icon">📐</span>
+            <i className="metric-icon fa-regular fa-arrow-up-from-bracket"></i>
             <span className="metric-value">{drone.altitude}m</span>
             <span className="metric-label">Độ cao</span>
           </div>
@@ -134,7 +133,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
       {/* Click hint */}
       <div className="drone-card-footer">
-        <span className="click-hint">👆 Nhấp để xem chi tiết</span>
+        <span className="click-hint">Nhấp để xem chi tiết</span>
       </div>
     </div>
   );

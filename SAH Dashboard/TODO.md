@@ -1,19 +1,15 @@
-# TODO: Kết nối CommandCenter từ Drone Card
+# SAH Dashboard - Zipline Professional Refactor
 
-## Steps:
+## Progress Tracking
 
-- [x] 1. **App.jsx** - Thêm state `showCommandCenter` và `selectedDroneForCommandCenter`
-  - Import CommandCenter component
-  - Thêm state quản lý
-  - Render CommandCenter khi showCommandCenter = true
-  - Truyền callback `onOpenCommandCenter(drone)` xuống Dashboard
-
-- [x] 2. **Dashboard.jsx** - Sửa `handleDroneClick` để mở CommandCenter
-  - Khi click drone card → chuyển tab sang 'commandcenter'
-  - Giữ nguyên MapView và các chức năng khác
-
-- [x] 3. **Kiểm tra** - Verify biên dịch và luồng điều hướng
-  - ✅ `npm run build` thành công, không có lỗi
-  - ✅ Click drone card → chuyển tab sang CommandCenter
-  - ✅ Nút "Fleet Dashboard" → quay lại Fleet tab
-  - ⚠️ Warning nhẹ về dynamic import trong MapView.jsx (có sẵn từ trước)
+- [x] Plan approved
+- [x] Step 1: Update App.css - CSS variables, remove scanlines/vignette/grid
+- [x] Step 2: Update dashboard.css - Complete rewrite, remove cyberpunk elements
+- [x] Step 3: Update commandCenter.css - Complete rewrite, remove cyberpunk elements
+- [x] Step 4: Update login.css - Minor refinements
+- [x] Step 5: Update Dashboard.jsx - Remove emoji icons, clean up
+- [x] Step 6: Update DroneCard.jsx - Remove emoji icons, simplify layout
+- [x] Step 7: Update DroneDetail.jsx - Remove emoji icons, simplify controls
+- [x] Step 8: Update MapView.jsx - Remove emoji icons, clean up
+- [x] Step 9: Update LoginRegister.jsx - Remove emoji icons
+- [x] Step 10: Verify build and test

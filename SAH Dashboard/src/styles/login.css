@@ -10,30 +10,7 @@
   padding: 20px;
 }
 
-/* Background glow effects */
-.auth-bg-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-.auth-bg-glow-1 {
-  width: 400px;
-  height: 400px;
-  background: #58a6ff;
-  top: -100px;
-  left: -100px;
-}
-
-.auth-bg-glow-2 {
-  width: 300px;
-  height: 300px;
-  background: #4CAF50;
-  bottom: -80px;
-  right: -80px;
-}
+/* Background glow effects - removed for cleaner look */
 
 /* ===== AUTH CARD ===== */
 .auth-card {
@@ -111,7 +88,6 @@
 .auth-tab.active {
   background: #1f6feb;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(31, 111, 235, 0.3);
 }
 
 .auth-tab:hover:not(.active) {
@@ -240,8 +216,6 @@
 
 .auth-submit-btn:hover {
   background: #388bfd;
-  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
-  transform: translateY(-1px);
 }
 
 .auth-submit-btn:active {
