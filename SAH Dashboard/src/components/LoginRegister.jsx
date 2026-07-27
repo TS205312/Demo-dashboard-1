@@ -161,14 +161,14 @@ function LoginRegister({ onLogin }) {
         {/* Error message */}
         {error && (
           <div className="auth-error">
-            <span>⚠️</span> {error}
+          <i className="fa-regular fa-triangle-exclamation"></i> {error}
           </div>
         )}
 
         {/* Success message */}
         {success && (
           <div className="auth-success">
-            <span>✅</span> {success}
+          <i className="fa-regular fa-circle-check"></i> {success}
           </div>
         )}
 
@@ -178,7 +178,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">👤</span>
+                <i className="auth-input-icon fa-regular fa-user"></i>
                 <input
                   type="text"
                   name="loginEmail"
@@ -193,7 +193,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Mật khẩu</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">🔒</span>
+                <i className="auth-input-icon fa-regular fa-lock"></i>
                 <input
                   type="password"
                   name="loginPassword"
@@ -217,7 +217,7 @@ function LoginRegister({ onLogin }) {
             </p>
 
             <div className="auth-admin-hint">
-              <span>🔑</span> Admin: admin@sah.tech / admin123
+              <i className="fa-regular fa-key" style={{marginRight: 4}}></i> Admin: admin@sah.tech / admin123
             </div>
           </form>
         )}
@@ -228,7 +228,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Họ và tên</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">👤</span>
+                <i className="auth-input-icon fa-regular fa-user"></i>
                 <input
                   type="text"
                   name="regName"
@@ -243,7 +243,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">📧</span>
+                <i className="auth-input-icon fa-regular fa-envelope"></i>
                 <input
                   type="email"
                   name="regEmail"
@@ -258,7 +258,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Mật khẩu</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">🔒</span>
+                <i className="auth-input-icon fa-regular fa-lock"></i>
                 <input
                   type="password"
                   name="regPassword"
@@ -273,7 +273,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Xác nhận mật khẩu</label>
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">🔐</span>
+                <i className="auth-input-icon fa-regular fa-lock"></i>
                 <input
                   type="password"
                   name="regConfirmPassword"

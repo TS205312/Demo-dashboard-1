@@ -1,21 +1,15 @@
-# SAH Dashboard - Professional Sci-Fi Station Upgrade
+# SAH Dashboard - Zipline Professional Refactor
 
 ## Progress Tracking
 
-### Phase 1: Global Styles
-- [x] `src/index.css` — Add font imports (Chakra Petch + JetBrains Mono)
-- [x] `src/App.css` — Add CSS variables, scanlines, vignette, grid background
-
-### Phase 2: Dashboard CSS Upgrade
-- [x] `src/styles/dashboard.css` — Full cyberpunk station theme
-
-### Phase 3: Login CSS Upgrade
-- [ ] `src/styles/login.css` — Match station theme
-
-### Phase 4: Component Updates
-- [ ] `src/App.jsx` — Add global overlays (scanlines, vignette)
-- [ ] `src/components/Dashboard.jsx` — Minor structure adjustments
-
-### Phase 5: Verification
-- [ ] Run dev server and verify no errors
-- [ ] Check visual appearance
+- [x] Plan approved
+- [x] Step 1: Update App.css - CSS variables, remove scanlines/vignette/grid
+- [x] Step 2: Update dashboard.css - Complete rewrite, remove cyberpunk elements
+- [x] Step 3: Update commandCenter.css - Complete rewrite, remove cyberpunk elements
+- [x] Step 4: Update login.css - Minor refinements
+- [x] Step 5: Update Dashboard.jsx - Remove emoji icons, clean up
+- [x] Step 6: Update DroneCard.jsx - Remove emoji icons, simplify layout
+- [x] Step 7: Update DroneDetail.jsx - Remove emoji icons, simplify controls
+- [x] Step 8: Update MapView.jsx - Remove emoji icons, clean up
+- [x] Step 9: Update LoginRegister.jsx - Remove emoji icons
+- [x] Step 10: Verify build and test

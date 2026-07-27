@@ -35,8 +35,6 @@ function CommandCenter({ onBackToFleet }) {
   const [flightPathCoords, setFlightPathCoords] = useState([]);
   const [targetNodeIndex, setTargetNodeIndex] = useState(0);
   const [currentTargetHospital, setCurrentTargetHospital] = useState("");
-  const [aiResponse, setAiResponse] = useState("Chào Tứ! Tôi là Copilot AI hỗ trợ điều phối. Hãy tạo một đơn vận chuyển y tế mới và bấm nút phân tích dưới đây để nhận đánh giá rủi ro chất lượng sinh phẩm & lập lộ trình thích ứng thời tiết!");
-  const [aiLoading, setAiLoading] = useState(false);
   const [pkgName, setPkgName] = useState("");
   const [pkgDest, setPkgDest] = useState("choray");
   const [pkgWeather, setPkgWeather] = useState("Lặng gió, thời tiết quang đãng");
@@ -490,73 +488,6 @@ function CommandCenter({ onBackToFleet }) {
   }, [pkgName, pkgDest, pkgWeather, sqlDatabase, writeToLogCenter, playBeep]);
 
   // ===================================================================
-  // AI GEMINI API
-  // ===================================================================
-  const callGeminiAPI = useCallback(async (promptText) => {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-    if (!apiKey) {
-      throw new Error("VITE_GEMINI_API_KEY not set in environment");
-    }
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
-    }
-    throw new Error("API Failure");
-  }, []);
-
-  const analyzeCurrentFlight = useCallback(async () => {
-    const db = sqlDatabaseRef.current;
-    const targetOrder = db.find(o => o.status === "PENDING" || o.status === "ĐANG BAY") || db[db.length - 1];
-    if (!targetOrder) return;
-
-    setAiResponse('[CONNECTING NEURAL NETWORK...] Đang nạp phân tích thời tiết từ mạng Gemini...');
-    setAiLoading(true);
-    playBeep(440, 0.15);
-
-    const prompt = `Bạn là Trợ lý Không lưu AI dự án SAH-TECH. Phân tích chuyến bay: Mã đơn: ${targetOrder.id}, Hàng: ${targetOrder.item}, Đích: ${targetOrder.destination}, Thời tiết: ${targetOrder.weather}. Hãy xuất 3 mục ngắn dạng HTML: ### 🛡️ KIỂM SOÁT SINH PHẨM Y TẾ, ### ⚙️ KHUYẾN NGHỊ CẤU HÌNH, ### 📝 THÔNG ĐIỆP BÀN GIAO.`;
-    try {
-      const response = await callGeminiAPI(prompt);
-      const formatted = response
-        .replace(/### (.*?)\n/g, '<h4>$1</h4>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/[-*] (.*?)\n/g, '<li>$1</li>')
-        .replace(/\n/g, '<br>');
-      setAiResponse(formatted);
-      playBeep(880, 0.25, 'sine', 0.04);
-    } catch (_error) {
-      void _error;
-      setAiResponse('<p style="color: var(--accent-warm);">[THẤT BẠI] Kiểm tra API Key của bạn.</p>');
-    } finally {
-      setAiLoading(false);
-    }
-  }, [callGeminiAPI, playBeep]);
-
-  const diagnoseEmergency = useCallback(async () => {
-    setAiResponse('[DIAGNOSING SYSTEM FAULT...] Đang quét viễn thám thô MAVLink...');
-    setAiLoading(true);
-    const prompt = `Drone SAH-TECH gặp sự cố RTL khẩn cấp. Hãy đưa ra: ### 🚨 CHẨN ĐOÁN LỖI KHẢ NGHI, ### 🛠️ HƯỚNG DẪN XỬ LÝ KHẨN (KỸ SƯ). Ngắn gọn dạng console.`;
-    try {
-      const response = await callGeminiAPI(prompt);
-      const formatted = response
-        .replace(/### (.*?)\n/g, '<h4>$1</h4>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
-      setAiResponse(formatted);
-    } catch (_error) {
-      void _error;
-      setAiResponse('<p style="color: var(--accent-warm);">[LỖI TRUYỀN TIN]</p>');
-    } finally {
-      setAiLoading(false);
-    }
-  }, [callGeminiAPI]);
-
-  // ===================================================================
   // EFFECTS - Flight tick & clock
   // ===================================================================
   useEffect(() => {
@@ -793,28 +724,6 @@ function CommandCenter({ onBackToFleet }) {
                   <span className="cc-iot-state ok">{iotPower}</span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* AI Copilot Panel */}
-          <div className="cc-panel cc-ai-copilot-panel">
-            <div className="cc-panel-header">
-              <div className="cc-panel-title" style={{ color: 'var(--accent-warm)', textShadow: '0 0 8px rgba(255,0,127,0.6)' }}>
-                TRỢ LÝ TÁC CHIẾN AI ✨
-              </div>
-              <div className="cc-panel-subtitle" style={{ color: 'var(--accent-warm)' }}>Mô hình: Gemini 2.5 Flash</div>
-            </div>
-            <div className="cc-ai-screen" dangerouslySetInnerHTML={{ __html: aiResponse }} />
-            <div className={`cc-ai-loading-bar ${aiLoading ? 'active' : ''}`}></div>
-            <div className="cc-control-row" style={{ marginTop: '10px' }}>
-              <button className="cc-cmd-btn auto" style={{ padding: '10px', fontSize: '11px' }} onClick={analyzeCurrentFlight}>
-                <i className="fa-solid fa-wand-magic-sparkles"></i> Phân Tích Lộ Trình ✨
-              </button>
-              {showDiagnose && (
-                <button className="cc-cmd-btn rtl" style={{ padding: '10px', fontSize: '11px' }} onClick={diagnoseEmergency}>
-                  <i className="fa-solid fa-kit-medical"></i> Chẩn Đoán Sự Cố ✨
-                </button>
-              )}
             </div>
           </div>
 

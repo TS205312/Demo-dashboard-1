@@ -83,7 +83,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
   return (
     <div className="map-container">
       <div className="map-header">
-        <h3 className="map-title">🗺️ Bản đồ vị trí Drone</h3>
+        <h3 className="map-title">Bản đồ vị trí Drone</h3>
         <div className="map-search">
           <input
             type="text"
@@ -93,7 +93,9 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <button className="map-search-btn" onClick={handleSearch}>🔍</button>
+          <button className="map-search-btn" onClick={handleSearch}>
+            <i className="fa-regular fa-magnifying-glass"></i>
+          </button>
         </div>
       </div>
 
@@ -108,7 +110,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 setShowSearch(false);
               }}
             >
-              📍 {r.label}
+              <i className="fa-regular fa-location-dot" style={{marginRight: 4}}></i> {r.label}
             </div>
           ))}
         </div>
@@ -187,7 +189,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
 
       {selectedDrone && (
         <div className="map-coords-info">
-          <span>📍 {selectedDrone.name}: </span>
+          <span><i className="fa-regular fa-location-dot" style={{marginRight: 4}}></i>{selectedDrone.name}: </span>
           <span className="coord-value">{selectedDrone.gps.lat.toFixed(4)}, {selectedDrone.gps.lng.toFixed(4)}</span>
           {locationNames[selectedDrone.id] && (
             <span className="coord-location"> - {locationNames[selectedDrone.id]}</span>
@@ -209,7 +211,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
           <span>Offline</span>
         </div>
         <div className="legend-item" style={{ color: '#8b949e', fontSize: '10px' }}>
-          <span>🌐</span>
+          <i className="fa-regular fa-globe" style={{marginRight: 4}}></i>
           <span>PositionStack</span>
         </div>
       </div>

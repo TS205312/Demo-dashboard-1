@@ -52,7 +52,7 @@ function DroneDetail({ drone, onClose }) {
           {/* Left column - Metrics */}
           <div className="detail-metrics">
             <div className="detail-metric-group">
-              <h4 className="metric-group-title">🌡️ Nhiệt độ & Vị trí</h4>
+              <h4 className="metric-group-title">Nhiệt độ & Vị trí</h4>
               <div className="detail-metric">
                 <span className="detail-metric-label">Nhiệt độ</span>
                 <span className="detail-metric-value">{drone.temperature}°C</span>
@@ -72,7 +72,7 @@ function DroneDetail({ drone, onClose }) {
             </div>
 
             <div className="detail-metric-group">
-              <h4 className="metric-group-title">🔋 Năng lượng & Vận hành</h4>
+              <h4 className="metric-group-title">Năng lượng & Vận hành</h4>
               <div className="detail-metric">
                 <span className="detail-metric-label">Pin</span>
                 <span className="detail-metric-value" style={{ color: batteryColor }}>
@@ -94,7 +94,7 @@ function DroneDetail({ drone, onClose }) {
             </div>
 
             <div className="detail-metric-group">
-              <h4 className="metric-group-title">💨 Môi trường & Thái độ</h4>
+              <h4 className="metric-group-title">Môi trường & Thái độ</h4>
               <div className="detail-metric">
                 <span className="detail-metric-label">Tốc độ gió</span>
                 <span className="detail-metric-value">{drone.windSpeed} km/h</span>
@@ -112,7 +112,7 @@ function DroneDetail({ drone, onClose }) {
 
           {/* Right column - Artificial Horizon */}
           <div className="detail-horizon-section">
-            <h4 className="metric-group-title">🎯 PFD - Primary Flight Display</h4>
+            <h4 className="metric-group-title">PFD - Primary Flight Display</h4>
             <div className="detail-horizon-large">
               <ArtificialHorizon
                 pitch={drone.pitch}
@@ -133,13 +133,13 @@ function DroneDetail({ drone, onClose }) {
                   backgroundColor: drone.armed ? '#4CAF50' : '#F44336'
                 }} />
                 <span style={{ fontWeight: 600, color: drone.armed ? '#4CAF50' : '#F44336' }}>
-                  {drone.armed ? '🔒 ARMED' : '🔓 DISARMED'}
+                  {drone.armed ? 'ARMED' : 'DISARMED'}
                 </span>
               </div>
               <div className="quick-status-item">
                 <div className="quick-status-dot" style={{ backgroundColor: '#58a6ff' }} />
                 <span style={{ fontWeight: 600, color: '#58a6ff' }}>
-                  {drone.mode === 'vtol' ? '🛸 VTOL Mode' : '✈️ PLANE Mode'}
+                  {drone.mode === 'vtol' ? 'VTOL Mode' : 'PLANE Mode'}
                 </span>
               </div>
               <div className="quick-status-item">
@@ -166,14 +166,14 @@ function DroneDetail({ drone, onClose }) {
 
         {/* Control buttons bar */}
         <div className="detail-controls">
-          <div className="detail-controls-title">🎮 Điều khiển</div>
+          <div className="detail-controls-title">Điều khiển</div>
           <div className="detail-controls-grid">
             <button
               className="ctrl-btn ctrl-continue"
               onClick={() => alert(`✅ ${drone.name}: Tiếp tục bay theo hành trình`)}
               title="Tiếp tục bay theo hành trình đã lập trình"
             >
-              <span className="ctrl-icon">▶️</span>
+              <i className="ctrl-icon fa-regular fa-play"></i>
               <span className="ctrl-text">Tiếp tục bay</span>
             </button>
 
@@ -182,7 +182,7 @@ function DroneDetail({ drone, onClose }) {
               onClick={() => alert(`🗺️ ${drone.name}: Đang điều chỉnh đúng hành trình bay`)}
               title="Điều chỉnh drone bay đúng hành trình"
             >
-              <span className="ctrl-icon">🗺️</span>
+              <i className="ctrl-icon fa-regular fa-map"></i>
               <span className="ctrl-text">Đúng hành trình</span>
             </button>
 
@@ -191,7 +191,7 @@ function DroneDetail({ drone, onClose }) {
               onClick={() => alert(`🏠 ${drone.name}: Kích hoạt RTH - Return To Home`)}
               title="Kích hoạt chế độ tự động quay về điểm xuất phát"
             >
-              <span className="ctrl-icon">🏠</span>
+              <i className="ctrl-icon fa-regular fa-house"></i>
               <span className="ctrl-text">RTH</span>
               <span className="ctrl-badge">Mất động cơ</span>
             </button>
@@ -201,7 +201,7 @@ function DroneDetail({ drone, onClose }) {
               onClick={() => alert(`📡 ${drone.name}: Đang phát tín hiệu GPS tìm kiếm...`)}
               title="Phát tín hiệu GPS để định vị máy bay khi mất tín hiệu"
             >
-              <span className="ctrl-icon">📡</span>
+              <i className="ctrl-icon fa-regular fa-satellite-dish"></i>
               <span className="ctrl-text">Phát GPS</span>
               <span className="ctrl-badge">Tìm máy bay</span>
             </button>
