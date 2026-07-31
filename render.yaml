@@ -1,6 +1,16 @@
 # Render Blueprint Configuration for SAH-TECH Drone Logistics
+# Deploy all 3 services: Backend + User Interface + Dashboard
+#
+# Cách dùng:
+# 1. Push code lên GitHub
+# 2. Vào https://dashboard.render.com -> New Blueprint
+# 3. Connect repo -> chọn file render.yaml
+# 4. Render sẽ tự động tạo cả 3 services
+
 services:
-  # Backend API + WebSocket Server
+  # ============================================================
+  # 1. Backend API + WebSocket Server (Express + MongoDB)
+  # ============================================================
   - type: web
     name: sah-tech-backend
     env: node
@@ -11,14 +21,42 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: "22"
       - key: PORT
-        value: 3001
+        value: "3001"
       - key: MONGODB_URI
         sync: false
-        # 👆 Set this in Render Dashboard:
-        # Go to Dashboard > Environment > Add Secret File / Environment Variable
-        # Key: MONGODB_URI
-        # Value: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/sah_tech?retryWrites=true&w=majority
       - key: CORS_ORIGINS
-        value: 'https://sah-tech-dashboard.onrender.com,https://sah-tech-user.onrender.com'
+        value: "https://sah-user.onrender.com,https://sah-dash.onrender.com"
+
+  # ============================================================
+  # 2. Giao diện người dùng (User Interface - Đặt hàng y tế)
+  # ============================================================
+  - type: static_site
+    name: sah-user
+    env: node
+    region: singapore
+    branch: master
+    buildCommand: cd "Giao dien nguoi dung" && npm install && npm run build
+    staticPublishPath: ./Giao dien nguoi dung/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://sah-tech-backend.onrender.com/api
+      - key: VITE_WS_URL
+        value: wss://sah-tech-backend.onrender.com/ws
+
+  # ============================================================
+  # 3. SAH Dashboard (Staff - Quản lý đội bay & Command Center)
+  # ============================================================
+  - type: static_site
+    name: sah-dash
+    env: node
+    region: singapore
+    branch: master
+    buildCommand: cd "SAH Dashboard" && npm install && npm run build
+    staticPublishPath: ./SAH Dashboard/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://sah-tech-backend.onrender.com/api
+      - key: VITE_WS_URL
+        value: wss://sah-tech-backend.onrender.com/ws
