@@ -1,0 +1,11 @@
+node_modules/
+backend/node_modules/
+Giao dien nguoi dung/node_modules/
+SAH Dashboard/node_modules/
+*.log
+.env
+.env.local
+dist/
+build/
+.DS_Store
+*.db

@@ -1,0 +1,21 @@
+{
+  "name": "sah-tech-backend",
+  "version": "2.0.0",
+  "description": "Backend server for SAH-TECH Drone Logistics - MongoDB + Express + WebSocket",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongodb-memory-server": "^11.2.0",
+    "mongoose": "^8.24.2",
+    "ws": "^8.18.1"
+  },
+  "allowScripts": {
+    "mongodb-memory-server@11.2.0": true
+  }
+}

@@ -1,0 +1,24 @@
+# Render Blueprint Configuration for SAH-TECH Drone Logistics
+services:
+  # Backend API + WebSocket Server
+  - type: web
+    name: sah-tech-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: PORT
+        value: 3001
+      - key: MONGODB_URI
+        sync: false
+        # 👆 Set this in Render Dashboard:
+        # Go to Dashboard > Environment > Add Secret File / Environment Variable
+        # Key: MONGODB_URI
+        # Value: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/sah_tech?retryWrites=true&w=majority
+      - key: CORS_ORIGINS
+        value: 'https://sah-tech-dashboard.onrender.com,https://sah-tech-user.onrender.com'
