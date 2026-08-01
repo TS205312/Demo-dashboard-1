@@ -1,30 +1,6 @@
 import { useState } from 'react';
+import { apiLogin, apiRegister } from '../data/api';
 import '../styles/login.css';
-
-// Hardcoded admin account
-const ADMIN_ACCOUNT = {
-  email: 'admin@sah.tech',
-  password: 'admin123',
-  name: 'Admin',
-  role: 'admin',
-};
-
-const STORAGE_KEY = 'sah_users';
-
-function getRegisteredUsers() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveUser(user) {
-  const users = getRegisteredUsers();
-  users.push(user);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-}
 
 function LoginRegister({ onLogin }) {
   const [activeTab, setActiveTab] = useState('login');
@@ -45,7 +21,7 @@ function LoginRegister({ onLogin }) {
     setSuccess('');
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -56,24 +32,16 @@ function LoginRegister({ onLogin }) {
       return;
     }
 
-    // 1. Check admin account
-    if (loginEmail === ADMIN_ACCOUNT.email && loginPassword === ADMIN_ACCOUNT.password) {
-      onLogin({ name: ADMIN_ACCOUNT.name, email: ADMIN_ACCOUNT.email, role: 'admin' });
-      return;
-    }
+    const result = await apiLogin(loginEmail, loginPassword);
 
-    // 2. Check registered users
-    const users = getRegisteredUsers();
-    const foundUser = users.find((u) => u.email === loginEmail && u.password === loginPassword);
-    if (foundUser) {
-      onLogin({ name: foundUser.name, email: foundUser.email, role: 'user' });
-      return;
+    if (result.success) {
+      onLogin(result.data);
+    } else {
+      setError(result.message || 'Email hoặc mật khẩu không đúng!');
     }
-
-    setError('Email hoặc mật khẩu không đúng!');
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -92,35 +60,18 @@ function LoginRegister({ onLogin }) {
       return;
     }
 
-    // Check duplicate email
-    const users = getRegisteredUsers();
-    if (users.find((u) => u.email === regEmail)) {
-      setError('Email này đã được đăng ký!');
-      return;
-    }
-    if (regEmail === ADMIN_ACCOUNT.email) {
-      setError('Email này không được phép đăng ký!');
-      return;
-    }
+    const result = await apiRegister(regName, regEmail, regPassword);
 
-    // Save new user
-    const newUser = {
-      name: regName,
-      email: regEmail,
-      password: regPassword,
-      role: 'user',
-      createdAt: new Date().toISOString(),
-    };
-    saveUser(newUser);
-
-    setSuccess('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.');
-    // Clear register form
-    setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '' });
-    // Switch to login tab after 1.5s
-    setTimeout(() => {
-      setActiveTab('login');
-      setSuccess('');
-    }, 1500);
+    if (result.success) {
+      setSuccess('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.');
+      setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '' });
+      setTimeout(() => {
+        setActiveTab('login');
+        setSuccess('');
+      }, 1500);
+    } else {
+      setError(result.message || 'Đăng ký thất bại');
+    }
   };
 
   return (
@@ -161,14 +112,14 @@ function LoginRegister({ onLogin }) {
         {/* Error message */}
         {error && (
           <div className="auth-error">
-          <i className="fa-regular fa-triangle-exclamation"></i> {error}
+            <i className="fa-regular fa-triangle-exclamation"></i> {error}
           </div>
         )}
 
         {/* Success message */}
         {success && (
           <div className="auth-success">
-          <i className="fa-regular fa-circle-check"></i> {success}
+            <i className="fa-regular fa-circle-check"></i> {success}
           </div>
         )}
 
@@ -217,7 +168,7 @@ function LoginRegister({ onLogin }) {
             </p>
 
             <div className="auth-admin-hint">
-              <i className="fa-regular fa-key" style={{marginRight: 4}}></i> Admin: admin@sah.tech / admin123
+              <i className="fa-regular fa-key"></i> Admin: admin@sah.tech / admin123
             </div>
           </form>
         )}
