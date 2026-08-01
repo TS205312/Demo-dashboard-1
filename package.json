@@ -1,0 +1,27 @@
+{
+  "name": "sah-tech-drone-logistics",
+  "version": "3.0.0",
+  "description": "SAH-TECH Drone Logistics - Backend GCS server connecting User Interface and SAH Dashboard",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "build": "cd backend && npm install",
+    "postinstall": "cd backend && npm install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongodb-memory-server": "^11.2.0",
+    "mongoose": "^8.24.2",
+    "ws": "^8.18.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "allowScripts": {
+    "mongodb-memory-server@11.2.0": true
+  }
+}
+
