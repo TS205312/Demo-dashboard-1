@@ -6,7 +6,55 @@
 import { API_BASE } from './constants.js';
 
 /**
- * Tạo đơn hàng mới
+ * Đăng nhập bác sĩ
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise<{success: boolean, data?: object, message?: string}>}
+ */
+export async function apiLogin(email, password) {
+  try {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('apiLogin error:', error);
+    return { success: false, message: 'Lỗi kết nối server' };
+  }
+}
+
+/**
+ * Đăng ký tài khoản bác sĩ
+ * @param {Object} payload - { name, email, password, company_otp, doctor_id, department, hospital, phone }
+ */
+export async function apiRegister(payload) {
+  try {
+    const response = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        company_otp: payload.company_otp,
+        role: 'user',
+        doctor_id: payload.doctor_id || '',
+        department: payload.department || '',
+        hospital: payload.hospital || '',
+        phone: payload.phone || '',
+      }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('apiRegister error:', error);
+    return { success: false, message: 'Lỗi kết nối server' };
+  }
+}
+
+/**
+ * Tạo đơn hàng mới (kèm danh tính bác sĩ)
  */
 export async function apiCreateOrder(payload) {
   try {
@@ -18,6 +66,7 @@ export async function apiCreateOrder(payload) {
         destination: payload.destination,
         urgency: payload.urgency,
         notes: payload.notes || '',
+        created_by: payload.created_by || null,
       }),
     });
     const result = await response.json();
@@ -65,7 +114,7 @@ export async function apiGetOrder(id) {
 export function saveOrders(updatedOrders) {
   try {
     localStorage.setItem('sah_orders', JSON.stringify(updatedOrders));
-  } catch (e) { /* ignore */ }
+  } catch { /* ignore */ }
 }
 
 /**
@@ -75,7 +124,8 @@ export function getOrders() {
   try {
     const stored = localStorage.getItem('sah_orders');
     return stored ? JSON.parse(stored) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 }
+

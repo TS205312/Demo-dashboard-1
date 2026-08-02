@@ -11,6 +11,7 @@ function LoginRegister({ onLogin }) {
     regEmail: '',
     regPassword: '',
     regConfirmPassword: '',
+    regOtp: '',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -46,9 +47,13 @@ function LoginRegister({ onLogin }) {
     setError('');
     setSuccess('');
 
-    const { regName, regEmail, regPassword, regConfirmPassword } = formData;
+const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
     if (!regName || !regEmail || !regPassword) {
       setError('Vui lòng nhập đầy đủ thông tin');
+      return;
+    }
+    if (!regOtp) {
+      setError('Vui lòng nhập mã OTP công ty');
       return;
     }
     if (regPassword !== regConfirmPassword) {
@@ -60,7 +65,7 @@ function LoginRegister({ onLogin }) {
       return;
     }
 
-    const result = await apiRegister(regName, regEmail, regPassword);
+    const result = await apiRegister(regName, regEmail, regPassword, regOtp, 'staff');
 
     if (result.success) {
       setSuccess('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.');
@@ -80,15 +85,9 @@ function LoginRegister({ onLogin }) {
       <div className="auth-bg-glow auth-bg-glow-2" />
 
       <div className="auth-card">
-        {/* Logo & Branding */}
+{/* Logo & Branding */}
         <div className="auth-brand">
-          <div className="auth-logo">
-            <svg viewBox="0 0 48 48" width="48" height="48">
-              <circle cx="24" cy="24" r="22" fill="none" stroke="#58a6ff" strokeWidth="2" />
-              <path d="M24 8 L28 20 L40 20 L30 28 L34 40 L24 32 L14 40 L18 28 L8 20 L20 20 Z" fill="#58a6ff" opacity="0.8" />
-              <circle cx="24" cy="24" r="4" fill="#0d1117" />
-            </svg>
-          </div>
+          <img src="/sah-logo.png" alt="SAH-TECH" className="auth-logo" style={{ width: 64, height: 64, objectFit: 'contain' }} />
           <h1 className="auth-title">SAH-TECH</h1>
           <p className="auth-subtitle">Drone Control Station</p>
         </div>
@@ -126,7 +125,7 @@ function LoginRegister({ onLogin }) {
         {/* Login Form */}
         {activeTab === 'login' && (
           <form className="auth-form" onSubmit={handleLogin}>
-            <div className="auth-input-group">
+<div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
                 <i className="auth-input-icon fa-regular fa-user"></i>
@@ -191,7 +190,7 @@ function LoginRegister({ onLogin }) {
               </div>
             </div>
 
-            <div className="auth-input-group">
+<div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
                 <i className="auth-input-icon fa-regular fa-envelope"></i>
@@ -201,6 +200,21 @@ function LoginRegister({ onLogin }) {
                   className="auth-input"
                   placeholder="Nhập địa chỉ email"
                   value={formData.regEmail}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="auth-input-group">
+              <label className="auth-label">Mã OTP công ty</label>
+              <div className="auth-input-wrapper">
+                <i className="auth-input-icon fa-regular fa-shield-halved"></i>
+                <input
+                  type="text"
+                  name="regOtp"
+                  className="auth-input"
+                  placeholder="Nhập mã OTP (VD: SAH2025)"
+                  value={formData.regOtp}
                   onChange={handleChange}
                 />
               </div>
