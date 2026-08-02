@@ -27,8 +27,10 @@ export default function Navbar({ user, onLogout }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 {/* Logo / Brand */}
-          <div className="flex items-center gap-3">
-            <img src="/sah-logo.png" alt="SAH-TECH" className="w-9 h-9 object-contain" />
+<div className="flex items-center gap-3">
+            <div className="sah-logo-glow">
+              <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain sah-logo-pulse" />
+            </div>
             <div className="hidden sm:block">
               <p className="text-sm font-bold text-slate-800 leading-tight">SAH-TECH Medical</p>
               <p className="text-[11px] text-slate-400 font-medium leading-tight">Cổng đặt hàng Y tế</p>

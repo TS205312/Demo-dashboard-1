@@ -87,7 +87,7 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
       <div className="auth-card">
 {/* Logo & Branding */}
         <div className="auth-brand">
-          <img src="/sah-logo.png" alt="SAH-TECH" className="auth-logo" style={{ width: 64, height: 64, objectFit: 'contain' }} />
+<img src="/sah-logo.png" alt="SAH-TECH" className="auth-logo auth-logo-glow" style={{ width: 80, height: 80, objectFit: 'contain' }} />
           <h1 className="auth-title">SAH-TECH</h1>
           <p className="auth-subtitle">Drone Control Station</p>
         </div>

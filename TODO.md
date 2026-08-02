@@ -41,3 +41,12 @@
 - [x] Đăng nhập admin/số lượng drone seed
 - [x] Tạo đơn hàng từ User UI → Dashboard thấy được
 - [x] WebSocket real-time sync
+
+### Làm nổi bật logo SAH-TECH
+- [x] Copy logo vào public/ cả 2 dự án (sah-logo.png)
+- [x] Navbar (User UI) - logo glow + pulse animation
+- [x] DoctorAuth (User UI) - logo lớn hơn 80px + glow
+- [x] Dashboard header (SAH Dashboard) - logo glow + pulse
+- [x] LoginRegister (SAH Dashboard) - logo lớn hơn 80px + glow
+- [x] Thêm CSS glow/pulse ring vào cả 2 App.css
+- [x] Build lại thành công (User UI + SAH Dashboard)
