@@ -154,7 +154,9 @@ function Dashboard({ user, onLogout }) {
 <header className="dashboard-header">
         <div className="header-left">
           <div className="flex items-center gap-3">
-            <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain" />
+<div className="sah-logo-glow">
+              <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain sah-logo-pulse" />
+            </div>
             <div>
               <h1 className="header-title">SAH Drone Dashboard</h1>
               <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
