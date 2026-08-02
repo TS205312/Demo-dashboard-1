@@ -78,6 +78,35 @@ export async function seedDatabase() {
     console.log('   ✅ Admin account created: admin@sah.tech / admin123');
   }
 
+  // Seed demo doctor account (User UI)
+  const doctorExists = await User.findOne({ email: 'bs.an@sah.tech' });
+  if (!doctorExists) {
+    await User.create({
+      name: 'BS. Nguyễn Văn An',
+      email: 'bs.an@sah.tech',
+      password: 'doctor123',
+      role: 'user',
+      doctor_id: 'BS001',
+      department: 'Khoa Cấp cứu',
+      hospital: 'Bệnh viện Chợ Rẫy',
+      phone: '0901234567',
+    });
+    console.log('   ✅ Demo doctor created: bs.an@sah.tech / doctor123 (Khoa Cấp cứu)');
+  }
+
+  // Seed demo staff account (Dashboard - OTP SAH2025)
+  const staffExists = await User.findOne({ email: 'staff@sah.tech' });
+  if (!staffExists) {
+    await User.create({
+      name: 'Nhân viên điều phối',
+      email: 'staff@sah.tech',
+      password: 'staff123',
+      role: 'staff',
+      department: 'Trung tâm điều phối',
+    });
+    console.log('   ✅ Demo staff created: staff@sah.tech / staff123');
+  }
+
   // Seed drones (GCS Mission Planner schema)
   const droneCount = await Drone.countDocuments();
   if (droneCount === 0) {

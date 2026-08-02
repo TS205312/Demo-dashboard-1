@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { apiFetchOrders, apiCreateMission, apiUpdateOrderStatus, apiCreateOrder } from '../data/api';
 import '../styles/commandCenter.css';
 
 // ===================================================================
@@ -11,10 +12,20 @@ const WAYPOINTS = {
   nhidong: { name: "BV Nhi Đồng 1", coord: [10.76500, 106.66100] }
 };
 
+// Map backend status to display status
+const STATUS_MAP = {
+  pending: 'PENDING',
+  packaging: 'PENDING',
+  departed: 'ĐANG BAY',
+  inflight: 'ĐANG BAY',
+  delivered: 'ĐÃ GIAO',
+  cancelled: 'ĐÃ HUỶ',
+};
+
 // Leaflet loaded globally from CDN
 const L = typeof window !== 'undefined' ? window.L : null;
 
-function CommandCenter({ onBackToFleet }) {
+function CommandCenter({ onBackToFleet, drones }) {
   // ===================================================================
   // STATE
   // ===================================================================
@@ -419,7 +430,35 @@ function CommandCenter({ onBackToFleet }) {
   }, [playBeep, playAlarmSound, writeToLogCenter, updateActiveSqlItemStatus]);
 
   // ===================================================================
-  // MISSION CONTROL
+  // BACKEND SYNC — Load real orders from backend
+  // ===================================================================
+  const syncOrdersFromBackend = useCallback(async () => {
+    const orders = await apiFetchOrders();
+    if (!orders || orders.length === 0) return;
+    // Map backend orders to CC display format
+    const mapped = orders.map(o => ({
+      id: o.id || o._id,
+      destination: o.destination || '--',
+      item: o.medical_item || o.item || '--',
+      weather: o.notes || 'Thời tiết lý tưởng',
+      status: STATUS_MAP[o.status] || 'PENDING',
+      time: o.created_at ? new Date(o.created_at).toLocaleString('vi-VN') : '',
+      _backendId: o._id || o.id,
+      _status: o.status,
+    }));
+    setSqlDatabase(mapped);
+  }, []);
+
+  // Load orders when component mounts
+  useEffect(() => {
+    syncOrdersFromBackend();
+    // Poll every 5s for new orders from User Interface
+    const interval = setInterval(syncOrdersFromBackend, 5000);
+    return () => clearInterval(interval);
+  }, [syncOrdersFromBackend]);
+
+  // ===================================================================
+  // MISSION CONTROL — Backend-integrated
   // ===================================================================
   const startMission = useCallback(() => {
     if (stateRef.current !== "STANDBY") {
@@ -447,10 +486,30 @@ function CommandCenter({ onBackToFleet }) {
     setCurrentTargetHospital(pendingOrder.destination);
     setCurrentState("PREFLIGHT");
 
+    // Sync to backend: create mission + update order status
+    const droneId = drones && drones.length > 0 ? drones[0].id : null;
+    const orderId = pendingOrder._backendId || pendingOrder.id;
+    const destLat = targetWp.coord[0];
+    const destLng = targetWp.coord[1];
+
+    if (droneId) {
+      apiCreateMission(orderId, droneId, pendingOrder.destination, destLat, destLng)
+        .then(res => {
+          if (res.success) {
+            writeToLogCenter("DATABASE", `Mission ${res.data._id || res.data.id} đã được ghi vào database.`, 'sys');
+            // Update order status to departed
+            apiUpdateOrderStatus(orderId, 'departed', droneId);
+          }
+        })
+        .catch(err => writeToLogCenter("FAIL", `Lỗi tạo mission: ${err.message}`, 'sys'));
+    } else {
+      writeToLogCenter("SYSTEM", "Không có drone khả dụng trong fleet.", "sys");
+    }
+
     setSqlDatabase(prev => prev.map(row =>
       row.id === pendingOrder.id ? { ...row, status: "ĐANG BAY" } : row
     ));
-  }, [writeToLogCenter, playBeep]);
+  }, [writeToLogCenter, playBeep, drones]);
 
   const triggerRTL = useCallback(() => {
     const state = stateRef.current;
@@ -459,6 +518,14 @@ function CommandCenter({ onBackToFleet }) {
     const cc = document.querySelector('.command-center');
     if (cc) cc.classList.add('alarm-active');
     setShowDiagnose(true);
+
+    // Sync RTL to backend: cancel inflight orders
+    const db = sqlDatabaseRef.current;
+    db.forEach(row => {
+      if (row.status === "ĐANG BAY" && row._backendId) {
+        apiUpdateOrderStatus(row._backendId, 'cancelled');
+      }
+    });
 
     setSqlDatabase(prev => prev.map(row =>
       row.status === "ĐANG BAY" ? { ...row, status: "ĐÃ HUỶ" } : row
@@ -474,6 +541,21 @@ function CommandCenter({ onBackToFleet }) {
     }
     const id = "DX-" + (100 + sqlDatabase.length + 1);
     const destName = WAYPOINTS[pkgDest].name;
+
+    // Create order in backend (shared with User Interface)
+    apiCreateOrder({
+      medical_item: pkgName,
+      destination: destName,
+      urgency: 'Bình thường',
+      notes: pkgWeather,
+    }).then(res => {
+      if (res.success) {
+        writeToLogCenter("DATABASE", `Đơn hàng ${res.data.code} đã được tạo trên server.`, 'sys');
+      } else {
+        writeToLogCenter("FAIL", `Lỗi tạo đơn: ${res.message}`, 'sys');
+      }
+    });
+
     setSqlDatabase(prev => [...prev, {
       id,
       destination: destName,
@@ -482,7 +564,7 @@ function CommandCenter({ onBackToFleet }) {
       status: "PENDING",
       time: new Date().toLocaleString('vi-VN')
     }]);
-    writeToLogCenter("DATABASE", `Ghi thành công lệnh điều phối ${id} lên bảng dnd_sahtech.db`, 'sys');
+    writeToLogCenter("DATABASE", `Đã ghi lệnh điều phối ${id} lên database`, 'sys');
     playBeep(659.25, 0.1, 'sine', 0.05);
     setPkgName("");
   }, [pkgName, pkgDest, pkgWeather, sqlDatabase, writeToLogCenter, playBeep]);

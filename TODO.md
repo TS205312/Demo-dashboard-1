@@ -1,38 +1,43 @@
 # Kế hoạch kết nối giao diện người dùng và SAH Dashboard
 
-## ✅ Hoàn thành
-- [x] Phân tích kiến trúc 2 ứng dụng
-- [x] Lập kế hoạch Backend + Database
-- [x] Xác nhận kế hoạch với người dùng
-- [x] Tạo Backend Server (Express + MongoDB in-memory + WebSocket)
-  - [x] Models: User, Order, Drone (GCS), Mission, MissionLog
-  - [x] database.js - MongoDB connect + seed data (admin, 6 drones)
-  - [x] server.js - Express + WebSocket + Auto-progression
-  - [x] routes/auth.js - Login/Register API
-  - [x] routes/orders.js - CRUD orders + WebSocket broadcast
-  - [x] routes/drones.js - GCS drones + telemetry
-  - [x] routes/missions.js - Mission state machine + logs
-  - [x] routes/gcs.js - Ground Control Station endpoints
-  - [x] websocket.js - GCS WebSocket engine (drone/dashboard registration, failsafe RTL, heartbeat)
-- [x] Cập nhật Giao diện người dùng
-  - [x] utils/api.js - Gọi REST backend
-  - [x] utils/constants.js - API_BASE + WS_URL
-  - [x] hooks/useOrders.js - WebSocket real-time
-- [x] Cập nhật SAH Dashboard
-  - [x] data/api.js - API client đầy đủ
-  - [x] components/LoginRegister.jsx - Dùng backend auth
-- [x] Server hoạt động ổn định
-  - [x] MongoDB in-memory auto-start
-  - [x] Health check OK
-  - [x] Auth (login/register) OK
-  - [x] Orders CRUD OK
-  - [x] Drones list OK
-  - [x] Auto-progression: pending → delivered OK
+## ✅ Đã hoàn thành
 
-## 🚀 Server đang chạy tại
-- **REST API**: http://localhost:3001/api
-- **WebSocket**: ws://localhost:3001/ws
-- **Health**: http://localhost:3001/api/health
+### Backend Server (Express + MongoDB + WebSocket)
+- [x] package.json & cấu hình
+- [x] database.js - Khởi tạo MongoDB + seed data
+- [x] server.js - Express server + WebSocket
+- [x] routes/auth.js - Đăng nhập/Đăng ký (có OTP công ty)
+- [x] routes/orders.js - CRUD đơn hàng (dùng chung User UI + Dashboard)
+- [x] routes/drones.js - Drone + Telemetry
+- [x] routes/missions.js - Quản lý mission bay (state machine)
+- [x] routes/gcs.js - GCS engine status
+- [x] websocket.js - Real-time WebSocket engine
+- [x] models/User.js, Order.js, Drone.js, Mission.js, MissionLog.js
 
-## 📝 Tài khoản mặc định
-- **Admin**: admin@sah.tech / admin123
+### Giao diện người dùng (User Interface)
+- [x] utils/api.js - Gọi REST backend thật (tạo đơn, lấy danh sách)
+- [x] utils/constants.js - Cập nhật API_BASE, WS_URL
+- [x] hooks/useOrders.js - WebSocket real-time, gọi API thật, pass created_by
+- [x] App.jsx - Clean code, fix all eslint errors
+- [x] Navbar.jsx - Hiển thị tên bác sĩ đã đăng nhập, nút đăng xuất
+
+### SAH Dashboard
+- [x] data/api.js - Đầy đủ API client (login, register, orders, drones, missions)
+- [x] LoginRegister.jsx - Đăng nhập/đăng ký backend, OTP công ty (SAH2025)
+- [x] Dashboard.jsx - Load drones từ backend, Command Center từ backend
+- [x] CommandCenter.jsx - Lấy orders thật, tạo mission, sync trạng thái
+
+### Deploy & DevOps
+- [x] Root package.json - fix lỗi Render deploy
+- [x] render.yaml - rootDir: backend
+- [x] CHAY_TOAN_BO.bat, TAT_TOAN_BO.bat
+- [x] DEPLOY_GUIDE.md
+- [x] PR: blackboxai/fix-render-deploy
+
+### Xác minh
+- [x] Backend server chạy, REST API hoạt động
+- [x] Giao diện người dùng build thành công
+- [x] SAH Dashboard build thành công
+- [x] Đăng nhập admin/số lượng drone seed
+- [x] Tạo đơn hàng từ User UI → Dashboard thấy được
+- [x] WebSocket real-time sync

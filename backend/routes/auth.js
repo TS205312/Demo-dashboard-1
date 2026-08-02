@@ -3,8 +3,13 @@ import User from '../models/User.js';
 
 const router = Router();
 
+// Mã OTP công ty - chỉ nhân viên/bác sĩ trong công ty mới biết
+// Có thể đổi qua biến môi trường COMPANY_OTP
+const COMPANY_OTP = process.env.COMPANY_OTP || 'SAH2025';
+
 /**
  * POST /api/auth/login
+ * Đăng nhập chung cho cả Dashboard (staff/admin) và User UI (bác sĩ)
  */
 router.post('/login', async (req, res) => {
   try {
@@ -20,7 +25,16 @@ router.post('/login', async (req, res) => {
 
     res.json({
       success: true,
-      data: { id: user._id, name: user.name, email: user.email, role: user.role }
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        doctor_id: user.doctor_id || '',
+        department: user.department || '',
+        hospital: user.hospital || '',
+        phone: user.phone || '',
+      }
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -30,10 +44,17 @@ router.post('/login', async (req, res) => {
 
 /**
  * POST /api/auth/register
+ * Đăng ký - bắt buộc nhập Mã OTP công ty (chỉ người trong công ty mới truy cập)
  */
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name, email, password,
+      company_otp,        // Mã OTP công ty
+      role = 'user',      // 'user' = bác sĩ (User UI), 'staff' = nhân viên (Dashboard)
+      doctor_id, department, hospital, phone,
+    } = req.body;
+
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ thông tin' });
     }
@@ -41,17 +62,46 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
     }
 
+    // Kiểm tra mã OTP công ty
+    if (!company_otp || company_otp !== COMPANY_OTP) {
+      return res.status(403).json({
+        success: false,
+        message: 'Mã OTP công ty không hợp lệ. Vui lòng liên hệ quản trị viên để được cấp mã.',
+      });
+    }
+
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(409).json({ success: false, message: 'Email này đã được đăng ký' });
     }
 
-    const user = await User.create({ name, email, password, role: 'user' });
+    // role hợp lệ: bác sĩ (user) hoặc nhân viên vận hành (staff)
+    const allowedRole = role === 'staff' ? 'staff' : 'user';
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: allowedRole,
+      doctor_id: doctor_id || '',
+      department: department || '',
+      hospital: hospital || '',
+      phone: phone || '',
+    });
 
     res.status(201).json({
       success: true,
       message: 'Đăng ký thành công',
-      data: { id: user._id, name: user.name, email: user.email, role: user.role }
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        doctor_id: user.doctor_id || '',
+        department: user.department || '',
+        hospital: user.hospital || '',
+        phone: user.phone || '',
+      }
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -61,10 +111,11 @@ router.post('/register', async (req, res) => {
 
 /**
  * GET /api/auth/users
+ * Lấy danh sách users (admin only)
  */
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    const users = await User.find().sort({ createdAt: -1 });
     res.json({ success: true, data: users });
   } catch (error) {
     console.error('Get users error:', error);

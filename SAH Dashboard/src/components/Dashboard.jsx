@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import dronesData from '../data/droneData';
+import { useState, useEffect } from 'react';
+import { apiFetchDrones } from '../data/api';
 import DroneCard from './DroneCard';
 import DroneDetail from './DroneDetail';
 import MapView from './MapView';
@@ -11,6 +11,28 @@ function Dashboard({ user, onLogout }) {
   const [selectedDrone, setSelectedDrone] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [filter, setFilter] = useState('all'); // all | online | warning | offline
+  const [dronesData, setDronesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch drones from backend
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      const data = await apiFetchDrones();
+      if (!cancelled) {
+        setDronesData(data);
+        setLoading(false);
+      }
+    };
+    load();
+    // Poll every 10s to keep fleet data fresh
+    const interval = setInterval(load, 10000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleDroneClick = (drone) => {
     setSelectedDrone(drone);
@@ -84,14 +106,25 @@ function Dashboard({ user, onLogout }) {
             </div>
           </div>
           <div className="drone-grid">
-            {filteredDrones.map((drone) => (
-              <DroneCard
-                key={drone.id}
-                drone={drone}
-                onClick={handleDroneClick}
-                isSelected={selectedDrone && selectedDrone.id === drone.id}
-              />
-            ))}
+            {loading ? (
+              <div className="loading-state">
+                <span className="spinner"></span>
+                <p className="text-sm text-slate-500">Đang tải dữ liệu drone...</p>
+              </div>
+            ) : filteredDrones.length === 0 ? (
+              <div className="empty-state">
+                <p className="text-sm text-slate-500">Không có drone nào</p>
+              </div>
+            ) : (
+              filteredDrones.map((drone) => (
+                <DroneCard
+                  key={drone.id}
+                  drone={drone}
+                  onClick={handleDroneClick}
+                  isSelected={selectedDrone && selectedDrone.id === drone.id}
+                />
+              ))
+            )}
           </div>
         </div>
 
@@ -118,10 +151,15 @@ function Dashboard({ user, onLogout }) {
   return (
     <div className="dashboard">
       {/* Header */}
-      <header className="dashboard-header">
+<header className="dashboard-header">
         <div className="header-left">
-          <h1 className="header-title">SAH Drone Dashboard</h1>
-          <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
+          <div className="flex items-center gap-3">
+            <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain" />
+            <div>
+              <h1 className="header-title">SAH Drone Dashboard</h1>
+              <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
+            </div>
+          </div>
         </div>
         <div className="header-right">
           <div className="header-datetime">
