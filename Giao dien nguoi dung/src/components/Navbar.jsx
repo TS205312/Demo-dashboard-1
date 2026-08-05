@@ -26,10 +26,10 @@ export default function Navbar({ user, onLogout }) {
     <nav className="navbar" id="navbar" ref={navbarRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo / Brand */}
+{/* Logo / Brand */}
           <div className="flex items-center gap-3">
             <div className="sah-logo-glow">
-              <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain sah-logo-pulse" />
+              <img src="/sah-logo.png" alt="SAH-TECH" className="sah-logo-pulse" style={{ width: 40, height: 40, objectFit: 'contain' }} />
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-bold text-slate-800 leading-tight">SAH-TECH Medical</p>
