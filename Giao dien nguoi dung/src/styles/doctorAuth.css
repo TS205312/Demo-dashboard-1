@@ -8,7 +8,7 @@
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #0B1120 0%, #1E3A8A 55%, #2563EB 100%);
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 55%, #059669 100%);
 }
 
 /* Glow orbs */
@@ -22,7 +22,7 @@
 .doctor-auth-glow-1 {
   width: 420px;
   height: 420px;
-  background: #3B82F6;
+  background: #10B981;
   top: -120px;
   left: -120px;
 }
@@ -56,31 +56,31 @@
   width: 96px;
   height: 96px;
   border-radius: 1.5rem;
-  background: linear-gradient(145deg, #EFF6FF 0%, #DBEAFE 100%);
+  background: linear-gradient(145deg, #ECFDF5 0%, #D1FAE5 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 0.9rem;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-  border: 1px solid rgba(37, 99, 235, 0.15);
+  box-shadow: 0 10px 30px rgba(5, 150, 105, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
+  border: 1px solid rgba(5, 150, 105, 0.15);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .doctor-auth-logo-wrap:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.7);
+  box-shadow: 0 14px 36px rgba(5, 150, 105, 0.3), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 .doctor-auth-logo {
   width: 64px;
   height: 64px;
   border-radius: 1.25rem;
-  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  background: linear-gradient(135deg, #059669, #047857);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 1.75rem;
   margin: 0 auto 0.75rem;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4);
 }
 .doctor-auth-title {
   font-size: 1.5rem;
@@ -118,7 +118,7 @@
 }
 .doctor-auth-tab.active {
   background: #fff;
-  color: #2563EB;
+  color: #059669;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .doctor-auth-tab i {
@@ -188,9 +188,9 @@
   box-sizing: border-box;
 }
 .doctor-input:focus {
-  border-color: #2563EB;
+  border-color: #059669;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
 .doctor-input::placeholder {
   color: #94A3B8;
@@ -215,15 +215,15 @@
   font-size: 0.95rem;
   font-weight: 700;
   color: #fff;
-  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  background: linear-gradient(135deg, #059669, #047857);
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
   margin-top: 0.25rem;
 }
 .doctor-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.45);
 }
 .doctor-submit-btn:disabled {
   opacity: 0.6;
@@ -250,7 +250,7 @@
   margin: 0.25rem 0 0;
 }
 .doctor-link {
-  color: #2563EB;
+  color: #059669;
   font-weight: 600;
   cursor: pointer;
 }
@@ -260,12 +260,12 @@
 
 /* Demo hint */
 .doctor-demo-hint {
-  background: #EFF6FF;
-  border: 1px dashed #93C5FD;
+  background: #ECFDF5;
+  border: 1px dashed #6EE7B7;
   border-radius: 0.625rem;
   padding: 0.625rem 0.875rem;
   font-size: 0.78rem;
-  color: #1E40AF;
+  color: #065F46;
   text-align: center;
 }
 .doctor-demo-hint strong {

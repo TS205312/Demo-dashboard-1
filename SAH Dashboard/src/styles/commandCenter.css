@@ -289,7 +289,7 @@
 }
 
 .cc-cmd-btn.auto {
-  border-color: rgba(88, 166, 255, 0.3);
+  border-color: rgba(16, 185, 129, 0.3);
   color: var(--accent);
 }
 
@@ -465,9 +465,9 @@
 }
 
 .cc-pill.enroute {
-  background: rgba(88, 166, 255, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--accent);
-  border: 1px solid rgba(88, 166, 255, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .cc-pill.alert {
@@ -511,7 +511,7 @@
 .cc-filter-btn.active {
   color: var(--accent);
   border-color: var(--accent);
-  background: rgba(88, 166, 255, 0.1);
+  background: rgba(16, 185, 129, 0.1);
 }
 
 .cc-terminal {
