@@ -39,12 +39,48 @@
   max-width: 480px;
   background: rgba(255, 255, 255, 0.97);
   border-radius: 1.5rem;
-  padding: 2.25rem 2rem;
+  padding: 1.5rem;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
   position: relative;
   z-index: 1;
-  max-height: 92vh;
-  overflow-y: auto;
+}
+
+/* Wrapper cuộn bên trong ô trắng — dời thanh cuộn vào sâu hơn */
+.doctor-auth-scroll {
+  max-height: 88vh;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #059669 #e5e4e7;
+  padding-right: 1rem;
+  box-sizing: border-box;
+}
+
+/* Thanh cuộn luôn nằm trong ô trắng */
+.doctor-auth-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.doctor-auth-scroll::-webkit-scrollbar-track {
+  background: #f1f5f1;
+  border-radius: 8px;
+}
+.doctor-auth-scroll::-webkit-scrollbar-thumb {
+  background: #059669;
+  border-radius: 8px;
+  border: 2px solid #f1f5f1;
+}
+.doctor-auth-scroll::-webkit-scrollbar-thumb:hover {
+  background: #047857;
+}
+
+/* Dời thanh cuộn thêm vào trong (không sát nội dung) */
+.doctor-auth-scroll .doctor-auth-brand,
+.doctor-auth-scroll .doctor-auth-tabs,
+.doctor-auth-scroll .doctor-auth-error,
+.doctor-auth-scroll .doctor-auth-success,
+.doctor-auth-scroll .doctor-auth-form,
+.doctor-auth-scroll .doctor-auth-version {
+  padding-right: 0.5rem;
 }
 
 /* Branding */
