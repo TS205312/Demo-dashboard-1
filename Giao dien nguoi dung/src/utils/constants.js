@@ -6,16 +6,23 @@
 // Nếu chạy trên Render, dùng biến môi trường VITE_API_URL
 // Nếu chạy local, dùng localhost
 const getApiBase = () => {
-  // Ưu tiên biến môi trường (Render deployment)
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+    let url = import.meta.env.VITE_API_URL.trim().replace(/\/+$/, '');
+    if (!url.endsWith('/api')) {
+      url += '/api';
+    }
+    return url;
   }
   return 'http://127.0.0.1:3001/api';
 };
 
 const getWsUrl = () => {
   if (import.meta.env.VITE_WS_URL) {
-    return import.meta.env.VITE_WS_URL;
+    let url = import.meta.env.VITE_WS_URL.trim().replace(/\/+$/, '');
+    if (!url.endsWith('/ws')) {
+      url += '/ws';
+    }
+    return url;
   }
   return 'ws://127.0.0.1:3001/ws';
 };

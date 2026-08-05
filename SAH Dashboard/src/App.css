@@ -4,8 +4,8 @@
   --bg-panel: #161b22;
   --bg-card: #1c2128;
   --bg-hover: #21262d;
-  --accent: #58a6ff;
-  --accent-rgb: 88, 166, 255;
+  --accent: #10b981;
+  --accent-rgb: 16, 185, 129;
   --success: #3fb950;
   --warning: #d29922;
   --danger: #f85149;
@@ -82,7 +82,7 @@ body {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(88, 166, 255, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
   animation: sah-logo-pulse-ring 2s ease-in-out infinite;
   pointer-events: none;
 }
@@ -91,18 +91,18 @@ body {
   position: absolute;
   inset: -2px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(88, 166, 255, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
   animation: sah-logo-pulse-ring 2s ease-in-out infinite 0.5s;
   pointer-events: none;
 }
 .sah-logo-pulse {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4)) drop-shadow(0 0 16px rgba(88, 166, 255, 0.2));
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)) drop-shadow(0 0 16px rgba(16, 185, 129, 0.2));
   transition: filter 0.3s ease;
 }
 .sah-logo-pulse:hover {
-  filter: drop-shadow(0 0 12px rgba(88, 166, 255, 0.6)) drop-shadow(0 0 24px rgba(88, 166, 255, 0.3));
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.3));
 }
 
 @keyframes sah-logo-pulse-ring {
@@ -113,13 +113,13 @@ body {
 
 /* Logo glow in auth card (dashboard login) */
 .auth-logo-glow {
-  filter: drop-shadow(0 0 12px rgba(88, 166, 255, 0.5)) drop-shadow(0 0 24px rgba(88, 166, 255, 0.25));
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25));
   animation: sah-logo-auth-pulse 3s ease-in-out infinite;
 }
 
 @keyframes sah-logo-auth-pulse {
-  0% { filter: drop-shadow(0 0 12px rgba(88, 166, 255, 0.5)) drop-shadow(0 0 24px rgba(88, 166, 255, 0.25)); }
-  50% { filter: drop-shadow(0 0 20px rgba(88, 166, 255, 0.7)) drop-shadow(0 0 40px rgba(88, 166, 255, 0.35)); }
-  100% { filter: drop-shadow(0 0 12px rgba(88, 166, 255, 0.5)) drop-shadow(0 0 24px rgba(88, 166, 255, 0.25)); }
+  0% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25)); }
+  50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 40px rgba(16, 185, 129, 0.35)); }
+  100% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25)); }
 }
 

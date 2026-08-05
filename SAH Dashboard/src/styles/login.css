@@ -47,14 +47,14 @@
   margin-bottom: 12px;
   padding: 10px;
   border-radius: 16px;
-  background: radial-gradient(circle at center, rgba(88, 166, 255, 0.15), transparent 70%);
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.15), transparent 70%);
 }
 
 .auth-logo-img {
   width: 120px;
   height: 120px;
   object-fit: contain;
-  filter: drop-shadow(0 0 18px rgba(88, 166, 255, 0.55)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.55)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
   animation: authLogoFloat 3s ease-in-out infinite;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .auth-tab.active {
-  background: #1f6feb;
+  background: #10b981;
   color: #fff;
 }
 
@@ -190,8 +190,8 @@
 }
 
 .auth-input-wrapper:focus-within {
-  border-color: #58a6ff;
-  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.15);
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
 }
 
 .auth-input-icon {
@@ -220,7 +220,7 @@
   width: 100%;
   padding: 12px;
   border: none;
-  background: #1f6feb;
+  background: #10b981;
   color: #fff;
   font-size: 15px;
   font-weight: 700;
@@ -231,7 +231,7 @@
 }
 
 .auth-submit-btn:hover {
-  background: #388bfd;
+  background: #059669;
 }
 
 .auth-submit-btn:active {
@@ -247,14 +247,14 @@
 }
 
 .auth-link {
-  color: #58a6ff;
+  color: #10b981;
   cursor: pointer;
   font-weight: 600;
   transition: color 0.2s;
 }
 
 .auth-link:hover {
-  color: #79c0ff;
+  color: #34d399;
   text-decoration: underline;
 }
 
