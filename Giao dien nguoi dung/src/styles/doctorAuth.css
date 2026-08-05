@@ -52,7 +52,7 @@
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: #059669 #e5e4e7;
-  padding-right: 1rem;
+  padding-right: calc(1rem - 2mm);
   box-sizing: border-box;
 }
 
