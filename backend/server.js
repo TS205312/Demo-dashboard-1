@@ -109,6 +109,18 @@ setInterval(async () => {
 }, 5000);
 
 // ===================================================================
+// HELPERS
+// ===================================================================
+// Display CORS origins safely (boolean true → 'All origins (*)')
+function formatCorsOrigins(origins) {
+  if (origins === true) return '    - All origins (*)';
+  if (Array.isArray(origins) && origins.length > 0) {
+    return origins.map(o => `    - ${o}`).join('\n');
+  }
+  return `    - ${origins}`;
+}
+
+// ===================================================================
 // START SERVER
 // ===================================================================
 server.listen(PORT, () => {
@@ -132,8 +144,7 @@ server.listen(PORT, () => {
 ║    • Ping/Pong heartbeat (30s)                            ║
 ║    • Telemetry timeout detection                          ║
 ╠══════════════════════════════════════════════════════════╣
-║  CORS origins:                                           ║
-${CORS_ORIGINS.map(o => `║    - ${o}`).join('\n')}
+${formatCorsOrigins(CORS_ORIGINS).split('\n').map(line => `║${line.padEnd(56)}║`).join('\n')}
 ╚══════════════════════════════════════════════════════════╝
   `);
 });

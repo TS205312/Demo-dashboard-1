@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { apiFetchOrders, apiCreateMission, apiUpdateOrderStatus, apiCreateOrder } from '../data/api';
+import { apiFetchOrders, apiCreateMission, apiUpdateOrderStatus, apiCreateOrder, apiFetchDrones } from '../data/api';
 import '../styles/commandCenter.css';
 
 // ===================================================================
@@ -14,8 +14,8 @@ const WAYPOINTS = {
 
 // Map backend status to display status
 const STATUS_MAP = {
-  pending: 'PENDING',
-  packaging: 'PENDING',
+  pending: 'CHỜ XỬ LÝ',
+  packaging: 'ĐÓNG GÓI',
   departed: 'ĐANG BAY',
   inflight: 'ĐANG BAY',
   delivered: 'ĐÃ GIAO',
@@ -25,16 +25,13 @@ const STATUS_MAP = {
 // Leaflet loaded globally from CDN
 const L = typeof window !== 'undefined' ? window.L : null;
 
-function CommandCenter({ onBackToFleet, drones }) {
+function CommandCenter({ onBackToFleet }) {
   // ===================================================================
   // STATE
   // ===================================================================
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [currentState, setCurrentState] = useState("STANDBY");
-  const [sqlDatabase, setSqlDatabase] = useState([
-    { id: "DX-101", destination: "BV Chợ Rẫy", item: "Huyết thanh kháng độc", weather: "Lặng gió, thời tiết quang đãng", status: "DELIVERED", time: "13/07/2026 08:30" },
-    { id: "DX-102", destination: "BV Nhi Đồng 1", item: "Máu nhóm O-", weather: "Thời tiết lý tưởng", status: "PENDING", time: "13/07/2026 08:45" }
-  ]);
+  const [sqlDatabase, setSqlDatabase] = useState([]);
   const [allLogsArray, setAllLogsArray] = useState([]);
   const [activeLogFilter, setActiveLogFilter] = useState('all');
   const [droneLat, setDroneLat] = useState(DOCK_COORD[0]);
@@ -46,15 +43,21 @@ function CommandCenter({ onBackToFleet, drones }) {
   const [flightPathCoords, setFlightPathCoords] = useState([]);
   const [targetNodeIndex, setTargetNodeIndex] = useState(0);
   const [currentTargetHospital, setCurrentTargetHospital] = useState("");
-  const [pkgName, setPkgName] = useState("");
+const [pkgName, setPkgName] = useState("");
   const [pkgDest, setPkgDest] = useState("choray");
-  const [pkgWeather, setPkgWeather] = useState("Lặng gió, thời tiết quang đãng");
   const [showDiagnose, setShowDiagnose] = useState(false);
   const [iotDoor, setIotDoor] = useState("ĐÃ ĐÓNG");
   const [iotGear, setIotGear] = useState("ĐÃ KHÓA");
   const [iotCharge, setIotCharge] = useState("ĐANG TRÌ TRỆ");
   const [iotPower, setIotPower] = useState("0.0 kW");
   const [clock, setClock] = useState("");
+
+  // Dispatch panel state
+  const [dispatchOrder, setDispatchOrder] = useState(null); // order being prepared
+  const [availableDrones, setAvailableDrones] = useState([]);
+  const [selectedDroneId, setSelectedDroneId] = useState("");
+  const [flightMinutes, setFlightMinutes] = useState(15);
+  const [preparingId, setPreparingId] = useState(null); // loading state for prepare/off
 
   // Refs (for use inside intervals/callbacks only)
   const mapInstanceRef = useRef(null);
@@ -434,83 +437,125 @@ function CommandCenter({ onBackToFleet, drones }) {
   // ===================================================================
   const syncOrdersFromBackend = useCallback(async () => {
     const orders = await apiFetchOrders();
-    if (!orders || orders.length === 0) return;
+    if (!orders) return;
     // Map backend orders to CC display format
     const mapped = orders.map(o => ({
-      id: o.id || o._id,
+      id: o._id || o.id,
       destination: o.destination || '--',
       item: o.medical_item || o.item || '--',
+      urgency: o.urgency || 'Bình thường',
+      doctor: (o.created_by && o.created_by.name) || '--',
+      notes: o.notes || '',
       weather: o.notes || 'Thời tiết lý tưởng',
-      status: STATUS_MAP[o.status] || 'PENDING',
-      time: o.created_at ? new Date(o.created_at).toLocaleString('vi-VN') : '',
+      status: STATUS_MAP[o.status] || 'CHỜ XỬ LÝ',
+      time: o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN') : '',
       _backendId: o._id || o.id,
       _status: o.status,
     }));
     setSqlDatabase(mapped);
   }, []);
 
-  // Load orders when component mounts
+  // Load orders + drones when component mounts
   useEffect(() => {
     syncOrdersFromBackend();
+    apiFetchDrones().then(dronesList => {
+      if (dronesList && dronesList.length > 0) {
+        setAvailableDrones(dronesList);
+        // Default select first online drone
+        const online = dronesList.find(d => d.status === 'online');
+        setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
+      }
+    });
     // Poll every 5s for new orders from User Interface
     const interval = setInterval(syncOrdersFromBackend, 5000);
     return () => clearInterval(interval);
   }, [syncOrdersFromBackend]);
 
   // ===================================================================
-  // MISSION CONTROL — Backend-integrated
+  // DISPATCH WORKFLOW
   // ===================================================================
-  const startMission = useCallback(() => {
-    if (stateRef.current !== "STANDBY") {
-      writeToLogCenter("FAIL", "Không thể chạy Mission: Drone đang thực thi hành trình khác!", "sys");
+  // Mở panel chuẩn bị đơn hàng
+  const prepareOrder = useCallback((order) => {
+    setDispatchOrder(order);
+    setFlightMinutes(15);
+    // Tự chọn drone online đầu tiên
+    const online = availableDrones.find(d => d.status === 'online');
+    if (online) {
+      setSelectedDroneId(String(online._id || online.id));
+    }
+    playBeep(523.25, 0.15);
+  }, [availableDrones, playBeep]);
+
+  // Xác nhận chuẩn bị hàng → đơn hàng chuyển sang 'packaging'
+  const confirmPrepare = useCallback(async () => {
+    if (!dispatchOrder) return;
+    const droneId = selectedDroneId;
+    if (!droneId) {
+      writeToLogCenter("FAIL", "Vui lòng chọn drone trước khi chuẩn bị hàng!", "sys");
+      playBeep(220, 0.3, 'sawtooth', 0.08);
       return;
     }
-    const db = sqlDatabaseRef.current;
-    const pendingOrder = db.find(o => o.status === "PENDING");
-    if (!pendingOrder) {
-      writeToLogCenter("SYSTEM", "Không tìm thấy đơn hàng PENDING nào trong Core SQL. Vui lòng tạo một đơn hàng mới phía dưới!", "sys");
-      playBeep(220, 0.25, 'sawtooth', 0.08);
+    setPreparingId(dispatchOrder._backendId);
+    const res = await apiUpdateOrderStatus(dispatchOrder._backendId, 'packaging', droneId);
+    setPreparingId(null);
+    if (res.success) {
+      writeToLogCenter("DATABASE", `Đơn ${dispatchOrder.id} đã xác nhận chuẩn bị hàng, gán drone ${droneId}.`, 'sys');
+      playBeep(659.25, 0.1, 'sine', 0.05);
+      syncOrdersFromBackend();
+    } else {
+      writeToLogCenter("FAIL", `Lỗi chuẩn bị đơn: ${res.message || 'không xác định'}`, 'sys');
+    }
+  }, [dispatchOrder, selectedDroneId, writeToLogCenter, playBeep, syncOrdersFromBackend]);
+
+  // Take Off → tạo mission + đơn chuyển sang 'departed'
+  const takeOff = useCallback(async () => {
+    if (!dispatchOrder) return;
+    const droneId = selectedDroneId;
+    if (!droneId) {
+      writeToLogCenter("FAIL", "Vui lòng chọn drone trước khi Take Off!", "sys");
+      playBeep(220, 0.3, 'sawtooth', 0.08);
       return;
     }
+    setPreparingId(dispatchOrder._backendId);
+    const destName = dispatchOrder.destination || 'BV Chợ Rẫy';
     let wpKey = "choray";
-    if (pendingOrder.destination.includes("Từ Dũ")) wpKey = "tudu";
-    if (pendingOrder.destination.includes("Nhi Đồng")) wpKey = "nhidong";
+    if (destName.includes("Từ Dũ")) wpKey = "tudu";
+    if (destName.includes("Nhi Đồng")) wpKey = "nhidong";
     const targetWp = WAYPOINTS[wpKey];
 
-    writeToLogCenter("COMMAND", `Khởi động Nhiệm Vụ Tự Động: Giao ${pendingOrder.item} tới ${pendingOrder.destination}.`, "cmd");
+    const missionRes = await apiCreateMission(dispatchOrder._backendId, droneId, destName, targetWp.coord[0], targetWp.coord[1]);
+    if (missionRes.success) {
+      writeToLogCenter("DATABASE", `Mission ${missionRes.data._id || missionRes.data.id} đã tạo. Drone ${droneId} cất cánh → ${destName} (dự kiến ${flightMinutes} phút).`, 'sys');
+    } else {
+      writeToLogCenter("FAIL", `Lỗi tạo mission: ${missionRes.message || 'không xác định'}`, 'sys');
+    }
+    // Cập nhật trạng thái đơn → departed
+    const statusRes = await apiUpdateOrderStatus(dispatchOrder._backendId, 'departed', droneId);
+    if (statusRes.success) {
+      writeToLogCenter("COMMAND", `Đơn ${dispatchOrder.id}: Drone đã cất cánh tới ${destName}.`, "cmd");
+    }
+
+    // Vẽ route trên map
     if (routeLineRef.current) {
       routeLineRef.current.setLatLngs([DOCK_COORD, targetWp.coord]);
     }
     setFlightPathCoords([targetWp.coord]);
     setTargetNodeIndex(0);
-    setCurrentTargetHospital(pendingOrder.destination);
-    setCurrentState("PREFLIGHT");
+    setCurrentTargetHospital(destName);
+    setCurrentState("TAKEOFF");
+    setPreparingId(null);
+    setDispatchOrder(null);
+    syncOrdersFromBackend();
+    playBeep(880, 0.4, 'sine', 0.08);
+  }, [dispatchOrder, selectedDroneId, flightMinutes, writeToLogCenter, playBeep, syncOrdersFromBackend]);
 
-    // Sync to backend: create mission + update order status
-    const droneId = drones && drones.length > 0 ? drones[0].id : null;
-    const orderId = pendingOrder._backendId || pendingOrder.id;
-    const destLat = targetWp.coord[0];
-    const destLng = targetWp.coord[1];
+  const closeDispatchPanel = useCallback(() => {
+    setDispatchOrder(null);
+  }, []);
 
-    if (droneId) {
-      apiCreateMission(orderId, droneId, pendingOrder.destination, destLat, destLng)
-        .then(res => {
-          if (res.success) {
-            writeToLogCenter("DATABASE", `Mission ${res.data._id || res.data.id} đã được ghi vào database.`, 'sys');
-            // Update order status to departed
-            apiUpdateOrderStatus(orderId, 'departed', droneId);
-          }
-        })
-        .catch(err => writeToLogCenter("FAIL", `Lỗi tạo mission: ${err.message}`, 'sys'));
-    } else {
-      writeToLogCenter("SYSTEM", "Không có drone khả dụng trong fleet.", "sys");
-    }
-
-    setSqlDatabase(prev => prev.map(row =>
-      row.id === pendingOrder.id ? { ...row, status: "ĐANG BAY" } : row
-    ));
-  }, [writeToLogCenter, playBeep, drones]);
-
+  // ===================================================================
+  // MISSION CONTROL — General
+  // ===================================================================
   const triggerRTL = useCallback(() => {
     const state = stateRef.current;
     if (state === "STANDBY") return;
@@ -522,7 +567,7 @@ function CommandCenter({ onBackToFleet, drones }) {
     // Sync RTL to backend: cancel inflight orders
     const db = sqlDatabaseRef.current;
     db.forEach(row => {
-      if (row.status === "ĐANG BAY" && row._backendId) {
+      if ((row.status === "ĐANG BAY") && row._backendId) {
         apiUpdateOrderStatus(row._backendId, 'cancelled');
       }
     });
@@ -539,35 +584,26 @@ function CommandCenter({ onBackToFleet, drones }) {
       playBeep(220, 0.3, 'sawtooth', 0.08);
       return;
     }
-    const id = "DX-" + (100 + sqlDatabase.length + 1);
     const destName = WAYPOINTS[pkgDest].name;
 
-    // Create order in backend (shared with User Interface)
+// Create order in backend (shared with User Interface)
     apiCreateOrder({
       medical_item: pkgName,
       destination: destName,
       urgency: 'Bình thường',
-      notes: pkgWeather,
+      notes: '',
     }).then(res => {
       if (res.success) {
         writeToLogCenter("DATABASE", `Đơn hàng ${res.data.code} đã được tạo trên server.`, 'sys');
+        syncOrdersFromBackend();
       } else {
         writeToLogCenter("FAIL", `Lỗi tạo đơn: ${res.message}`, 'sys');
       }
     });
 
-    setSqlDatabase(prev => [...prev, {
-      id,
-      destination: destName,
-      item: pkgName,
-      weather: pkgWeather,
-      status: "PENDING",
-      time: new Date().toLocaleString('vi-VN')
-    }]);
-    writeToLogCenter("DATABASE", `Đã ghi lệnh điều phối ${id} lên database`, 'sys');
     playBeep(659.25, 0.1, 'sine', 0.05);
     setPkgName("");
-  }, [pkgName, pkgDest, pkgWeather, sqlDatabase, writeToLogCenter, playBeep]);
+  }, [pkgName, pkgDest, writeToLogCenter, playBeep, syncOrdersFromBackend]);
 
   // ===================================================================
   // EFFECTS - Flight tick & clock
@@ -623,18 +659,47 @@ function CommandCenter({ onBackToFleet, drones }) {
   };
 
   const renderSqlTable = () => {
+    if (!sqlDatabase || sqlDatabase.length === 0) {
+      return (
+        <tr>
+          <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+            Chưa có đơn hàng. Đơn từ bác sĩ sẽ hiển thị tại đây.
+          </td>
+        </tr>
+      );
+    }
     return sqlDatabase.map(row => {
       let pillClass = 'pending';
       if (row.status === 'ĐANG BAY') pillClass = 'enroute';
-      if (row.status === 'DELIVERED' || row.status === 'ĐÃ GIAO' || row.status === 'ĐANG THẢ HÀNG') pillClass = 'delivered';
-      if (row.status === 'TRỄ HẸN' || row.status === 'ĐÃ HUỶ') pillClass = 'alert';
+      if (row.status === 'ĐÃ GIAO') pillClass = 'delivered';
+      if (row.status === 'ĐÃ HUỶ') pillClass = 'alert';
+      if (row.status === 'ĐÓNG GÓI') pillClass = 'enroute';
+      const isPending = row._status === 'pending' || row.status === 'CHỜ XỬ LÝ';
+      const isPreparing = preparingId === row._backendId;
       return (
         <tr key={row.id}>
           <td><b>{row.id}</b></td>
-          <td>{row.destination}</td>
+          <td>{row.doctor}</td>
           <td>{row.item}</td>
-          <td><span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{row.weather}</span></td>
+          <td>{row.destination}</td>
+          <td style={{ fontSize: '9px', color: row.urgency === 'Cấp cứu khẩn' ? 'var(--danger)' : 'var(--text-muted)' }}>
+            {row.urgency === 'Cấp cứu khẩn' ? '🚨 ' : ''}{row.urgency}
+          </td>
           <td><span className={`cc-pill ${pillClass}`}>{row.status}</span></td>
+          <td>
+            {isPending ? (
+              <button
+                className="cc-cmd-btn auto"
+                style={{ flex: '0 0 auto', padding: '3px 8px', fontSize: '9px' }}
+                onClick={() => prepareOrder(row)}
+                disabled={!!isPreparing}
+              >
+                {isPreparing ? '...' : <><i className="fa-solid fa-box-open"></i> Chuẩn bị</>}
+              </button>
+            ) : (
+              <span style={{ color: 'var(--text-muted)', fontSize: '9px' }}>—</span>
+            )}
+          </td>
         </tr>
       );
     });
@@ -722,12 +787,6 @@ function CommandCenter({ onBackToFleet, drones }) {
                 <option value="tudu">BV Từ Dũ (Điểm 2)</option>
                 <option value="nhidong">BV Nhi Đồng 1 (Điểm 3)</option>
               </select>
-              <select className="cc-dispatch-select" value={pkgWeather} onChange={(e) => setPkgWeather(e.target.value)}>
-                <option value="Lặng gió, thời tiết quang đãng">Thời tiết: Đẹp (Lặng gió)</option>
-                <option value="Gió ngược mạnh (35 km/h), có nhiễu động không khí">Thời tiết: Gió ngược mạnh</option>
-                <option value="Mưa rào dông kèm sấm chớp">Thời tiết: Mưa dông nhẹ</option>
-                <option value="Nhiệt độ môi trường cực đoan (39°C)">Thời tiết: Nắng nóng (39°C)</option>
-              </select>
               <button className="cc-cmd-btn auto" style={{ padding: '8px 15px', fontSize: '11px', flex: '0 0 auto' }} onClick={dispatchNewPackage}>
                 <i className="fa-solid fa-plus"></i> Tạo Đơn
               </button>
@@ -735,9 +794,6 @@ function CommandCenter({ onBackToFleet, drones }) {
 
             {/* Control Row */}
             <div className="cc-control-row">
-              <button className="cc-cmd-btn auto" onClick={startMission}>
-                <i className="fa-solid fa-play"></i> Bắt Đầu Nhiệm Vụ Tự Động
-              </button>
               <button className="cc-cmd-btn rtl" onClick={triggerRTL}>
                 <i className="fa-solid fa-triangle-exclamation"></i> Khẩn Cấp Quay Về (RTL)
               </button>
@@ -813,17 +869,19 @@ function CommandCenter({ onBackToFleet, drones }) {
           <div className="cc-panel cc-table-panel">
             <div className="cc-panel-header">
               <div className="cc-panel-title">Lịch Trình Vận Chuyển Core SQL</div>
-              <div className="cc-panel-subtitle">DATABASE: dnd_sahtech.db (Table: medical_dispatch)</div>
+              <div className="cc-panel-subtitle">Đơn hàng real-time từ bác sĩ (medical_dispatch)</div>
             </div>
             <div className="cc-table-scroll">
               <table className="cc-data-table">
                 <thead>
                   <tr>
                     <th>Mã đơn</th>
-                    <th>Điểm đến</th>
-                    <th>Hàng hóa</th>
-                    <th>Thời tiết</th>
+                    <th>Bác sĩ</th>
+                    <th>Y phẩm</th>
+                    <th>Điểm nhận</th>
+                    <th>Mức độ</th>
                     <th>Trạng thái</th>
+                    <th>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>{renderSqlTable()}</tbody>
@@ -857,6 +915,101 @@ function CommandCenter({ onBackToFleet, drones }) {
           </div>
         </div>
       </div>
+
+      {/* ===== DISPATCH PREPARE PANEL (Modal) ===== */}
+      {dispatchOrder && (
+        <div className="cc-dispatch-overlay" onClick={closeDispatchPanel}>
+          <div className="cc-dispatch-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="cc-panel-header">
+              <div>
+                <div className="cc-panel-title">
+                  <i className="fa-solid fa-box-open" style={{ marginRight: 6 }}></i>
+                  Chuẩn bị đơn hàng — #{dispatchOrder.id}
+                </div>
+                <div className="cc-panel-subtitle">Từ bác sĩ: {dispatchOrder.doctor}</div>
+              </div>
+              <button className="cc-nav-btn" onClick={closeDispatchPanel}>
+                <i className="fa-solid fa-xmark"></i> Đóng
+              </button>
+            </div>
+
+            {/* Thông tin y phẩm bác sĩ yêu cầu */}
+            <div className="cc-dispatch-info">
+              <div className="cc-dispatch-info-row">
+                <span className="cc-dispatch-info-label"><i className="fa-solid fa-syringe"></i> Y phẩm</span>
+                <span className="cc-dispatch-info-value">{dispatchOrder.item}</span>
+              </div>
+              <div className="cc-dispatch-info-row">
+                <span className="cc-dispatch-info-label"><i className="fa-solid fa-location-dot"></i> Điểm nhận</span>
+                <span className="cc-dispatch-info-value">{dispatchOrder.destination}</span>
+              </div>
+              <div className="cc-dispatch-info-row">
+                <span className="cc-dispatch-info-label"><i className="fa-solid fa-triangle-exclamation"></i> Mức độ</span>
+                <span className="cc-dispatch-info-value" style={{ color: dispatchOrder.urgency === 'Cấp cứu khẩn' ? 'var(--danger)' : 'var(--text-main)' }}>
+                  {dispatchOrder.urgency === 'Cấp cứu khẩn' ? '🚨 ' : '✅ '}{dispatchOrder.urgency}
+                </span>
+              </div>
+              {dispatchOrder.notes && (
+                <div className="cc-dispatch-info-row">
+                  <span className="cc-dispatch-info-label"><i className="fa-regular fa-note-sticky"></i> Ghi chú</span>
+                  <span className="cc-dispatch-info-value">{dispatchOrder.notes}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Chọn drone */}
+            <div className="cc-dispatch-field">
+              <label className="cc-dispatch-label">Chọn Drone vận chuyển</label>
+              <select
+                className="cc-dispatch-select"
+                style={{ width: '100%' }}
+                value={selectedDroneId}
+                onChange={(e) => setSelectedDroneId(e.target.value)}
+              >
+                {availableDrones.length === 0 && <option value="">Không có drone</option>}
+                {availableDrones.map(d => (
+                  <option key={d._id || d.id} value={String(d._id || d.id)}>
+                    {d.name} — PIN {d.battery}% · {d.status === 'online' ? 'Sẵn sàng' : d.status}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Thời gian bay tới đích */}
+            <div className="cc-dispatch-field">
+              <label className="cc-dispatch-label">Thời gian bay tới đích (phút)</label>
+              <input
+                type="number"
+                className="cc-dispatch-input"
+                style={{ width: '100%' }}
+                min={1}
+                max={120}
+                value={flightMinutes}
+                onChange={(e) => setFlightMinutes(Number(e.target.value))}
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="cc-control-row">
+              <button
+                className="cc-cmd-btn auto"
+                onClick={confirmPrepare}
+                disabled={preparingId === dispatchOrder._backendId}
+              >
+                <i className="fa-solid fa-box"></i> Xác nhận chuẩn bị
+              </button>
+              <button
+                className="cc-cmd-btn auto"
+                style={{ borderColor: 'rgba(16,185,129,0.6)' }}
+                onClick={takeOff}
+                disabled={preparingId === dispatchOrder._backendId}
+              >
+                <i className="fa-solid fa-rocket"></i> Take Off
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

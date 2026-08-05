@@ -14,8 +14,8 @@
   --text-muted: #484f58;
   --border: #30363d;
   --border-light: #21262d;
-  --font-display: 'Chakra Petch', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+--font-display: 'Times New Roman', Georgia, serif;
+  --font-mono: 'Times New Roman', 'Courier New', monospace;
 }
 
 /* ===== RESET & GLOBAL ===== */
