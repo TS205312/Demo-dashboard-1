@@ -13,8 +13,8 @@ import Order from './models/Order.js';
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/sah_tech';
 const CORS_ORIGINS = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(',')
-  : ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'];
+  ? (process.env.CORS_ORIGINS.includes('*') ? true : process.env.CORS_ORIGINS.split(','))
+  : true;
 
 // ===================================================================
 // INITIALIZE DATABASE
