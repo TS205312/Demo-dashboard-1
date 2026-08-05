@@ -135,8 +135,10 @@ export default function DoctorAuth({ onLogin }) {
 
       <div className="doctor-auth-card">
 {/* Branding */}
-        <div className="doctor-auth-brand">
-<img src="/sah-logo.png" alt="SAH-TECH" className="doctor-auth-logo" style={{ width: 80, height: 80, objectFit: 'contain' }} />
+<div className="doctor-auth-brand">
+          <div className="doctor-auth-logo-wrap">
+            <img src="/sah-logo.png" alt="SAH-TECH" style={{ width: 84, height: 84, objectFit: 'contain' }} />
+          </div>
           <h1 className="doctor-auth-title">SAH-TECH Medical</h1>
           <p className="doctor-auth-subtitle">Cổng đặt hàng vận chuyển y tế bằng Drone</p>
         </div>

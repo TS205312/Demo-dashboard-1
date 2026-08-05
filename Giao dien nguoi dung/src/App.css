@@ -29,6 +29,32 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
+/* ===== SAH LOGO GLOW ===== */
+.sah-logo-glow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 0.9rem;
+  background: linear-gradient(145deg, #EFF6FF 0%, #DBEAFE 100%);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.sah-logo-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.sah-logo-pulse {
+  animation: sah-logo-pulse-ring 2.5s ease-in-out infinite;
+}
+@keyframes sah-logo-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35); }
+  70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
 /* ===== GLASS CARD ===== */
 .glass-card {
   background: rgba(255, 255, 255, 0.9);
@@ -307,59 +333,6 @@
   border-radius: 50%;
   animation: spin-slow 0.7s linear infinite;
   display: inline-block;
-}
-
-/* ===== SAH-TECH LOGO GLOW & PULSE ===== */
-.sah-logo-glow {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.sah-logo-glow::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.3) 0%, transparent 70%);
-  animation: sah-logo-pulse-ring 2s ease-in-out infinite;
-  pointer-events: none;
-}
-.sah-logo-glow::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
-  animation: sah-logo-pulse-ring 2s ease-in-out infinite 0.5s;
-  pointer-events: none;
-}
-.sah-logo-pulse {
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.4)) drop-shadow(0 0 16px rgba(37, 99, 235, 0.2));
-  transition: filter 0.3s ease;
-}
-.sah-logo-pulse:hover {
-  filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.6)) drop-shadow(0 0 24px rgba(37, 99, 235, 0.3));
-}
-
-@keyframes sah-logo-pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.7; }
-  50% { transform: scale(1.1); opacity: 0.3; }
-  100% { transform: scale(0.95); opacity: 0.7; }
-}
-
-/* Logo trong auth card */
-.doctor-auth-logo, .auth-logo-img {
-  filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.5)) drop-shadow(0 0 24px rgba(37, 99, 235, 0.25));
-  animation: sah-logo-glow-pulse 3s ease-in-out infinite;
-}
-
-@keyframes sah-logo-glow-pulse {
-  0% { filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.5)) drop-shadow(0 0 24px rgba(37, 99, 235, 0.25)); }
-  50% { filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.7)) drop-shadow(0 0 40px rgba(37, 99, 235, 0.35)); }
-  100% { filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.5)) drop-shadow(0 0 24px rgba(37, 99, 235, 0.25)); }
 }
 
 /* ===== FLYING DRONE ICON ON MAP ===== */
