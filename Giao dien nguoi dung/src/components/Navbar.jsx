@@ -22,11 +22,9 @@ export default function Navbar() {
     <nav className="navbar" id="navbar" ref={navbarRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo / Brand */}
+{/* Logo / Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-medical-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md">
-              <i className="fa-solid fa-heart-pulse text-lg"></i>
-            </div>
+            <img src="/sah-logo.png" alt="SAH-TECH" className="w-10 h-10 object-contain" />
             <div className="hidden sm:block">
               <p className="text-sm font-bold text-slate-800 leading-tight">SAH-TECH Medical</p>
               <p className="text-[11px] text-slate-400 font-medium leading-tight">Cổng đặt hàng Y tế</p>

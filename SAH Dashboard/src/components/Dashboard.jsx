@@ -118,10 +118,13 @@ function Dashboard({ user, onLogout }) {
   return (
     <div className="dashboard">
       {/* Header */}
-      <header className="dashboard-header">
+<header className="dashboard-header">
         <div className="header-left">
-          <h1 className="header-title">SAH Drone Dashboard</h1>
-          <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
+          <img src="/sah-logo.png" alt="SAH-TECH" className="header-logo" />
+          <div>
+            <h1 className="header-title">SAH Drone Dashboard</h1>
+            <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
+          </div>
         </div>
         <div className="header-right">
           <div className="header-datetime">

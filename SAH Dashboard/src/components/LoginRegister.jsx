@@ -80,14 +80,10 @@ function LoginRegister({ onLogin }) {
       <div className="auth-bg-glow auth-bg-glow-2" />
 
       <div className="auth-card">
-        {/* Logo & Branding */}
+{/* Logo & Branding */}
         <div className="auth-brand">
           <div className="auth-logo">
-            <svg viewBox="0 0 48 48" width="48" height="48">
-              <circle cx="24" cy="24" r="22" fill="none" stroke="#58a6ff" strokeWidth="2" />
-              <path d="M24 8 L28 20 L40 20 L30 28 L34 40 L24 32 L14 40 L18 28 L8 20 L20 20 Z" fill="#58a6ff" opacity="0.8" />
-              <circle cx="24" cy="24" r="4" fill="#0d1117" />
-            </svg>
+            <img src="/sah-logo.png" alt="SAH-TECH Logo" className="auth-logo-img" />
           </div>
           <h1 className="auth-title">SAH-TECH</h1>
           <p className="auth-subtitle">Drone Control Station</p>

@@ -22,8 +22,14 @@
 
 .header-left {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 16px;
+}
+
+.header-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
 }
 
 .header-title {
