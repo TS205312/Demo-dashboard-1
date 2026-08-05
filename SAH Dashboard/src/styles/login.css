@@ -45,12 +45,22 @@
 .auth-logo {
   display: inline-flex;
   margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: radial-gradient(circle at center, rgba(88, 166, 255, 0.15), transparent 70%);
 }
 
 .auth-logo-img {
-  width: 88px;
-  height: 88px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
+  filter: drop-shadow(0 0 18px rgba(88, 166, 255, 0.55)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+  animation: authLogoFloat 3s ease-in-out infinite;
+}
+
+@keyframes authLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 .auth-title {
