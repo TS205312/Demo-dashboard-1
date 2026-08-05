@@ -134,7 +134,8 @@ export default function DoctorAuth({ onLogin }) {
       <div className="doctor-auth-glow doctor-auth-glow-2" />
 
       <div className="doctor-auth-card">
-{/* Branding */}
+        <div className="doctor-auth-scroll">
+        {/* Branding */}
 <div className="doctor-auth-brand">
           <div className="doctor-auth-logo-wrap">
             <img src="/sah-logo.png" alt="SAH-TECH" style={{ width: 84, height: 84, objectFit: 'contain' }} />
@@ -400,6 +401,7 @@ export default function DoctorAuth({ onLogin }) {
 
         <div className="doctor-auth-version">
           SAH Medical Portal v3.0
+        </div>
         </div>
       </div>
     </div>
