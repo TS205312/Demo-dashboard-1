@@ -74,7 +74,7 @@ export function useOrders() {
               default:
                 break;
             }
-          } catch (e) {
+          } catch {
             // ignore parse errors
           }
         };
@@ -106,7 +106,7 @@ export function useOrders() {
   }, []);
 
   // Submit đơn hàng
-  const submitOrder = useCallback(async (formData) => {
+  const submitOrder = useCallback(async (formData, user) => {
     if (isSubmitting) return false;
     setIsSubmitting(true);
 
@@ -116,6 +116,7 @@ export function useOrders() {
         destination: formData.get('destination'),
         urgency: formData.get('urgency'),
         notes: formData.get('notes') || '',
+        created_by: user?.id || null,
       };
 
       const result = await apiCreateOrder(payload);
@@ -174,6 +175,7 @@ export function useOrders() {
     submitOrder,
     closeModal,
     clearToast,
+    setToast,
     setActiveOrder,
     getTimelineStep,
     setOrders,

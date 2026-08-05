@@ -11,6 +11,7 @@ function LoginRegister({ onLogin }) {
     regEmail: '',
     regPassword: '',
     regConfirmPassword: '',
+    regOtp: '',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -46,9 +47,13 @@ function LoginRegister({ onLogin }) {
     setError('');
     setSuccess('');
 
-    const { regName, regEmail, regPassword, regConfirmPassword } = formData;
+    const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
     if (!regName || !regEmail || !regPassword) {
       setError('Vui lòng nhập đầy đủ thông tin');
+      return;
+    }
+    if (!regOtp) {
+      setError('Vui lòng nhập mã OTP công ty');
       return;
     }
     if (regPassword !== regConfirmPassword) {
@@ -60,11 +65,11 @@ function LoginRegister({ onLogin }) {
       return;
     }
 
-    const result = await apiRegister(regName, regEmail, regPassword);
+    const result = await apiRegister(regName, regEmail, regPassword, regOtp, 'staff');
 
     if (result.success) {
       setSuccess('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.');
-      setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '' });
+      setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '', regOtp: '' });
       setTimeout(() => {
         setActiveTab('login');
         setSuccess('');
@@ -80,7 +85,7 @@ function LoginRegister({ onLogin }) {
       <div className="auth-bg-glow auth-bg-glow-2" />
 
       <div className="auth-card">
-{/* Logo & Branding */}
+        {/* Logo & Branding */}
         <div className="auth-brand">
           <div className="auth-logo">
             <img src="/sah-logo.png" alt="SAH-TECH Logo" className="auth-logo-img" />
@@ -203,6 +208,21 @@ function LoginRegister({ onLogin }) {
             </div>
 
             <div className="auth-input-group">
+              <label className="auth-label">Mã OTP công ty</label>
+              <div className="auth-input-wrapper">
+                <i className="auth-input-icon fa-regular fa-shield-halved"></i>
+                <input
+                  type="text"
+                  name="regOtp"
+                  className="auth-input"
+                  placeholder="Nhập mã OTP (VD: SAH2025)"
+                  value={formData.regOtp}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="auth-input-group">
               <label className="auth-label">Mật khẩu</label>
               <div className="auth-input-wrapper">
                 <i className="auth-input-icon fa-regular fa-lock"></i>
@@ -254,4 +274,3 @@ function LoginRegister({ onLogin }) {
 }
 
 export default LoginRegister;
-

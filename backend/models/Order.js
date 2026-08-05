@@ -28,4 +28,15 @@ orderSchema.pre('save', function(next) {
   }
 });
 
+// Serialize: luôn kèm field `id` để tương thích frontend dùng order.id
+orderSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    ret.code = ret.code || `SAH-${String(1000 + parseInt(ret.id.slice(-4), 16) % 9000).padStart(4, '0')}`;
+    return ret;
+  }
+});
+
 export default mongoose.model('Order', orderSchema);

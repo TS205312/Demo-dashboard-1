@@ -43,4 +43,14 @@ missionLogSchema.index({ mission_id: 1, createdAt: -1 });
 missionLogSchema.index({ log_type: 1 });
 missionLogSchema.index({ createdAt: -1 });
 
+// Serialize: luôn kèm field `id` để tương thích frontend
+missionLogSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    return ret;
+  }
+});
+
 export default mongoose.model('MissionLog', missionLogSchema);

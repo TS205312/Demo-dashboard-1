@@ -82,14 +82,25 @@ export async function apiLogin(email, password) {
 }
 
 /**
- * Đăng ký
+ * Đăng ký - yêu cầu mã OTP công ty
+ * @param {string} name
+ * @param {string} email
+ * @param {string} password
+ * @param {string} companyOtp - Mã OTP công ty (mặc định SAH2025)
+ * @param {string} role - 'staff' cho nhân viên Dashboard, 'user' cho bác sĩ
  */
-export async function apiRegister(name, email, password) {
+export async function apiRegister(name, email, password, companyOtp, role = 'staff') {
   try {
     const res = await fetch(`${BACKEND_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        company_otp: companyOtp,
+        role,
+      }),
     });
     return await res.json();
   } catch (err) {
@@ -111,6 +122,42 @@ export async function apiFetchOrders(status = null) {
   } catch (err) {
     console.error('Fetch orders error:', err);
     return [];
+  }
+}
+
+/**
+ * Tạo đơn hàng mới từ Command Center
+ */
+export async function apiCreateOrder(payload) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Create order API error:', err);
+    return { success: false, message: 'Lỗi kết nối server' };
+  }
+}
+
+/**
+ * Cập nhật trạng thái đơn hàng từ Command Center
+ */
+export async function apiUpdateOrderStatus(orderId, status, assignedDroneId = null) {
+  try {
+    const body = { status };
+    if (assignedDroneId) body.assigned_drone_id = assignedDroneId;
+    const res = await fetch(`${BACKEND_URL}/orders/${orderId}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Update order status API error:', err);
+    return { success: false, message: 'Lỗi kết nối server' };
   }
 }
 

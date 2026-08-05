@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useClock } from './hooks/useClock';
 import { useOrders } from './hooks/useOrders';
 
+import DoctorAuth from './components/DoctorAuth';
 import Navbar from './components/Navbar';
 import OrderForm from './components/OrderForm';
 import OrderTimeline from './components/OrderTimeline';
@@ -14,6 +15,16 @@ import './App.css';
 
 function App() {
   const liveTime = useClock();
+  const [user, setUser] = useState(() => {
+    // Khôi phục phiên đăng nhập từ localStorage
+    try {
+      const saved = localStorage.getItem('sah_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const {
     orders,
     activeOrder,
@@ -24,16 +35,24 @@ function App() {
     submitOrder,
     closeModal,
     clearToast,
+    setToast,
     setActiveOrder,
   } = useOrders();
 
   const [estTime, setEstTime] = useState('--');
-  const [allOrders, setAllOrders] = useState([]);
 
-  // Sync orders from hook to local state for table
-  useEffect(() => {
-    setAllOrders(orders);
-  }, [orders]);
+  const handleLogin = useCallback((userData) => {
+    setUser(userData);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setUser(null);
+    localStorage.removeItem('sah_current_user');
+    // Clear form state
+    const form = document.getElementById('orderForm');
+    if (form) form.reset();
+    setEstTime('--');
+  }, []);
 
   const handleUrgencyChange = useCallback((e) => {
     const urgency = e.target.value;
@@ -54,28 +73,33 @@ function App() {
   }, []);
 
   const handleSubmit = useCallback(async (formData) => {
-    const success = await submitOrder(formData);
+    const success = await submitOrder(formData, user);
     if (success) {
       // Reset form
       const form = document.getElementById('orderForm');
       if (form) form.reset();
       setEstTime('--');
     }
-  }, [submitOrder]);
+  }, [submitOrder, user]);
 
   const handleSelectOrder = useCallback((orderId) => {
     setActiveOrder(orderId);
     setToast({ message: `📋 Đang theo dõi đơn hàng #SAH-${String(orderId).padStart(4, '0')}`, type: 'info' });
-  }, [setActiveOrder]);
+  }, [setActiveOrder, setToast]);
 
   const handleRefresh = useCallback(() => {
     setToast({ message: '🔄 Đã làm mới danh sách đơn hàng', type: 'info' });
-  }, []);
+  }, [setToast]);
+
+  // Nếu chưa đăng nhập → hiển thị trang đăng nhập bác sĩ
+  if (!user) {
+    return <DoctorAuth onLogin={handleLogin} />;
+  }
 
   return (
     <>
-      <Navbar />
-      
+      <Navbar user={user} onLogout={handleLogout} />
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
@@ -109,7 +133,7 @@ function App() {
           <div className="lg:col-span-3 space-y-6">
             <TrackingMap activeOrder={activeOrder} />
             <OrderHistory
-              orders={allOrders}
+              orders={orders}
               onSelectOrder={handleSelectOrder}
               onRefresh={handleRefresh}
             />

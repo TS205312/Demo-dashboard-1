@@ -78,4 +78,14 @@ missionSchema.pre('save', function(next) {
   next();
 });
 
+// Serialize: luôn kèm field `id` để tương thích frontend
+missionSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    return ret;
+  }
+});
+
 export default mongoose.model('Mission', missionSchema);

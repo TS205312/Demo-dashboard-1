@@ -77,4 +77,20 @@ droneSchema.index({ isConnected: 1 });
 droneSchema.index({ status: 1 });
 droneSchema.index({ battery: 1 });
 
+// Serialize: luôn kèm field `id` để tương thích frontend dùng drone.id
+droneSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    // Map sang schema cũ của frontend DroneCard/MapView
+    ret.distance = ret.distance_traveled || 0;
+    ret.windSpeed = ret.wind_speed || 0;
+    ret.flightHours = ret.flight_hours || 0;
+    ret.airspeed = ret.ground_speed || 0;
+    ret.gps = { lat: ret.gps_lat, lng: ret.gps_lng };
+    return ret;
+  }
+});
+
 export default mongoose.model('Drone', droneSchema);
