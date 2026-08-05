@@ -47,7 +47,7 @@ function LoginRegister({ onLogin }) {
     setError('');
     setSuccess('');
 
-const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
+    const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
     if (!regName || !regEmail || !regPassword) {
       setError('Vui lòng nhập đầy đủ thông tin');
       return;
@@ -69,7 +69,7 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
 
     if (result.success) {
       setSuccess('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.');
-      setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '' });
+      setFormData({ ...formData, regName: '', regEmail: '', regPassword: '', regConfirmPassword: '', regOtp: '' });
       setTimeout(() => {
         setActiveTab('login');
         setSuccess('');
@@ -85,9 +85,11 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
       <div className="auth-bg-glow auth-bg-glow-2" />
 
       <div className="auth-card">
-{/* Logo & Branding */}
+        {/* Logo & Branding */}
         <div className="auth-brand">
-<img src="/sah-logo.png" alt="SAH-TECH" className="auth-logo auth-logo-glow" style={{ width: 80, height: 80, objectFit: 'contain' }} />
+          <div className="auth-logo">
+            <img src="/sah-logo.png" alt="SAH-TECH Logo" className="auth-logo-img" />
+          </div>
           <h1 className="auth-title">SAH-TECH</h1>
           <p className="auth-subtitle">Drone Control Station</p>
         </div>
@@ -125,7 +127,7 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
         {/* Login Form */}
         {activeTab === 'login' && (
           <form className="auth-form" onSubmit={handleLogin}>
-<div className="auth-input-group">
+            <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
                 <i className="auth-input-icon fa-regular fa-user"></i>
@@ -190,7 +192,7 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
               </div>
             </div>
 
-<div className="auth-input-group">
+            <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
                 <i className="auth-input-icon fa-regular fa-envelope"></i>
@@ -272,4 +274,3 @@ const { regName, regEmail, regPassword, regConfirmPassword, regOtp } = formData;
 }
 
 export default LoginRegister;
-
