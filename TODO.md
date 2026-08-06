@@ -1,15 +1,12 @@
-# SAH Dashboard - Zipline Professional Refactor
+# TODO: Debug & Fix SAH Dashboard
 
-## Progress Tracking
-
-- [x] Plan approved
-- [x] Step 1: Update App.css - CSS variables, remove scanlines/vignette/grid
-- [x] Step 2: Update dashboard.css - Complete rewrite, remove cyberpunk elements
-- [x] Step 3: Update commandCenter.css - Complete rewrite, remove cyberpunk elements
-- [x] Step 4: Update login.css - Minor refinements
-- [x] Step 5: Update Dashboard.jsx - Remove emoji icons, clean up
-- [x] Step 6: Update DroneCard.jsx - Remove emoji icons, simplify layout
-- [x] Step 7: Update DroneDetail.jsx - Remove emoji icons, simplify controls
-- [x] Step 8: Update MapView.jsx - Remove emoji icons, clean up
-- [x] Step 9: Update LoginRegister.jsx - Remove emoji icons
-- [x] Step 10: Verify build and test
+## Steps
+- [x] 1. Tạo nhánh mới `debug-fixes` từ `master`
+- [x] 2. Cập nhật backend URL trong `src/data/api.js` trỏ tới `https://demo-dashboard-1-1.onrender.com/api`
+- [x] 3. Sửa lỗi lint `CommandCenter.jsx:460` (react-hooks/set-state-in-effect)
+- [x] 4. Sửa lỗi lint `DroneCommandView.jsx:18` (no-unused-vars - biến `temperature`)
+- [x] 5. Sửa lỗi lint `OrdersPage.jsx:32` (react-hooks/set-state-in-effect)
+- [x] 6. Sửa warning dynamic import trong `MapView.jsx`
+- [x] 7. Chạy `npm run lint` xác nhận sạch lỗi
+- [x] 8. Chạy `npm run build` xác nhận build thành công
+- [x] 9. Commit các thay đổi lên nhánh `debug-fixes`

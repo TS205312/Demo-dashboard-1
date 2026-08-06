@@ -455,20 +455,26 @@ const [pkgName, setPkgName] = useState("");
     setSqlDatabase(mapped);
   }, []);
 
-  // Load orders + drones when component mounts
+// Load orders + drones when component mounts
   useEffect(() => {
-    syncOrdersFromBackend();
-    apiFetchDrones().then(dronesList => {
-      if (dronesList && dronesList.length > 0) {
-        setAvailableDrones(dronesList);
-        // Default select first online drone
-        const online = dronesList.find(d => d.status === 'online');
-        setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
-      }
-    });
+    // Defer initial fetch to avoid calling setState synchronously within the effect
+    const initialLoad = setTimeout(() => {
+      syncOrdersFromBackend();
+      apiFetchDrones().then(dronesList => {
+        if (dronesList && dronesList.length > 0) {
+          setAvailableDrones(dronesList);
+          // Default select first online drone
+          const online = dronesList.find(d => d.status === 'online');
+          setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
+        }
+      });
+    }, 0);
     // Poll every 5s for new orders from User Interface
     const interval = setInterval(syncOrdersFromBackend, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initialLoad);
+      clearInterval(interval);
+    };
   }, [syncOrdersFromBackend]);
 
   // ===================================================================

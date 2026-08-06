@@ -28,11 +28,15 @@ function OrdersPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadOrders();
+useEffect(() => {
+    // Defer initial load to avoid calling setState synchronously within the effect
+    const initialLoad = setTimeout(loadOrders, 0);
     // Poll every 5s for real-time updates from User Interface
     const interval = setInterval(loadOrders, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initialLoad);
+      clearInterval(interval);
+    };
   }, [loadOrders]);
 
   // Filter logic

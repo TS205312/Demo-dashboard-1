@@ -10,12 +10,11 @@ function DroneCommandView({ drone }) {
   const compassRef = useRef(null);
 
   // Drone data mapped from props
-  const droneName = drone?.name || 'DHMR-32000';
+const droneName = drone?.name || 'DHMR-32000';
   const battery = drone?.battery || 90;
   const altitude = drone?.altitude || 270;
   const speed = drone?.airspeed || 20;
   const distance = drone?.distance || 12;
-  const temperature = drone?.temperature || 32;
   const gpsLat = drone?.gps?.lat || 10.8231;
   const gpsLng = drone?.gps?.lng || 106.6297;
   const level = drone?.pitch || 2;

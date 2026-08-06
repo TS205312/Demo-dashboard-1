@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { reverseGeocode } from '../data/api';
+import { reverseGeocode, forwardGeocode } from '../data/api';
 
 function MapView({ drones, selectedDrone, onDroneClick }) {
   const [locationNames, setLocationNames] = useState({});
@@ -56,10 +56,9 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     return () => { cancelled = true; };
   }, [drones]);
 
-  const handleSearch = useCallback(async () => {
+const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) return;
     try {
-      const { forwardGeocode } = await import('../data/api');
       const results = await forwardGeocode(searchQuery);
       setSearchResults(results);
       setShowSearch(true);
