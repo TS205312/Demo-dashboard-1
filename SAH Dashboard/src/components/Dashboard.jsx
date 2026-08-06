@@ -4,10 +4,11 @@ import DroneCard from './DroneCard';
 import DroneDetail from './DroneDetail';
 import MapView from './MapView';
 import CommandCenter from './CommandCenter';
+import OrdersPage from './OrdersPage';
 import '../styles/dashboard.css';
 
 function Dashboard({ user, onLogout }) {
-  const [activeTab, setActiveTab] = useState('fleet'); // 'fleet' | 'commandcenter'
+  const [activeTab, setActiveTab] = useState('fleet'); // 'fleet' | 'commandcenter' | 'orders'
   const [selectedDrone, setSelectedDrone] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [filter, setFilter] = useState('all'); // all | online | warning | offline
@@ -190,16 +191,24 @@ function Dashboard({ user, onLogout }) {
         >
           <i className="fa-solid fa-helicopter"></i> Fleet
         </button>
-        <button
+<button
           className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
           onClick={() => setActiveTab('commandcenter')}
         >
           <i className="fa-solid fa-tower-broadcast"></i> Command Center
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+          onClick={() => setActiveTab('orders')}
+        >
+          <i className="fa-solid fa-clipboard-list"></i> Đơn hàng
+        </button>
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'fleet' ? renderFleetTab() : (
+      {activeTab === 'fleet' ? renderFleetTab() : activeTab === 'orders' ? (
+        <OrdersPage />
+      ) : (
         <CommandCenter drones={dronesData} onBackToFleet={handleBackToFleet} />
       )}
     </div>

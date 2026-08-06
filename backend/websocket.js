@@ -31,6 +31,20 @@ const connectedDashboards = new Map();
 
 let dashboardIdCounter = 0;
 let broadcastFn = null; // Will be set after WSS creation
+let wssInstance = null;  // Reference to the WebSocketServer instance
+
+// ===================================================================
+// ORDER EVENT BROADCAST (New order / status update → all clients)
+// Used by routes/orders.js so the User UI receives real-time updates.
+// ===================================================================
+export function broadcastOrderEvent(type, data) {
+  const msg = createMessage(type, data);
+  if (wssInstance) {
+    wssInstance.clients.forEach((ws) => {
+      sendSafe(ws, msg);
+    });
+  }
+}
 
 // ===================================================================
 // HELPER: Create timestamped message
@@ -382,6 +396,7 @@ function cleanupConnection(ws) {
 // ===================================================================
 export function initWebSocketServer(server) {
   const wss = new WebSocketServer({ server, path: '/ws' });
+  wssInstance = wss;
 
   console.log('✅ GCS WebSocket Engine initialized on path /ws');
 

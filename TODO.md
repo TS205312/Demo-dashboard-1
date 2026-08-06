@@ -1,52 +1,32 @@
-# Kế hoạch kết nối giao diện người dùng và SAH Dashboard
+# Kế hoạch kết nối Giao diện người dùng & SAH Dashboard
 
-## ✅ Đã hoàn thành
+## ✅ Hoàn thành toàn bộ
 
 ### Backend Server (Express + MongoDB + WebSocket)
-- [x] package.json & cấu hình
-- [x] database.js - Khởi tạo MongoDB + seed data
-- [x] server.js - Express server + WebSocket
-- [x] routes/auth.js - Đăng nhập/Đăng ký (có OTP công ty)
-- [x] routes/orders.js - CRUD đơn hàng (dùng chung User UI + Dashboard)
-- [x] routes/drones.js - Drone + Telemetry
-- [x] routes/missions.js - Quản lý mission bay (state machine)
-- [x] routes/gcs.js - GCS engine status
-- [x] websocket.js - Real-time WebSocket engine
-- [x] models/User.js, Order.js, Drone.js, Mission.js, MissionLog.js
+- [x] Cấu hình package.json, server.js
+- [x] Database models (User, Order, Drone, Mission, MissionLog)
+- [x] Routes: auth, orders, drones, missions, gcs
+- [x] WebSocket engine (GCS Mission Planner style)
+- [x] Auto-progression đơn hàng
+- [x] Render deploy config (DEPLOY_GUIDE.md, render.yaml)
+- [x] Script chạy/tắt toàn bộ (CHAY_TOAN_BO.bat, TAT_TOAN_BO.bat)
 
-### Giao diện người dùng (User Interface)
-- [x] utils/api.js - Gọi REST backend thật (tạo đơn, lấy danh sách)
-- [x] utils/constants.js - Cập nhật API_BASE, WS_URL
-- [x] hooks/useOrders.js - WebSocket real-time, gọi API thật, pass created_by
-- [x] App.jsx - Clean code, fix all eslint errors
-- [x] Navbar.jsx - Hiển thị tên bác sĩ đã đăng nhập, nút đăng xuất
+### Kết nối 2 frontend vào Backend
+- [x] Giao diện người dùng → gọi API backend thật
+- [x] SAH Dashboard → gọi API backend thật
+- [x] Command Center hiển thị đơn hàng realtime từ bác sĩ
+- [x] Điều phối drone, take off, cập nhật trạng thái
 
-### SAH Dashboard
-- [x] data/api.js - Đầy đủ API client (login, register, orders, drones, missions)
-- [x] LoginRegister.jsx - Đăng nhập/đăng ký backend, OTP công ty (SAH2025)
-- [x] Dashboard.jsx - Load drones từ backend, Command Center từ backend
-- [x] CommandCenter.jsx - Lấy orders thật, tạo mission, sync trạng thái
+### Sửa lỗi font tiếng Việt (SAH Dashboard)
+- [x] Thêm font Be Vietnam Pro (hỗ trợ đầy đủ tiếng Việt)
+- [x] Cập nhật CSS variables để dùng font mới
 
-### Deploy & DevOps
-- [x] Root package.json - fix lỗi Render deploy
-- [x] render.yaml - rootDir: backend
-- [x] CHAY_TOAN_BO.bat, TAT_TOAN_BO.bat
-- [x] DEPLOY_GUIDE.md
-- [x] PR: blackboxai/fix-render-deploy
+### Thêm trang Đơn hàng cho nhân viên (SAH Dashboard)
+- [x] Tạo component OrdersPage.jsx
+- [x] Thêm tab "Đơn hàng" vào Dashboard
+- [x] Thêm CSS cho trang đơn hàng
+- [x] Hiển thị đơn từ bác sĩ
+- [x] Tìm kiếm + lọc + tự động cập nhật (poll 5s)
 
-### Xác minh
-- [x] Backend server chạy, REST API hoạt động
-- [x] Giao diện người dùng build thành công
-- [x] SAH Dashboard build thành công
-- [x] Đăng nhập admin/số lượng drone seed
-- [x] Tạo đơn hàng từ User UI → Dashboard thấy được
-- [x] WebSocket real-time sync
-
-### Làm nổi bật logo SAH-TECH
-- [x] Copy logo vào public/ cả 2 dự án (sah-logo.png)
-- [x] Navbar (User UI) - logo glow + pulse animation
-- [x] DoctorAuth (User UI) - logo lớn hơn 80px + glow
-- [x] Dashboard header (SAH Dashboard) - logo glow + pulse
-- [x] LoginRegister (SAH Dashboard) - logo lớn hơn 80px + glow
-- [x] Thêm CSS glow/pulse ring vào cả 2 App.css
-- [x] Build lại thành công (User UI + SAH Dashboard)
+### Kiểm tra
+- [x] Build SAH Dashboard thành công (0 lỗi)

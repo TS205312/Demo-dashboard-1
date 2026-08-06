@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Order from '../models/Order.js';
 import Drone from '../models/Drone.js';
+import { broadcastOrderEvent } from '../websocket.js';
 
 const router = Router();
 
@@ -51,6 +52,7 @@ router.get('/:id', async (req, res) => {
 
 /**
  * POST /api/orders
+ * Tạo đơn hàng mới (từ User UI) và broadcast real-time tới mọi client
  */
 router.post('/', async (req, res) => {
   try {
@@ -73,6 +75,13 @@ router.post('/', async (req, res) => {
       created_by: created_by || null,
     });
 
+    // Broadcast new order to all connected clients (User UI + Dashboard)
+    try {
+      broadcastOrderEvent('new_order', order);
+    } catch (wsErr) {
+      console.warn('Broadcast new_order failed:', wsErr.message);
+    }
+
     res.status(201).json({
       success: true,
       message: 'Đơn hàng đã được tạo thành công!',
@@ -86,6 +95,7 @@ router.post('/', async (req, res) => {
 
 /**
  * PUT /api/orders/:id/status
+ * Cập nhật trạng thái đơn hàng (từ Command Center) và broadcast real-time
  */
 router.put('/:id/status', async (req, res) => {
   try {
@@ -102,6 +112,13 @@ router.put('/:id/status', async (req, res) => {
     const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
+    }
+
+    // Broadcast status update to all connected clients for real-time timeline
+    try {
+      broadcastOrderEvent('order_status_update', order);
+    } catch (wsErr) {
+      console.warn('Broadcast order_status_update failed:', wsErr.message);
     }
 
     res.json({ success: true, message: `Đã cập nhật trạng thái thành ${status}`, data: order });
@@ -128,4 +145,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 export default router;
-
