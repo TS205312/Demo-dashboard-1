@@ -1,0 +1,182 @@
+/* =============================================================
+   DroneStatusPage.css — Tab bar for Command / Advanced views
+   ============================================================= */
+
+.dsp-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Tab bar */
+.dsp-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: rgba(20, 26, 36, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+
+/* Back button */
+.dsp-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(200, 214, 229, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.dsp-back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dsp-back-btn i {
+  font-size: 11px;
+}
+
+/* Tab buttons */
+.dsp-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.dsp-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(200, 214, 229, 0.5);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.dsp-tab:hover {
+  color: rgba(200, 214, 229, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dsp-tab.active {
+  background: rgba(0, 212, 255, 0.12);
+  color: #00d4ff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.15);
+}
+
+.dsp-tab i {
+  font-size: 11px;
+}
+
+/* Drone badge */
+.dsp-drone-badge {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+.dsp-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dsp-status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+  animation: dsp-dot-pulse 2s ease-in-out infinite;
+}
+
+.dsp-status-dot.warning {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+  animation: dsp-dot-pulse 1.5s ease-in-out infinite;
+}
+
+.dsp-status-dot.offline {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes dsp-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.dsp-drone-badge-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(200, 214, 229, 0.8);
+  white-space: nowrap;
+}
+
+/* Content area */
+.dsp-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* Scrollbar styling */
+.dsp-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dsp-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dsp-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.dsp-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dsp-tab-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dsp-drone-badge {
+    margin-left: 0;
+  }
+
+  .dsp-content {
+    padding: 8px;
+  }
+}

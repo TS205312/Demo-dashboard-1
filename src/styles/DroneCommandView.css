@@ -1,0 +1,876 @@
+/* =============================================================
+   DroneCommandView.css — Dark hi-tech drone command UI
+   Matches the DHMR-32000 screenshot layout
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.dcv-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: calc(100vh - 160px);
+  font-family: 'Inter', sans-serif;
+  color: #c8d6e5;
+}
+
+/* ============================
+   TOP ROW — Video + Info
+   ============================ */
+.dcv-top-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- VIDEO PANEL ---------- */
+.dcv-video-panel {
+  background: #141a24;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dcv-video-feed {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
+}
+
+.dcv-video-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, #0a1a12 0%, #1a2a1a 30%, #0d1f15 60%, #132418 100%);
+  z-index: 0;
+}
+
+/* Simulated forest/nature view overlay */
+.dcv-video-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(20, 80, 40, 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 40%, rgba(15, 60, 30, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(30, 50, 20, 0.3) 0%, transparent 40%);
+}
+
+.dcv-video-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+  pointer-events: none;
+}
+
+/* Video overlay elements */
+.dcv-video-overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  z-index: 10;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+}
+
+.dcv-hdr-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+.dcv-rec-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: dcv-pulse 1.5s ease-in-out infinite;
+}
+
+.dcv-rec-dot-lg {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: dcv-pulse 1.5s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes dcv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.dcv-video-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dcv-vid-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  width: 32px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.dcv-vid-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dcv-rec-indicator {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dcv-video-res {
+  position: absolute;
+  top: 48px;
+  left: 16px;
+  z-index: 10;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Level indicator */
+.dcv-level-indicator {
+  position: absolute;
+  top: 76px;
+  left: 16px;
+  z-index: 10;
+}
+
+.dcv-level-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.dcv-level-bar {
+  width: 200px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1px;
+  position: relative;
+}
+
+.dcv-level-marker {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 10px;
+  background: #fff;
+  border-radius: 1px;
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+}
+
+/* Crosshair */
+.dcv-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.dcv-crosshair-h {
+  width: 30px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  top: 0;
+  left: -15px;
+}
+
+.dcv-crosshair-v {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  top: -15px;
+  left: 0;
+}
+
+/* Mode badge */
+.dcv-mode-badge {
+  position: absolute;
+  top: 100px;
+  left: 16px;
+  z-index: 10;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00d4ff;
+}
+
+/* RGBE toggles */
+.dcv-rgbe-toggles {
+  position: absolute;
+  bottom: 60px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dcv-channel-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+}
+
+.dcv-channel-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dcv-ch-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Thumbnail strip */
+.dcv-thumbnail-strip {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+
+.dcv-thumb {
+  width: 80px;
+  height: 50px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.dcv-thumb::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(20, 80, 40, 0.4), rgba(30, 50, 20, 0.4));
+}
+
+.dcv-thumb.active {
+  border-color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+.dcv-thumb:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- INFO PANEL ---------- */
+.dcv-info-panel {
+  background: #141a24;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.dcv-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dcv-drone-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.dcv-drone-icon {
+  opacity: 0.8;
+  animation: dcv-float 3s ease-in-out infinite;
+}
+
+@keyframes dcv-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.dcv-info-desc {
+  font-size: 12px;
+  color: rgba(200, 214, 229, 0.5);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dcv-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dcv-info-label {
+  font-size: 13px;
+  color: rgba(200, 214, 229, 0.6);
+}
+
+.dcv-info-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dcv-info-value small {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(200, 214, 229, 0.5);
+  margin-left: 2px;
+}
+
+.dcv-divider {
+  height: 2px;
+  border-radius: 1px;
+  margin: 2px 0;
+}
+
+.dcv-divider-blue {
+  background: linear-gradient(to right, #3b82f6, transparent);
+}
+
+/* Battery bar */
+.dcv-battery-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.dcv-battery-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+/* Triple stats */
+.dcv-triple-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.dcv-triple-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dcv-triple-label {
+  font-size: 10px;
+  color: rgba(200, 214, 229, 0.4);
+  margin-bottom: 2px;
+}
+
+.dcv-triple-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.dcv-triple-icons {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.dcv-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.dcv-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Resolution slider */
+.dcv-resolution-section {
+  margin-top: auto;
+}
+
+.dcv-resolution-slider {
+  margin-top: 8px;
+}
+
+.dcv-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.dcv-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00d4ff;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+.dcv-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00d4ff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+.dcv-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 9px;
+  color: rgba(200, 214, 229, 0.35);
+}
+
+/* ============================
+   BOTTOM ROW — Camera + Compass
+   ============================ */
+.dcv-bottom-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 12px;
+  min-height: 240px;
+}
+
+/* ---------- CAMERA PANEL ---------- */
+.dcv-camera-panel {
+  background: #141a24;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Progress bar */
+.dcv-progress-bar {
+  position: relative;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dcv-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+}
+
+.dcv-progress-dots {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+}
+
+.dcv-progress-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dcv-progress-dot.active {
+  background: #00d4ff;
+  box-shadow: 0 0 4px rgba(0, 212, 255, 0.4);
+}
+
+/* Camera content layout */
+.dcv-camera-content {
+  display: flex;
+  flex: 1;
+  padding: 14px;
+  gap: 16px;
+}
+
+.dcv-camera-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Media toggle */
+.dcv-media-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+}
+
+.dcv-media-btn {
+  padding: 5px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  color: rgba(255, 255, 255, 0.5);
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+}
+
+.dcv-media-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Camera thumbnail */
+.dcv-camera-thumb {
+  width: 100px;
+  height: 65px;
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(20, 80, 40, 0.5), rgba(40, 60, 30, 0.4)),
+    #0a1a12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Camera stats */
+.dcv-camera-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+
+.dcv-cam-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.dcv-cam-stat-label {
+  font-size: 10px;
+  color: rgba(200, 214, 229, 0.4);
+}
+
+.dcv-cam-stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.dcv-cam-stat-value small {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(200, 214, 229, 0.4);
+}
+
+/* Camera center */
+.dcv-camera-center {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Frame line */
+.dcv-frame-line-section {
+  width: 100%;
+}
+
+.dcv-frame-title {
+  font-size: 11px;
+  color: rgba(200, 214, 229, 0.4);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.dcv-frame-options {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dcv-frame-btn {
+  width: 100%;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.5);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.dcv-frame-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dcv-frame-btn.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.dcv-action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.dcv-action-btn {
+  padding: 5px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.dcv-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Joystick */
+.dcv-joystick-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dcv-joystick-arrows {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left knob right"
+    ". down .";
+  grid-template-columns: 28px 56px 28px;
+  grid-template-rows: 28px 56px 28px;
+  gap: 2px;
+  align-items: center;
+  justify-items: center;
+}
+
+.dcv-joy-arrow {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.dcv-joy-arrow:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dcv-joy-arrow:active {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+}
+
+.dcv-joy-up { grid-area: up; }
+.dcv-joy-left { grid-area: left; }
+.dcv-joy-right { grid-area: right; }
+.dcv-joy-down { grid-area: down; }
+
+.dcv-joystick-knob {
+  grid-area: knob;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2a3040 0%, #1a2030 100%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+}
+
+.dcv-joystick-knob:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(0, 212, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dcv-joy-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dcv-chevron-down {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.dcv-chevron-down:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- COMPASS PANEL ---------- */
+.dcv-compass-panel {
+  background: #141a24;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dcv-compass-coords {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(200, 214, 229, 0.5);
+  text-align: center;
+}
+
+.dcv-compass-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dcv-compass-canvas {
+  display: block;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media (max-width: 1024px) {
+  .dcv-top-row,
+  .dcv-bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dcv-camera-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .dcv-container {
+    gap: 8px;
+  }
+
+  .dcv-camera-stats {
+    grid-template-columns: 1fr;
+  }
+}
