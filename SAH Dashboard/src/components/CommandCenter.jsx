@@ -457,18 +457,24 @@ const [pkgName, setPkgName] = useState("");
 
   // Load orders + drones when component mounts
   useEffect(() => {
-    syncOrdersFromBackend();
-    apiFetchDrones().then(dronesList => {
-      if (dronesList && dronesList.length > 0) {
-        setAvailableDrones(dronesList);
-        // Default select first online drone
-        const online = dronesList.find(d => d.status === 'online');
-        setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
-      }
-    });
+    // Defer setState calls out of the effect body to satisfy react-hooks/set-state-in-effect
+    const t = setTimeout(() => {
+      syncOrdersFromBackend();
+      apiFetchDrones().then(dronesList => {
+        if (dronesList && dronesList.length > 0) {
+          setAvailableDrones(dronesList);
+          // Default select first online drone
+          const online = dronesList.find(d => d.status === 'online');
+          setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
+        }
+      });
+    }, 0);
     // Poll every 5s for new orders from User Interface
     const interval = setInterval(syncOrdersFromBackend, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(t);
+      clearInterval(interval);
+    };
   }, [syncOrdersFromBackend]);
 
   // ===================================================================

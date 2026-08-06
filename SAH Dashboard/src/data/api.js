@@ -6,7 +6,7 @@ const getBackendUrl = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  return 'http://127.0.0.1:3001/api';
+  return 'https://demo-dashboard-1-1.onrender.com/api';
 };
 
 const BACKEND_URL = getBackendUrl();
