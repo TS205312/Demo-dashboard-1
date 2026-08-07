@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+ import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  ArrowLeft, Volume2, VolumeX, Bell, Activity, MapPin, Gauge, BatteryCharging,
+  Radio, Navigation as NavigationIcon, Home, Pause, Play,
+  Video, Siren, Plus, X, Package, Rocket, TriangleAlert, Search,
+  Wind, Thermometer, Flame, Box, Shield, ShieldCheck, Plane, Droplets,
+} from 'lucide-react';
 import { apiFetchOrders, apiCreateMission, apiUpdateOrderStatus, apiCreateOrder, apiFetchDrones } from '../data/api';
 import '../styles/commandCenter.css';
 
@@ -25,7 +31,7 @@ const STATUS_MAP = {
 // Leaflet loaded globally from CDN
 const L = typeof window !== 'undefined' ? window.L : null;
 
-function CommandCenter({ onBackToFleet }) {
+function CommandCenter({ onBackToFleet, drones = [] }) {
   // ===================================================================
   // STATE
   // ===================================================================
@@ -43,7 +49,7 @@ function CommandCenter({ onBackToFleet }) {
   const [flightPathCoords, setFlightPathCoords] = useState([]);
   const [targetNodeIndex, setTargetNodeIndex] = useState(0);
   const [currentTargetHospital, setCurrentTargetHospital] = useState("");
-const [pkgName, setPkgName] = useState("");
+  const [pkgName, setPkgName] = useState("");
   const [pkgDest, setPkgDest] = useState("choray");
   const [showDiagnose, setShowDiagnose] = useState(false);
   const [iotDoor, setIotDoor] = useState("ĐÃ ĐÓNG");
@@ -53,13 +59,19 @@ const [pkgName, setPkgName] = useState("");
   const [clock, setClock] = useState("");
 
   // Dispatch panel state
-  const [dispatchOrder, setDispatchOrder] = useState(null); // order being prepared
+  const [dispatchOrder, setDispatchOrder] = useState(null);
   const [availableDrones, setAvailableDrones] = useState([]);
   const [selectedDroneId, setSelectedDroneId] = useState("");
   const [flightMinutes, setFlightMinutes] = useState(15);
-  const [preparingId, setPreparingId] = useState(null); // loading state for prepare/off
+  const [preparingId, setPreparingId] = useState(null);
 
-  // Refs (for use inside intervals/callbacks only)
+  // Fleet quick-select (right rail)
+  const [activeDroneId, setActiveDroneId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showAlertPanel, setShowAlertPanel] = useState(false);
+
+  // Refs
   const mapInstanceRef = useRef(null);
   const droneMarkerRef = useRef(null);
   const dockerMarkerRef = useRef(null);
@@ -83,7 +95,7 @@ const [pkgName, setPkgName] = useState("");
   const iotPowerRef = useRef(iotPower);
   const showDiagnoseRef = useRef(showDiagnose);
 
-  // Sync refs with state
+  // Sync refs
   useEffect(() => { stateRef.current = currentState; }, [currentState]);
   useEffect(() => { droneLatRef.current = droneLat; }, [droneLat]);
   useEffect(() => { droneLngRef.current = droneLng; }, [droneLng]);
@@ -101,6 +113,59 @@ const [pkgName, setPkgName] = useState("");
   useEffect(() => { iotChargeRef.current = iotCharge; }, [iotCharge]);
   useEffect(() => { iotPowerRef.current = iotPower; }, [iotPower]);
   useEffect(() => { showDiagnoseRef.current = showDiagnose; }, [showDiagnose]);
+
+  // Sparkline history tracking
+  useEffect(() => {
+    setSparkHistory(prev => { // eslint-disable-line react-hooks/set-state-in-effect
+      const next = {
+        speed: [...prev.speed, droneSpeed].slice(-40),
+        alt: [...prev.alt, droneAlt].slice(-40),
+        batt: [...prev.batt, droneBattery].slice(-40),
+      };
+      return next;
+    });
+  }, [droneSpeed, droneAlt, droneBattery]);
+
+  // Draw sparklines
+  useEffect(() => {
+    const draw = (id, data, color) => {
+      const canvas = document.getElementById(id);
+      if (!canvas || !canvas.parentElement) return;
+      if (!L) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const w = canvas.width = canvas.parentElement.offsetWidth;
+      const h = canvas.height = 22;
+      ctx.clearRect(0, 0, w, h);
+      if (data.length < 2) return;
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.lineJoin = 'round';
+      const maxHistoryLength = 40;
+      const step = w / (maxHistoryLength - 1);
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = max - min === 0 ? 1 : max - min;
+      for (let i = 0; i < data.length; i++) {
+        const x = i * step;
+        const y = h - ((data[i] - min) / range) * (h - 4) - 2;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, color.replace('1)', '0.2)'));
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.lineTo((data.length - 1) * step, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+    };
+    draw('cc-spark-speed', sparkHistory.speed, 'rgba(6,182,212,1)');
+    draw('cc-spark-alt', sparkHistory.alt, 'rgba(139,92,246,1)');
+    draw('cc-spark-batt', sparkHistory.batt, sparkHistory.batt.length > 0 && sparkHistory.batt[sparkHistory.batt.length - 1] < 25 ? 'rgba(239,68,68,1)' : 'rgba(16,185,129,1)');
+  }, [sparkHistory]);
 
   // ===================================================================
   // AUDIO ENGINE
@@ -127,7 +192,7 @@ const [pkgName, setPkgName] = useState("");
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + duration);
-    } catch (_e) { void _e; /* audio context may fail silently */ }
+} catch { /* audio context may fail silently */ }
   }, [audioEnabled, initAudio]);
 
   const playAlarmSound = useCallback(() => {
@@ -154,34 +219,34 @@ const [pkgName, setPkgName] = useState("");
     const map = L.map('cc-map', { zoomControl: false, attributionControl: false }).setView([10.76200, 106.66600], 14);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-    const routeLine = L.polyline([], { color: '#66FCF1', weight: 3, opacity: 0.8, dashArray: "8, 6" }).addTo(map);
+    const routeLine = L.polyline([], { color: '#06B6D4', weight: 3, opacity: 0.85, dashArray: "8, 6" }).addTo(map);
     routeLineRef.current = routeLine;
 
     const droneIcon = L.divIcon({
       className: '',
-      html: '<div id="cc-drone-marker" style="width:16px;height:16px;border-radius:50%;background:#66FCF1;box-shadow:0 0 12px 5px rgba(102,252,241,0.9);transition:transform 0.2s;"></div>',
-      iconSize: [16, 16]
+      html: '<div id="cc-drone-marker" style="width:14px;height:14px;border-radius:50%;background:#06B6D4;box-shadow:0 0 12px 5px rgba(6,182,212,0.7);border:2px solid #fff;"></div>',
+      iconSize: [14, 14]
     });
     const droneMarker = L.marker(DOCK_COORD, { icon: droneIcon }).addTo(map);
     droneMarkerRef.current = droneMarker;
 
     const dockerIcon = L.divIcon({
       className: '',
-      html: '<div style="width:20px;height:20px;border-radius:50%;background:#FF007F;box-shadow:0 0 12px 5px rgba(255,0,127,0.8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9px;color:#fff;">D1</div>',
-      iconSize: [20, 20]
+      html: '<div style="width:18px;height:18px;border-radius:4px;background:#10B981;box-shadow:0 0 12px 5px rgba(16,185,129,0.6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9px;color:#fff;font-family:JetBrains Mono,monospace;">D</div>',
+      iconSize: [18, 18]
     });
     const dockerMarker = L.marker(DOCK_COORD, { icon: dockerIcon }).addTo(map);
-    dockerMarker.bindPopup("<b style='color:#000;'>Trạm sạc Docker Base #DK-01</b>");
+    dockerMarker.bindPopup("<b style='color:#e5eaf3;'>Trạm sạc Docker Base #DK-01</b>");
     dockerMarkerRef.current = dockerMarker;
 
     Object.keys(WAYPOINTS).forEach((key, index) => {
       const wp = WAYPOINTS[key];
       const wpIcon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:3px;background:rgba(102,252,241,0.2);border:2px solid #66FCF1;box-shadow:0 0 8px rgba(102,252,241,0.5);display:flex;align-items:center;justify-content:center;font-family:'Chakra Petch';font-size:10px;font-weight:bold;color:#66FCF1;">H${index+1}</div>`,
-        iconSize: [18, 18]
+        html: `<div style="width:16px;height:16px;border-radius:3px;background:rgba(245,158,11,0.15);border:1.5px solid #F59E0B;box-shadow:0 0 8px rgba(245,158,11,0.4);display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;font-size:9px;font-weight:bold;color:#F59E0B;">H${index+1}</div>`,
+        iconSize: [16, 16]
       });
-      L.marker(wp.coord, { icon: wpIcon }).addTo(map).bindPopup(`<b style="color:#000;">${wp.name}</b>`);
+      L.marker(wp.coord, { icon: wpIcon }).addTo(map).bindPopup(`<b style="color:#e5eaf3;">${wp.name}</b>`);
     });
 
     mapInstanceRef.current = map;
@@ -190,45 +255,6 @@ const [pkgName, setPkgName] = useState("");
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, []);
-
-  // ===================================================================
-  // SPARKLINE DRAWING
-  // ===================================================================
-  const drawSparkline = useCallback((canvasId, data, color) => { // eslint-disable-line no-unused-vars
-    const canvas = document.getElementById(canvasId);
-    if (!canvas || !canvas.parentElement) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const w = canvas.width = canvas.parentElement.offsetWidth;
-    const h = canvas.height = 25;
-    ctx.clearRect(0, 0, w, h);
-    if (data.length < 2) return;
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
-    ctx.lineJoin = 'round';
-    const maxHistoryLength = 40;
-    const step = w / (maxHistoryLength - 1);
-    const min = Math.min(...data);
-    const max = Math.max(...data);
-    const range = max - min === 0 ? 1 : max - min;
-    for (let i = 0; i < data.length; i++) {
-      const x = i * step;
-      const y = h - ((data[i] - min) / range) * (h - 4) - 2;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.lineTo((data.length - 1) * step, h);
-    ctx.lineTo(0, h);
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0, 0, 0, h);
-    const replacedColor = color.replace('1)', '0.25)');
-    grad.addColorStop(0, replacedColor);
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grad;
-    ctx.fill();
   }, []);
 
   // ===================================================================
@@ -245,7 +271,7 @@ const [pkgName, setPkgName] = useState("");
   }, []);
 
   // ===================================================================
-  // UPDATE SQL ITEM STATUS — MUST BE ABOVE tickFlight
+  // UPDATE SQL ITEM STATUS
   // ===================================================================
   const updateActiveSqlItemStatus = useCallback((hospitalName, newStatus) => {
     setSqlDatabase(prev => {
@@ -279,36 +305,32 @@ const [pkgName, setPkgName] = useState("");
     let newSpeed = speed;
     let newLat = lat;
     let newLng = lng;
-    let newDoor = iotDoorRef.current;
-    let newGear = iotGearRef.current;
-    let newCharge = iotChargeRef.current;
-    let newPower = iotPowerRef.current;
 
     const setIotAndBattery = () => {
-      setIotDoor(newDoor);
-      setIotGear(newGear);
-      setIotCharge(newCharge);
-      setIotPower(newPower);
+      setIotDoor(iotDoorRef.current);
+      setIotGear(iotGearRef.current);
+      setIotCharge(iotChargeRef.current);
+      setIotPower(iotPowerRef.current);
     };
 
     if (state === "STANDBY") {
       if (battery < 100) {
         newBattery = Math.min(100, battery + 0.3);
-        newDoor = "ĐÃ ĐÓNG";
-        newGear = "ĐÃ KHÓA";
-        newCharge = "SẠC SIÊU TỐC";
-        newPower = "2.1 kW";
+        iotDoorRef.current = "ĐÃ ĐÓNG";
+        iotGearRef.current = "ĐÃ KHÓA";
+        iotChargeRef.current = "SẠC SIÊU TỐC";
+        iotPowerRef.current = "2.1 kW";
       } else {
-        newDoor = "ĐÃ ĐÓNG";
-        newGear = "ĐÃ KHÓA";
-        newCharge = "HOÀN THÀNH SẠC";
-        newPower = "0.0 kW";
+        iotDoorRef.current = "ĐÃ ĐÓNG";
+        iotGearRef.current = "ĐÃ KHÓA";
+        iotChargeRef.current = "HOÀN THÀNH SẠC";
+        iotPowerRef.current = "0.0 kW";
       }
     } else if (state === "PREFLIGHT") {
-      setIotDoor("ĐANG MỞ...");
-      setIotGear("ĐANG NHẢ NGÀM...");
-      setIotCharge("NGẮT SẠC");
-      setIotPower("0.0 kW");
+      iotDoorRef.current = "ĐANG MỞ...";
+      iotGearRef.current = "ĐANG NHẢ NGÀM...";
+      iotChargeRef.current = "NGẮT SẠC";
+      iotPowerRef.current = "0.0 kW";
       playBeep(440, 0.1, 'sawtooth');
       setTimeout(() => {
         setCurrentState("TAKEOFF");
@@ -316,10 +338,10 @@ const [pkgName, setPkgName] = useState("");
       }, 2000);
       return;
     } else if (state === "TAKEOFF") {
-      newDoor = "ĐÃ MỞ";
-      newGear = "ĐÃ NHẢ";
-      newCharge = "SẴN SÀNG";
-      newPower = "0.0 kW";
+      iotDoorRef.current = "ĐÃ MỞ";
+      iotGearRef.current = "ĐÃ NHẢ";
+      iotChargeRef.current = "SẴN SÀNG";
+      iotPowerRef.current = "0.0 kW";
       newAlt = Math.min(45, alt + 4.5);
       newSpeed = 5;
       newBattery = battery - 0.1;
@@ -393,10 +415,10 @@ const [pkgName, setPkgName] = useState("");
         playBeep(523.25, 0.4, 'sine', 0.08);
       }
     } else if (state === "DOCKING") {
-      setIotDoor("ĐANG ĐÓNG...");
-      setIotGear("ĐANG KHÓA NHANH...");
-      setIotCharge("KẾT NỐI SẠC");
-      setIotPower("0.0 kW");
+      iotDoorRef.current = "ĐANG ĐÓNG...";
+      iotGearRef.current = "ĐANG KHÓA NHANH...";
+      iotChargeRef.current = "KẾT NỐI SẠC";
+      iotPowerRef.current = "0.0 kW";
       setTimeout(() => {
         setCurrentState("STANDBY");
         const cc = document.querySelector('.command-center');
@@ -433,12 +455,11 @@ const [pkgName, setPkgName] = useState("");
   }, [playBeep, playAlarmSound, writeToLogCenter, updateActiveSqlItemStatus]);
 
   // ===================================================================
-  // BACKEND SYNC — Load real orders from backend
+  // BACKEND SYNC
   // ===================================================================
   const syncOrdersFromBackend = useCallback(async () => {
     const orders = await apiFetchOrders();
     if (!orders) return;
-    // Map backend orders to CC display format
     const mapped = orders.map(o => ({
       id: o._id || o.id,
       destination: o.destination || '--',
@@ -455,18 +476,15 @@ const [pkgName, setPkgName] = useState("");
     setSqlDatabase(mapped);
   }, []);
 
-  // Load orders + drones when component mounts
   useEffect(() => {
     syncOrdersFromBackend();
     apiFetchDrones().then(dronesList => {
       if (dronesList && dronesList.length > 0) {
         setAvailableDrones(dronesList);
-        // Default select first online drone
         const online = dronesList.find(d => d.status === 'online');
         setSelectedDroneId(String(online ? online._id || online.id : dronesList[0]._id || dronesList[0].id));
       }
     });
-    // Poll every 5s for new orders from User Interface
     const interval = setInterval(syncOrdersFromBackend, 5000);
     return () => clearInterval(interval);
   }, [syncOrdersFromBackend]);
@@ -474,19 +492,18 @@ const [pkgName, setPkgName] = useState("");
   // ===================================================================
   // DISPATCH WORKFLOW
   // ===================================================================
-  // Mở panel chuẩn bị đơn hàng
   const prepareOrder = useCallback((order) => {
     setDispatchOrder(order);
     setFlightMinutes(15);
-    // Tự chọn drone online đầu tiên
     const online = availableDrones.find(d => d.status === 'online');
-    if (online) {
-      setSelectedDroneId(String(online._id || online.id));
-    }
+    if (online) setSelectedDroneId(String(online._id || online.id));
     playBeep(523.25, 0.15);
   }, [availableDrones, playBeep]);
 
-  // Xác nhận chuẩn bị hàng → đơn hàng chuyển sang 'packaging'
+  const closeDispatchPanel = useCallback(() => {
+    setDispatchOrder(null);
+  }, []);
+
   const confirmPrepare = useCallback(async () => {
     if (!dispatchOrder) return;
     const droneId = selectedDroneId;
@@ -507,7 +524,6 @@ const [pkgName, setPkgName] = useState("");
     }
   }, [dispatchOrder, selectedDroneId, writeToLogCenter, playBeep, syncOrdersFromBackend]);
 
-  // Take Off → tạo mission + đơn chuyển sang 'departed'
   const takeOff = useCallback(async () => {
     if (!dispatchOrder) return;
     const droneId = selectedDroneId;
@@ -529,13 +545,11 @@ const [pkgName, setPkgName] = useState("");
     } else {
       writeToLogCenter("FAIL", `Lỗi tạo mission: ${missionRes.message || 'không xác định'}`, 'sys');
     }
-    // Cập nhật trạng thái đơn → departed
     const statusRes = await apiUpdateOrderStatus(dispatchOrder._backendId, 'departed', droneId);
     if (statusRes.success) {
       writeToLogCenter("COMMAND", `Đơn ${dispatchOrder.id}: Drone đã cất cánh tới ${destName}.`, "cmd");
     }
 
-    // Vẽ route trên map
     if (routeLineRef.current) {
       routeLineRef.current.setLatLngs([DOCK_COORD, targetWp.coord]);
     }
@@ -549,12 +563,8 @@ const [pkgName, setPkgName] = useState("");
     playBeep(880, 0.4, 'sine', 0.08);
   }, [dispatchOrder, selectedDroneId, flightMinutes, writeToLogCenter, playBeep, syncOrdersFromBackend]);
 
-  const closeDispatchPanel = useCallback(() => {
-    setDispatchOrder(null);
-  }, []);
-
   // ===================================================================
-  // MISSION CONTROL — General
+  // MISSION CONTROL
   // ===================================================================
   const triggerRTL = useCallback(() => {
     const state = stateRef.current;
@@ -564,7 +574,6 @@ const [pkgName, setPkgName] = useState("");
     if (cc) cc.classList.add('alarm-active');
     setShowDiagnose(true);
 
-    // Sync RTL to backend: cancel inflight orders
     const db = sqlDatabaseRef.current;
     db.forEach(row => {
       if ((row.status === "ĐANG BAY") && row._backendId) {
@@ -585,8 +594,6 @@ const [pkgName, setPkgName] = useState("");
       return;
     }
     const destName = WAYPOINTS[pkgDest].name;
-
-// Create order in backend (shared with User Interface)
     apiCreateOrder({
       medical_item: pkgName,
       destination: destName,
@@ -600,7 +607,6 @@ const [pkgName, setPkgName] = useState("");
         writeToLogCenter("FAIL", `Lỗi tạo đơn: ${res.message}`, 'sys');
       }
     });
-
     playBeep(659.25, 0.1, 'sine', 0.05);
     setPkgName("");
   }, [pkgName, pkgDest, writeToLogCenter, playBeep, syncOrdersFromBackend]);
@@ -620,7 +626,6 @@ const [pkgName, setPkgName] = useState("");
     return () => clearInterval(interval);
   }, []);
 
-  // MAVLink telemetry broadcast
   useEffect(() => {
     const interval = setInterval(() => {
       if (stateRef.current !== "STANDBY") {
@@ -637,7 +642,7 @@ const [pkgName, setPkgName] = useState("");
   }, [writeToLogCenter]);
 
   // ===================================================================
-  // RENDER HELPERS (use state directly, not refs — to avoid refs-in-render warnings)
+  // RENDER HELPERS
   // ===================================================================
   const getPhaseText = () => {
     if (currentState === "STANDBY") return "PHASE: STANDBY";
@@ -653,17 +658,37 @@ const [pkgName, setPkgName] = useState("");
   };
 
   const getSystemStatus = () => {
-    if (currentState === "STANDBY") return "ĐANG CHỜ LỆNH";
     if (currentState === "RTL_EMERGENCY") return "HỦY KHẨN CẤP (RTL)";
+    if (currentState === "STANDBY") return "ĐANG CHỜ LỆNH";
     return "DỊCH CHUYỂN";
+  };
+
+  // Status color helpers
+  const batteryColorHex = (batt) => batt > 60 ? '#10B981' : batt > 25 ? '#F59E0B' : '#EF4444';
+
+  // Active fleet drone (from props or fallback to availableDrones / derive)
+  const fleetDrones = drones && drones.length > 0 ? drones : availableDrones;
+  const activeDrone = fleetDrones.find(d => String(d.id) === String(activeDroneId)) || fleetDrones[0] || null;
+
+  const filteredFleetDrones = fleetDrones.filter(d => {
+    const matchSearch = !searchTerm || (d.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStatus = statusFilter === 'all' || d.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  const fleetStats = {
+    total: fleetDrones.length,
+    online: fleetDrones.filter(d => d.status === 'online').length,
+    warning: fleetDrones.filter(d => d.status === 'warning').length,
+    offline: fleetDrones.filter(d => d.status === 'offline').length,
   };
 
   const renderSqlTable = () => {
     if (!sqlDatabase || sqlDatabase.length === 0) {
       return (
         <tr>
-          <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
-            Chưa có đơn hàng. Đơn từ bác sĩ sẽ hiển thị tại đây.
+          <td colSpan="7" className="cc-empty-row">
+            <p className="text-[11px] text-[var(--color-ink-muted)]">Chưa có đơn hàng. Đơn từ bác sĩ sẽ hiển thị tại đây.</p>
           </td>
         </tr>
       );
@@ -678,26 +703,25 @@ const [pkgName, setPkgName] = useState("");
       const isPreparing = preparingId === row._backendId;
       return (
         <tr key={row.id}>
-          <td><b>{row.id}</b></td>
+          <td><span className="font-mono font-bold text-cyan-300">#{String(row.id).slice(-6)}</span></td>
           <td>{row.doctor}</td>
           <td>{row.item}</td>
           <td>{row.destination}</td>
-          <td style={{ fontSize: '9px', color: row.urgency === 'Cấp cứu khẩn' ? 'var(--danger)' : 'var(--text-muted)' }}>
-            {row.urgency === 'Cấp cứu khẩn' ? '🚨 ' : ''}{row.urgency}
+          <td className={row.urgency === 'Cấp cứu khẩn' ? 'text-red-400' : 'text-[var(--color-ink-muted)]'}>
+            {row.urgency === 'Cấp cứu khẩn' ? <Flame size={11} className="inline mr-1" /> : null}{row.urgency}
           </td>
           <td><span className={`cc-pill ${pillClass}`}>{row.status}</span></td>
           <td>
             {isPending ? (
               <button
-                className="cc-cmd-btn auto"
-                style={{ flex: '0 0 auto', padding: '3px 8px', fontSize: '9px' }}
+                className="cc-qaction cc-qaction-emerald"
                 onClick={() => prepareOrder(row)}
                 disabled={!!isPreparing}
               >
-                {isPreparing ? '...' : <><i className="fa-solid fa-box-open"></i> Chuẩn bị</>}
+                {isPreparing ? '...' : <><Box size={11} /> Chuẩn bị</>}
               </button>
             ) : (
-              <span style={{ color: 'var(--text-muted)', fontSize: '9px' }}>—</span>
+              <span className="text-[var(--color-ink-muted)] text-[10px]">—</span>
             )}
           </td>
         </tr>
@@ -710,259 +734,463 @@ const [pkgName, setPkgName] = useState("");
       if (activeLogFilter === 'all') return true;
       return log.type === activeLogFilter;
     });
-    return filtered.map((log, i) => {
+    return filtered.slice(-40).map((log, i) => {
       let colorClass = '';
       if (log.type === 'sys') colorClass = 'sys';
-      if (log.type === 'cmd') colorClass = '';
       if (log.tag.includes('FAIL') || log.tag.includes('KHẨN')) colorClass = 'err';
       return (
-        <p key={i}>
-          <span className="t">[{log.ts}]</span>{' '}
-          <span className={`k ${colorClass}`}>[{log.tag}]</span>{' '}
-          <span className="v">{log.msg}</span>
+        <p key={i} className="cc-log-line">
+          <span className="text-[var(--color-ink-muted)]">[{log.ts}]</span>{' '}
+          <span className={`cc-log-tag ${colorClass}`}>[{log.tag}]</span>{' '}
+          <span>{log.msg}</span>
         </p>
       );
     });
   };
 
+  // Phase badge color for header
+  const phaseIsEmergency = currentState === "RTL_EMERGENCY";
+  const phaseIsActive = currentState !== "STANDBY";
+
   return (
     <div className={`command-center ${currentState === "RTL_EMERGENCY" ? 'alarm-active' : ''}`}>
       {/* Overlays */}
       <div className="cc-scanlines"></div>
-      <div className="cc-vignette"></div>
-      <div className="cc-alarm-overlay"></div>
+      <div className="cc-grid-fade"></div>
 
-      {/* Topbar */}
-      <div className="cc-topbar">
-        <div className="cc-logo">SAH<span>-TECH</span> // DRONE LOGISTICS COMMAND</div>
-        <div className="cc-status-strip">
-          <button className="cc-nav-btn" onClick={onBackToFleet}>
-            <i className="fa-solid fa-arrow-left"></i> Fleet Dashboard
-          </button>
-          <button className="cc-audio-control" onClick={toggleAudio}>
-            <i className={`fa-solid ${audioEnabled ? 'fa-volume-high' : 'fa-volume-xmark'}`}></i> AUDIO: {audioEnabled ? 'ON' : 'OFF'}
-          </button>
-          <span>
-            <span className={`cc-live-dot ${currentState !== "STANDBY" ? 'pink' : ''}`}></span>
-            HỆ THỐNG: <b>{getSystemStatus()}</b>
-          </span>
-          <span>THIẾT BỊ <b>VTOL-K230</b></span>
-          <span>{clock}</span>
+      {/* ============================================================
+          TOP HEADER BAR
+      ============================================================ */}
+      <header className="cc-header">
+        <div className="flex items-center gap-3">
+          <div className="cc-brand-mark">
+            <NavigationIcon size={18} className="text-emerald-400" strokeWidth={2.2} />
+          </div>
+          <div>
+            <div className="cc-brand-name">SAH<em>TECH</em> // DRONE COMMAND</div>
+            <div className="cc-brand-sub">UAV FLEET OPERATIONS CENTER</div>
+          </div>
         </div>
-      </div>
 
-      {/* Dashboard Grid */}
-      <div className="cc-dashboard">
-        {/* Left Column */}
-        <div className="cc-column">
-          {/* Map Panel */}
-          <div className="cc-panel cc-map-panel">
-            <div className="cc-panel-header">
-              <div>
-                <div className="cc-panel-title">Hệ Thống Kiểm Soát Không Lưu (ATC)</div>
-                <div className="cc-panel-subtitle">Theo dõi tọa độ thực tế · Khu vực TP.HCM</div>
+        {/* KPI Chips */}
+        <div className="cc-kpi-strip">
+          <div className="cc-kpi-chip">
+            <span className="cc-kpi-dot text-white/70"></span>
+            <span className="cc-kpi-label">TOTAL</span>
+            <span className="cc-kpi-value text-white">{fleetStats.total}</span>
+          </div>
+          <div className="cc-kpi-chip">
+            <span className="cc-kpi-dot bg-emerald-400"></span>
+            <span className="cc-kpi-label">ONLINE</span>
+            <span className="cc-kpi-value text-emerald-400">{fleetStats.online}</span>
+          </div>
+          <div className="cc-kpi-chip">
+            <span className="cc-kpi-dot bg-amber-400"></span>
+            <span className="cc-kpi-label">WARN</span>
+            <span className="cc-kpi-value text-amber-400">{fleetStats.warning}</span>
+          </div>
+          <div className="cc-kpi-chip">
+            <span className="cc-kpi-dot bg-red-500"></span>
+            <span className="cc-kpi-label">OFFLINE</span>
+            <span className="cc-kpi-value text-red-400">{fleetStats.offline}</span>
+          </div>
+        </div>
+
+        <div className="cc-header-actions">
+          <div className={`cc-phase-badge ${phaseIsEmergency ? 'alert' : phaseIsActive ? 'active' : ''}`}>
+            <Activity size={12} />
+            <span>{getSystemStatus()}</span>
+          </div>
+          <div className="cc-clock">
+            <span className="font-mono">{clock}</span>
+          </div>
+          <button className="cc-icon-btn" onClick={toggleAudio} title="Bật/Tắt âm thanh">
+            {audioEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </button>
+          <div className="relative">
+            <button
+              className="cc-icon-btn relative"
+              onClick={() => setShowAlertPanel(v => !v)}
+              title="Thông báo hệ thống"
+            >
+              <Bell size={16} />
+              {fleetStats.warning + fleetStats.offline > 0 && (
+                <span className="cc-alert-badge">{fleetStats.warning + fleetStats.offline}</span>
+              )}
+            </button>
+            {showAlertPanel && (
+              <div className="cc-alert-popover">
+                <div className="cc-alert-popover-title">HỆ THỐNG CẢNH BÁO</div>
+                {fleetStats.warning > 0 && (
+                  <div className="cc-alert-item warn">
+                    <TriangleAlert size={14} />
+                    <span>{fleetStats.warning} drone ở trạng thái cảnh báo (pin yếu / nhiệt cao)</span>
+                  </div>
+                )}
+                {fleetStats.offline > 0 && (
+                  <div className="cc-alert-item danger">
+                    <Siren size={14} />
+                    <span>{fleetStats.offline} drone mất kết nối</span>
+                  </div>
+                )}
+                {fleetStats.warning + fleetStats.offline === 0 && (
+                  <div className="cc-alert-item ok">
+                    <ShieldCheck size={14} />
+                    <span>Tất cả hệ thống hoạt động bình thường</span>
+                  </div>
+                )}
               </div>
-              <div className="cc-panel-subtitle">{getPhaseText()}</div>
+            )}
+          </div>
+          <button className="cc-back-btn" onClick={onBackToFleet}>
+            <ArrowLeft size={14} /> Fleet
+          </button>
+        </div>
+      </header>
+
+      {/* ============================================================
+          MAIN 70 / 30 WORKSPACE
+      ============================================================ */}
+      <div className="cc-workspace">
+        {/* ------------ LEFT : MAP (70%) ------------ */}
+        <section className="cc-map-panel">
+          <div className="cc-panel-toolbar">
+            <div className="flex items-center gap-2.5">
+              <Radio size={14} className="text-cyan-400" />
+              <span className="cc-panel-title">Interactive Flight View</span>
+              <span className="cc-panel-sub">GIS · Live Telemetry</span>
             </div>
-            <div className="cc-map-container">
-              <div id="cc-map"></div>
-              <div className="cc-map-legend">
-                <span><i className="cc-dot cyan"></i> Vị trí hiện tại Drone</span>
-                <span><i className="cc-dot pink"></i> Trạm Sạc Docker Base 01</span>
-                <span><i className="cc-line"></i> Lộ trình bay thiết lập</span>
+            <div className={`cc-phase-tag ${phaseIsEmergency ? 'alert' : phaseIsActive ? 'active' : 'idle'}`}>
+              {getPhaseText()}
+            </div>
+          </div>
+
+          <div className="cc-map-container">
+            <div id="cc-map" className="cc-map-canvas"></div>
+
+            {/* Live telemetry HUD overlay */}
+            <div className="cc-hud-overlay top-left">
+              <div className="cc-hud-cell">
+                <Gauge size={11} className="text-cyan-400" />
+                <span className="cc-hud-label">SPEED</span>
+                <span className="cc-hud-monovalue">{droneSpeed.toFixed(1)}<small>km/h</small></span>
+                <canvas id="cc-spark-speed"></canvas>
+              </div>
+              <div className="cc-hud-cell">
+                <NavigationIcon size={11} className="text-violet-400" />
+                <span className="cc-hud-label">ALT</span>
+                <span className="cc-hud-monovalue">{droneAlt.toFixed(1)}<small>m</small></span>
+                <canvas id="cc-spark-alt"></canvas>
+              </div>
+              <div className="cc-hud-cell">
+                <BatteryCharging size={11} className={droneBattery < 25 ? 'text-red-400' : 'text-emerald-400'} />
+                <span className="cc-hud-label">BATT</span>
+                <span className={`cc-hud-monovalue ${droneBattery < 25 ? 'err' : ''}`}>{droneBattery.toFixed(1)}<small>%</small></span>
+                <div className="cc-mini-battery">
+                  <div className="cc-mini-battery-fill" style={{ width: `${droneBattery}%`, background: batteryColorHex(droneBattery) }} />
+                </div>
               </div>
             </div>
 
-            {/* Dispatch Form */}
-            <div className="cc-dispatch-form">
+            <div className="cc-hud-overlay top-right">
+              <div className="cc-coord-chip">
+                <MapPin size={11} className="text-cyan-400" />
+                <span>{droneLat.toFixed(5)}, {droneLng.toFixed(5)}</span>
+              </div>
+              <div className="cc-coord-chip">
+                <Wind size={11} className="text-amber-400" />
+                <span>Wind 12.3 km/h</span>
+              </div>
+            </div>
+
+            {/* Map legend */}
+            <div className="cc-map-legend">
+              <span><i className="cc-legend-dot bg-cyan-400"></i> Drone</span>
+              <span><i className="cc-legend-dot bg-emerald-400"></i> Docker Base</span>
+              <span><i className="cc-legend-dot bg-amber-400"></i> Hospital</span>
+              <span><i className="cc-legend-line"></i> Flight Path</span>
+            </div>
+          </div>
+
+          {/* Dispatch bar */}
+          <div className="cc-dispatch-bar">
+            <div className="cc-dispatch-input-wrap">
+              <Search size={13} className="text-[var(--color-ink-muted)]" />
               <input
-                type="text"
                 className="cc-dispatch-input"
-                placeholder="Mặt hàng y tế (Ví dụ: Insulin, Máu nhóm A, Vắc-xin COVID)..."
+                placeholder="Medical item (Ví dụ: Insulin, Máu A, Vắc-xin)..."
                 value={pkgName}
                 onChange={(e) => setPkgName(e.target.value)}
               />
-              <select className="cc-dispatch-select" value={pkgDest} onChange={(e) => setPkgDest(e.target.value)}>
-                <option value="choray">BV Chợ Rẫy (Điểm 1)</option>
-                <option value="tudu">BV Từ Dũ (Điểm 2)</option>
-                <option value="nhidong">BV Nhi Đồng 1 (Điểm 3)</option>
+            </div>
+            <select className="cc-dispatch-select" value={pkgDest} onChange={(e) => setPkgDest(e.target.value)}>
+              <option value="choray">BV Chợ Rẫy</option>
+              <option value="tudu">BV Từ Dũ</option>
+              <option value="nhidong">BV Nhi Đồng 1</option>
+            </select>
+            <button className="cc-qaction cc-qaction-emerald" onClick={dispatchNewPackage}>
+              <Plus size={14} /> Tạo Đơn
+            </button>
+            <button className="cc-qaction cc-qaction-danger" onClick={triggerRTL} disabled={currentState === "STANDBY"}>
+              <Siren size={14} /> RTL
+            </button>
+          </div>
+        </section>
+
+        {/* ------------ RIGHT : SMART PANEL (30%) ------------ */}
+        <aside className="cc-side-panel">
+          {/* Active drone telemetry card */}
+          <div className="cc-card cc-corner">
+            <div className="cc-card-head">
+              <div>
+                <div className="cc-card-title">ACTIVE VEHICLE</div>
+                <div className="cc-card-sub">Drone Telemetry</div>
+              </div>
+              {activeDrone && (
+                <span className={`cc-status-badge ${activeDrone.status}`}>
+                  {activeDrone.status === 'online' ? <Shield size={10} /> : activeDrone.status === 'warning' ? <TriangleAlert size={10} /> : <Siren size={10} />}
+                  {activeDrone.status === 'online' ? 'ONLINE' : activeDrone.status === 'warning' ? 'WARNING' : 'OFFLINE'}
+                </span>
+              )}
+            </div>
+
+            {activeDrone ? (
+              <div className="cc-vehicle-body">
+                <div className="cc-vehicle-top">
+                  <div className="cc-vehicle-name">
+                    <span className="cc-vehicle-avatar">
+                      <Plane size={16} />
+                    </span>
+                    <div>
+                      <div className="cc-vehicle-name-text">{activeDrone.name}</div>
+                      <div className="cc-vehicle-mode">
+                        <i className={`cc-vehicle-led ${activeDrone.armed ? 'armed' : 'disarmed'}`}></i>
+                        {activeDrone.armed ? 'ARMED' : 'DISARMED'} · {activeDrone.mode?.toUpperCase() || 'VTOL'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`cc-arm-switch ${activeDrone.armed ? 'on' : ''}`}>
+                    <ShieldCheck size={12} />
+                    {activeDrone.armed ? 'ARM' : 'DIS'}
+                  </div>
+                </div>
+
+                {/* Telemetry grid */}
+                <div className="cc-tele-grid">
+                  <div className="cc-tele-cell">
+                    <MapPin size={11} className="text-cyan-400" />
+                    <div className="flex-1 min-w-0">
+                      <div className="cc-tele-label">GPS</div>
+                      <div className="cc-tele-value font-mono text-[11px]">{activeDrone.gps?.lat?.toFixed(4)}, {activeDrone.gps?.lng?.toFixed(4)}</div>
+                    </div>
+                  </div>
+                  <div className="cc-tele-cell">
+                    <NavigationIcon size={11} className="text-violet-400" />
+                    <div className="flex-1 min-w-0">
+                      <div className="cc-tele-label">ĐỘ CAO</div>
+                      <div className="cc-tele-value">{activeDrone.altitude ?? 0}<small>m</small></div>
+                    </div>
+                  </div>
+                  <div className="cc-tele-cell">
+                    <Thermometer size={11} className={activeDrone.temperature > 40 ? 'text-amber-400' : 'text-emerald-400'} />
+                    <div className="flex-1 min-w-0">
+                      <div className="cc-tele-label">NHIỆT ĐỘ</div>
+                      <div className="cc-tele-value">{activeDrone.temperature}<small>°C</small></div>
+                    </div>
+                  </div>
+                  <div className="cc-tele-cell">
+                    <Wind size={11} className="text-amber-400" />
+                    <div className="flex-1 min-w-0">
+                      <div className="cc-tele-label">GIÓ</div>
+                      <div className="cc-tele-value">{activeDrone.windSpeed}<small>km/h</small></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Battery */}
+                <div className="cc-battery-block">
+                  <div className="flex items-center justify-between">
+                    <span className="cc-tele-label inline-flex items-center gap-1"><BatteryCharging size={12} /> PIN</span>
+                    <span className="font-mono font-bold" style={{ color: batteryColorHex(activeDrone.battery) }}>{activeDrone.battery}%</span>
+                  </div>
+                  <div className="cc-batt-track">
+                    <div className="cc-batt-fill" style={{ width: `${activeDrone.battery}%`, background: batteryColorHex(activeDrone.battery) }} />
+                  </div>
+                </div>
+
+                {/* Quick actions */}
+                <div className="cc-quick-actions">
+                  <button className="cc-qaction cc-qaction-cyan" onClick={() => alert(`🎥 ${activeDrone.name}: Đang mở video stream...`)}>
+                    <Video size={14} /> Live
+                  </button>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`✅ ${activeDrone.name}: Tiếp tục bay theo hành trình`)}>
+                    <Play size={14} /> Tiếp
+                  </button>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`⏸️ ${activeDrone.name}: Tạm dừng bay`)}>
+                    <Pause size={14} /> Pause
+                  </button>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`🏠 ${activeDrone.name}: Kích hoạt RTL - Return To Launch`)}>
+                    <Home size={14} /> RTL
+                  </button>
+                  <button className="cc-qaction cc-qaction-danger" onClick={() => alert(`🚨 ${activeDrone.name}: LỆNH KHẨN CẤP`)}>
+                    <Siren size={14} /> Khẩn
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 text-center text-[var(--color-ink-muted)] text-sm">Chưa có drone hoạt động</div>
+            )}
+          </div>
+
+          {/* Fleet rail with search & filter */}
+          <div className="cc-card">
+            <div className="cc-card-head">
+              <div>
+                <div className="cc-card-title">DRONE FLEET</div>
+                <div className="cc-card-sub">{fleetStats.total} vehicles registered</div>
+              </div>
+            </div>
+            <div className="cc-fleet-search">
+              <input
+                className="cc-fleet-search-input"
+                placeholder="Tìm kiếm drone..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <select className="cc-fleet-search-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <option value="all">Tất cả</option>
+                <option value="online">Online</option>
+                <option value="warning">Warning</option>
+                <option value="offline">Offline</option>
               </select>
-              <button className="cc-cmd-btn auto" style={{ padding: '8px 15px', fontSize: '11px', flex: '0 0 auto' }} onClick={dispatchNewPackage}>
-                <i className="fa-solid fa-plus"></i> Tạo Đơn
-              </button>
             </div>
-
-            {/* Control Row */}
-            <div className="cc-control-row">
-              <button className="cc-cmd-btn rtl" onClick={triggerRTL}>
-                <i className="fa-solid fa-triangle-exclamation"></i> Khẩn Cấp Quay Về (RTL)
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="cc-column cc-column-right">
-          {/* HUD Panel */}
-          <div className="cc-panel">
-            <div className="cc-panel-header">
-              <div className="cc-panel-title">Cảm Biến Vật Lý (HUD)</div>
-              <div className="cc-panel-subtitle">Chạy luồng: 30Hz</div>
-            </div>
-            <div className="cc-hud-grid">
-              <div className="cc-hud-cell">
-                <div className="cc-hud-label">Tốc độ (Speed)</div>
-                <div className="cc-hud-value" id="cc-hudSpeed">{droneSpeed.toFixed(1)}<span className="cc-hud-unit">km/h</span></div>
-                <canvas className="cc-hud-sparkline" id="cc-sparkline-Speed"></canvas>
-              </div>
-              <div className="cc-hud-cell">
-                <div className="cc-hud-label">Độ cao (Alt)</div>
-                <div className="cc-hud-value" id="cc-hudAlt">{droneAlt.toFixed(1)}<span className="cc-hud-unit">m</span></div>
-                <canvas className="cc-hud-sparkline" id="cc-sparkline-Alt"></canvas>
-              </div>
-              <div className="cc-hud-cell">
-                <div className="cc-hud-label">Pin (Battery)</div>
-                <div className={`cc-hud-value ${droneBattery < 25 ? 'warn' : ''}`} id="cc-hudBatt">{droneBattery.toFixed(1)}<span className="cc-hud-unit">%</span></div>
-                <canvas className="cc-hud-sparkline" id="cc-sparkline-Batt"></canvas>
-              </div>
+            <div className="cc-fleet-list">
+              {filteredFleetDrones.length === 0 && (
+                <div className="text-center text-[var(--color-ink-muted)] text-xs py-6">Không tìm thấy drone</div>
+              )}
+              {filteredFleetDrones.map((d) => {
+                const battColor = batteryColorHex(d.battery);
+                return (
+                  <button
+                    key={String(d.id)}
+                    className={`cc-fleet-item ${String(activeDroneId) === String(d.id) || (!activeDroneId && d.id === activeDrone?.id) ? 'active' : ''}`}
+                    onClick={() => setActiveDroneId(String(d.id))}
+                  >
+                    <span className={`cc-fleet-led ${d.status}`}></span>
+                    <span className="cc-fleet-name">{d.name}</span>
+                    <span className="cc-fleet-alt">{d.altitude ?? 0}m</span>
+                    <span className="cc-fleet-batt">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full mr-1" style={{ background: battColor }}></span>
+                      {d.battery}%
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* IoT Dock Panel */}
-          <div className="cc-panel">
-            <div className="cc-panel-header">
-              <div className="cc-panel-title">Trạm Sạc Docker Base IoT</div>
-              <div className="cc-panel-subtitle">Mã Node: #DK-01</div>
-            </div>
-            <div className="cc-dock-monitor">
-              <div className="cc-dock-svg-wrap">
-                <svg width="80" height="80" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" fill="none" stroke="#1F2833" strokeWidth="4" />
-                  <path id="cc-svgDoor" d={iotDoor === "ĐÃ MỞ" ? "M 20 20 L 80 20" : "M 20 50 L 80 50"} stroke={iotDoor === "ĐÃ MỞ" ? "#66FCF1" : "#FF007F"} strokeWidth="6" strokeLinecap="round"/>
-                  <g id="cc-svgGear" style={iotCharge === "SẠC SIÊU TỐC" ? { animation: 'cc-spin-gear 1s linear infinite', transformOrigin: '50px 50px' } : {}}>
-                    <circle cx="50" cy="50" r="10" fill="none" stroke="#66FCF1" strokeWidth="3" strokeDasharray="6,4"/>
-                  </g>
-                </svg>
+          {/* Order table */}
+          <div className="cc-card">
+            <div className="cc-card-head">
+              <div>
+                <div className="cc-card-title">MISSION QUEUE</div>
+                <div className="cc-card-sub">Medical dispatch orders</div>
               </div>
-              <div className="cc-iot-grid">
-                <div className="cc-iot-row">
-                  <span className="cc-iot-tag">Cửa khoang</span>
-                  <span className={`cc-iot-state ${iotDoor === "ĐÃ MỞ" ? 'ok' : iotDoor.includes("ĐANG") ? 'transitioning' : 'lock'}`}>{iotDoor}</span>
-                </div>
-                <div className="cc-iot-row">
-                  <span className="cc-iot-tag">Ngàm khóa cơ</span>
-                  <span className={`cc-iot-state ${iotGear === "ĐÃ NHẢ" ? 'ok' : iotGear.includes("ĐANG") ? 'transitioning' : 'lock'}`}>{iotGear}</span>
-                </div>
-                <div className="cc-iot-row">
-                  <span className="cc-iot-tag">Chế độ sạc</span>
-                  <span className="cc-iot-state ok">{iotCharge}</span>
-                </div>
-                <div className="cc-iot-row">
-                  <span className="cc-iot-tag">Công suất</span>
-                  <span className="cc-iot-state ok">{iotPower}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* SQL Table Panel */}
-          <div className="cc-panel cc-table-panel">
-            <div className="cc-panel-header">
-              <div className="cc-panel-title">Lịch Trình Vận Chuyển Core SQL</div>
-              <div className="cc-panel-subtitle">Đơn hàng real-time từ bác sĩ (medical_dispatch)</div>
+              <span className="cc-queue-count">{sqlDatabase.length}</span>
             </div>
             <div className="cc-table-scroll">
-              <table className="cc-data-table">
+              <table className="cc-table">
                 <thead>
                   <tr>
-                    <th>Mã đơn</th>
-                    <th>Bác sĩ</th>
+                    <th>Mã</th>
                     <th>Y phẩm</th>
                     <th>Điểm nhận</th>
-                    <th>Mức độ</th>
                     <th>Trạng thái</th>
-                    <th>Thao tác</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>{renderSqlTable()}</tbody>
               </table>
             </div>
           </div>
-
-          {/* Terminal Panel */}
-          <div className="cc-panel cc-terminal-panel">
-            <div className="cc-panel-header">
-              <div className="cc-panel-title">Hộp Đen Log Viễn Thám (NoSQL)</div>
-              <div className="cc-panel-subtitle">Hệ cơ sở dữ liệu Timescale JSON Telemetry</div>
-            </div>
-            <div className="cc-terminal-filters">
-              {['all', 'mav', 'sys', 'cmd'].map((f) => {
-                const filterLabel = f === 'all' ? 'Tất cả' : f === 'mav' ? 'MAVLink' : f === 'sys' ? 'Hệ thống' : 'Mệnh lệnh';
-                return (
-                  <button
-                    key={f}
-                    className={`cc-filter-btn ${activeLogFilter === f ? 'active' : ''}`}
-                    onClick={() => { setActiveLogFilter(f); playBeep(440, 0.08); }}
-                  >
-                    {filterLabel}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="cc-terminal">
-              {renderLogs()}
-            </div>
-          </div>
-        </div>
+        </aside>
       </div>
 
-      {/* ===== DISPATCH PREPARE PANEL (Modal) ===== */}
+      {/* ============================================================
+          BOTTOM LOG TERMINAL
+      ============================================================ */}
+      <footer className="cc-terminal-bar">
+        <div className="cc-terminal-head">
+          <div className="flex items-center gap-2">
+            <Activity size={12} className="text-emerald-400" />
+            <span className="cc-terminal-title">TELEMETRY LOG</span>
+            <span className="text-[9px] text-[var(--color-ink-muted)] font-mono">NoSQL · MAVLink Stream</span>
+          </div>
+          <div className="cc-terminal-filters">
+            {['all', 'mav', 'sys', 'cmd'].map((f) => (
+              <button
+                key={f}
+                className={`cc-filter-btn ${activeLogFilter === f ? 'active' : ''}`}
+                onClick={() => { setActiveLogFilter(f); playBeep(440, 0.08); }}
+              >
+                {f === 'all' ? 'Tất cả' : f === 'mav' ? 'MAVLink' : f === 'sys' ? 'Hệ thống' : 'Mệnh lệnh'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="cc-terminal-body">
+          {renderLogs().length === 0 ? (
+            <p className="text-[var(--color-ink-muted)] text-[11px]">Awaiting telemetry stream...</p>
+          ) : renderLogs()}
+        </div>
+      </footer>
+
+      {/* ============================================================
+          DISPATCH MODAL
+      ============================================================ */}
       {dispatchOrder && (
         <div className="cc-dispatch-overlay" onClick={closeDispatchPanel}>
           <div className="cc-dispatch-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="cc-panel-header">
+            <div className="flex items-start justify-between mb-4">
               <div>
-                <div className="cc-panel-title">
-                  <i className="fa-solid fa-box-open" style={{ marginRight: 6 }}></i>
-                  Chuẩn bị đơn hàng — #{dispatchOrder.id}
+                <div className="cc-card-title flex items-center gap-2 text-base">
+                  <Box size={16} className="text-emerald-400" />
+                  Chuẩn bị đơn hàng — #{String(dispatchOrder.id).slice(-6)}
                 </div>
-                <div className="cc-panel-subtitle">Từ bác sĩ: {dispatchOrder.doctor}</div>
+                <div className="cc-card-sub mt-1">Từ bác sĩ: {dispatchOrder.doctor}</div>
               </div>
-              <button className="cc-nav-btn" onClick={closeDispatchPanel}>
-                <i className="fa-solid fa-xmark"></i> Đóng
+              <button className="cc-icon-btn" onClick={closeDispatchPanel}>
+                <X size={16} />
               </button>
             </div>
 
-            {/* Thông tin y phẩm bác sĩ yêu cầu */}
             <div className="cc-dispatch-info">
               <div className="cc-dispatch-info-row">
-                <span className="cc-dispatch-info-label"><i className="fa-solid fa-syringe"></i> Y phẩm</span>
+                <span className="cc-dispatch-info-label"><Package size={12} /> Y phẩm</span>
                 <span className="cc-dispatch-info-value">{dispatchOrder.item}</span>
               </div>
               <div className="cc-dispatch-info-row">
-                <span className="cc-dispatch-info-label"><i className="fa-solid fa-location-dot"></i> Điểm nhận</span>
+                <span className="cc-dispatch-info-label"><MapPin size={12} /> Điểm nhận</span>
                 <span className="cc-dispatch-info-value">{dispatchOrder.destination}</span>
               </div>
               <div className="cc-dispatch-info-row">
-                <span className="cc-dispatch-info-label"><i className="fa-solid fa-triangle-exclamation"></i> Mức độ</span>
-                <span className="cc-dispatch-info-value" style={{ color: dispatchOrder.urgency === 'Cấp cứu khẩn' ? 'var(--danger)' : 'var(--text-main)' }}>
+                <span className="cc-dispatch-info-label"><TriangleAlert size={12} /> Mức độ</span>
+                <span className="cc-dispatch-info-value" style={{ color: dispatchOrder.urgency === 'Cấp cứu khẩn' ? '#EF4444' : '#E5EAF3' }}>
                   {dispatchOrder.urgency === 'Cấp cứu khẩn' ? '🚨 ' : '✅ '}{dispatchOrder.urgency}
                 </span>
               </div>
               {dispatchOrder.notes && (
                 <div className="cc-dispatch-info-row">
-                  <span className="cc-dispatch-info-label"><i className="fa-regular fa-note-sticky"></i> Ghi chú</span>
+                  <span className="cc-dispatch-info-label"><Droplets size={12} /> Ghi chú</span>
                   <span className="cc-dispatch-info-value">{dispatchOrder.notes}</span>
                 </div>
               )}
             </div>
 
-            {/* Chọn drone */}
-            <div className="cc-dispatch-field">
-              <label className="cc-dispatch-label">Chọn Drone vận chuyển</label>
+            <div className="mt-4">
+              <label className="cc-form-label">Chọn Drone vận chuyển</label>
               <select
-                className="cc-dispatch-select"
-                style={{ width: '100%' }}
+                className="cc-dispatch-select w-full"
                 value={selectedDroneId}
                 onChange={(e) => setSelectedDroneId(e.target.value)}
               >
@@ -975,13 +1203,11 @@ const [pkgName, setPkgName] = useState("");
               </select>
             </div>
 
-            {/* Thời gian bay tới đích */}
-            <div className="cc-dispatch-field">
-              <label className="cc-dispatch-label">Thời gian bay tới đích (phút)</label>
+            <div className="mt-3">
+              <label className="cc-form-label">Thời gian bay tới đích (phút)</label>
               <input
                 type="number"
-                className="cc-dispatch-input"
-                style={{ width: '100%' }}
+                className="cc-dispatch-input w-full"
                 min={1}
                 max={120}
                 value={flightMinutes}
@@ -989,22 +1215,20 @@ const [pkgName, setPkgName] = useState("");
               />
             </div>
 
-            {/* Buttons */}
-            <div className="cc-control-row">
+            <div className="flex gap-2 mt-5">
               <button
-                className="cc-cmd-btn auto"
+                className="cc-qaction cc-qaction-emerald flex-1 justify-center"
                 onClick={confirmPrepare}
                 disabled={preparingId === dispatchOrder._backendId}
               >
-                <i className="fa-solid fa-box"></i> Xác nhận chuẩn bị
+                <Box size={14} /> Xác nhận chuẩn bị
               </button>
               <button
-                className="cc-cmd-btn auto"
-                style={{ borderColor: 'rgba(16,185,129,0.6)' }}
+                className="cc-qaction cc-qaction-cyan flex-1 justify-center"
                 onClick={takeOff}
                 disabled={preparingId === dispatchOrder._backendId}
               >
-                <i className="fa-solid fa-rocket"></i> Take Off
+                <Rocket size={14} /> Take Off
               </button>
             </div>
           </div>
@@ -1015,3 +1239,4 @@ const [pkgName, setPkgName] = useState("");
 }
 
 export default CommandCenter;
+

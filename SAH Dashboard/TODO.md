@@ -1,15 +1,21 @@
-# SAH Dashboard - Zipline Professional Refactor
+# Drone Command Center UI/UX Redesign — Task Todo
 
-## Progress Tracking
+## Steps
+- [x] Explore project structure & read relevant files
+- [x] Present plan & get user approval
+- [x] Install tailwindcss, @tailwindcss/vite, lucide-react
+- [x] Rewrite `CommandCenter.jsx` → Futuristic/SaaS layout (70/30 split, KPI header, fleet rail, telemetry card, quick actions, dispatch modal, log terminal)
+- [x] Repair corrupted sparkline block in `CommandCenter.jsx`
+- [x] Update `vite.config.js` — add Tailwind CSS v4 plugin
+- [x] Update `src/index.css` — import Tailwind + Inter/JetBrains Mono fonts + tactical theme tokens
+- [x] Update `index.html` — add Inter + JetBrains Mono Google Fonts
+- [x] Rewrite `src/styles/commandCenter.css` — full Futuristic dark theme (Palantir/Skydio style)
+- [x] Verify build (`npm run build`) — clean success
+- [x] Final review
 
-- [x] Plan approved
-- [x] Step 1: Update App.css - CSS variables, remove scanlines/vignette/grid
-- [x] Step 2: Update dashboard.css - Complete rewrite, remove cyberpunk elements
-- [x] Step 3: Update commandCenter.css - Complete rewrite, remove cyberpunk elements
-- [x] Step 4: Update login.css - Minor refinements
-- [x] Step 5: Update Dashboard.jsx - Remove emoji icons, clean up
-- [x] Step 6: Update DroneCard.jsx - Remove emoji icons, simplify layout
-- [x] Step 7: Update DroneDetail.jsx - Remove emoji icons, simplify controls
-- [x] Step 8: Update MapView.jsx - Remove emoji icons, clean up
-- [x] Step 9: Update LoginRegister.jsx - Remove emoji icons
-- [x] Step 10: Verify build and test
+## Notes
+- CommandCenter.jsx now uses Lucide icons + Tailwind utility classes.
+- Added live-occurring sparkline history for Speed / Altitude / Battery drawn on canvas HUD.
+- Font @import placed before Tailwind import to satisfy CSS spec (no build warning).
+- Build: `✓ built in 710ms` — no errors.
+
