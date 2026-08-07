@@ -126,7 +126,7 @@ function LoginRegister({ onLogin }) {
 
         {/* Login Form */}
         {activeTab === 'login' && (
-          <form className="auth-form" onSubmit={handleLogin}>
+          <form key="login" className="auth-form auth-form-enter-left" onSubmit={handleLogin}>
             <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
@@ -176,7 +176,7 @@ function LoginRegister({ onLogin }) {
 
         {/* Register Form */}
         {activeTab === 'register' && (
-          <form className="auth-form" onSubmit={handleRegister}>
+          <form key="register" className="auth-form auth-form-enter-right" onSubmit={handleRegister}>
             <div className="auth-input-group">
               <label className="auth-label">Họ và tên</label>
               <div className="auth-input-wrapper">
