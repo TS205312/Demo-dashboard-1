@@ -28,14 +28,26 @@ function App() {
   };
 
   if (!user) {
-    return <LoginRegister onLogin={handleLogin} />;
+    return (
+      <div className="page-transition" key="login">
+        <LoginRegister onLogin={handleLogin} />
+      </div>
+    );
   }
 
   if (showCommandCenter && selectedDroneForCommandCenter) {
-    return <CommandCenter drone={selectedDroneForCommandCenter} onBackToFleet={handleBackToFleet} />;
+    return (
+      <div className="page-transition" key="command-center">
+        <CommandCenter drone={selectedDroneForCommandCenter} onBackToFleet={handleBackToFleet} />
+      </div>
+    );
   }
 
-  return <Dashboard user={user} onLogout={handleLogout} onOpenCommandCenter={handleOpenCommandCenter} />;
+  return (
+    <div className="page-transition" key="dashboard">
+      <Dashboard user={user} onLogout={handleLogout} onOpenCommandCenter={handleOpenCommandCenter} />
+    </div>
+  );
 }
 
 export default App;

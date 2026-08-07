@@ -206,11 +206,13 @@ function Dashboard({ user, onLogout }) {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'fleet' ? renderFleetTab() : activeTab === 'orders' ? (
-        <OrdersPage />
-      ) : (
-        <CommandCenter drones={dronesData} onBackToFleet={handleBackToFleet} />
-      )}
+      <div className="tab-content-enter" key={activeTab}>
+        {activeTab === 'fleet' ? renderFleetTab() : activeTab === 'orders' ? (
+          <OrdersPage />
+        ) : (
+          <CommandCenter drones={dronesData} onBackToFleet={handleBackToFleet} />
+        )}
+      </div>
     </div>
   );
 }
