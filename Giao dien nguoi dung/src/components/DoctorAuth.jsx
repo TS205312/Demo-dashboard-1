@@ -128,7 +128,7 @@ export default function DoctorAuth({ onLogin }) {
   };
 
   return (
-    <div className="doctor-auth-container">
+    <div className="doctor-auth-container page-transition">
       {/* Background decoration */}
       <div className="doctor-auth-glow doctor-auth-glow-1" />
       <div className="doctor-auth-glow doctor-auth-glow-2" />
