@@ -1149,6 +1149,59 @@
   to { transform: rotate(360deg); }
 }
 
+/* ===== TAB CONTENT TRANSITION (page switch animation) ===== */
+.tab-content-enter {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: tabContentIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tabContentIn {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Animated active tab indicator */
+.tab-btn {
+  position: relative;
+}
+.tab-btn.active {
+  animation: tabActivate 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tabActivate {
+  0% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #06B6D4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+  animation: tabIndicator 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tabIndicator {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
 /* ===== TAB BAR ===== */
 .tab-bar {
   display: flex;
