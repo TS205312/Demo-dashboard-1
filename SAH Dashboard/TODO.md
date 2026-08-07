@@ -1,24 +1,30 @@
-# Drone Command Center UI/UX Redesign — Task Todo
+# SAH Drone Command Center — Liquid Glass UI Redesign
+
+## Goal
+Redesign the Drone Command Center (CommandCenter) as a Futuristic/SaaS "liquid glass" dashboard with Tailwind CSS v4 + lucide-react, keeping Leaflet map and all backend/flight-simulation logic intact.
 
 ## Steps
-- [x] Explore project structure & read relevant files
-- [x] Present plan & get user approval
-- [x] Install tailwindcss, @tailwindcss/vite, lucide-react
-- [x] Rewrite `CommandCenter.jsx` → Futuristic/SaaS layout (70/30 split, KPI header, fleet rail, telemetry card, quick actions, dispatch modal, log terminal)
-- [x] Repair corrupted sparkline block in `CommandCenter.jsx`
-- [x] Update `vite.config.js` — add Tailwind CSS v4 plugin
-- [x] Update `src/index.css` — import Tailwind + Inter/JetBrains Mono fonts + tactical theme tokens
-- [x] Update `index.html` — add Inter + JetBrains Mono Google Fonts
-- [x] Rewrite `src/styles/commandCenter.css` — full Futuristic dark theme (Palantir/Skydio style)
-- [x] Verify build (`npm run build`) — clean success
-- [x] Final review
+
+- [x] 1. Install dependencies: `tailwindcss`, `@tailwindcss/vite`, `lucide-react`
+- [x] 2. Configure Tailwind v4 plugin in `vite.config.js`
+- [x] 3. Set up global Tailwind theme + liquid glass custom utilities in `src/index.css`
+- [x] 4. Add Google Fonts (Inter + JetBrains Mono) + Leaflet/FontAwesome in `index.html`
+- [x] 5. Rewrite `src/components/CommandCenter.jsx` with liquid glass layout:
+  - Header (brand, KPI chips, phase badge, clock, alert popover)
+  - 70/30 workspace (left map panel + HUD overlays, right side panel)
+  - Vehicle card, telemetry grid, battery, quick actions, fleet rail, mission queue
+  - Dispatch modal, alarm state glow, log terminal
+  - Keep flight state machine, Leaflet map wiring, audio engine, sparklines, logs, backend sync
+- [x] 6. Rewrite `src/styles/commandCenter.css` with liquid glass styling:
+  - Frosted glass panels (backdrop-filter blur/saturate)
+  - Vibrant animated gradient backdrop + aurora
+  - Radar sweep / beam scan overlays on map
+  - KPI chips, pill controls, responsive breakpoints (1100px/900px)
+- [x] 7. Verify build (`npm run build`) passes without errors
+- [x] 8. Run dev server & visually confirm rendering
 
 ## Notes
-- CommandCenter.jsx now uses Lucide icons + Tailwind utility classes.
-- Added live-occurring sparkline history for Speed / Altitude / Battery drawn on canvas HUD.
-- Font @import placed before Tailwind import to satisfy CSS spec (no build warning).
-- Build: `✓ built in 710ms` — no errors.
-- Restyled to **Liquid Glass (iOS-style)** theme: updated `src/styles/commandCenter.css` glassmorphism controls/badges + `src/index.css` var() tokens (glass bg, --accent #10B981).
-- Committed `00a9aa8` & pushed to `blackboxai/command-center-redesign`.
-- PR opened: **https://github.com/TS205312/Demo-dashboard-1/pull/15**
-
+- Leaflet loaded via CDN in `index.html` (global `window.L`)
+- Font Awesome kept for map popups / legacy compatibility
+- Tailwind v4 uses `@import "tailwindcss"` + `@theme` (no tailwind.config needed)
+- Custom utilities defined via `@utility` in `index.css`

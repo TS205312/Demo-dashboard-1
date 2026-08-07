@@ -303,6 +303,37 @@
   border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
+/* ===== FORM TRANSITION ANIMATION ===== */
+.auth-form-enter-left {
+  animation: authFormEnterLeft 0.35s ease;
+}
+
+.auth-form-enter-right {
+  animation: authFormEnterRight 0.35s ease;
+}
+
+@keyframes authFormEnterLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes authFormEnterRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   .auth-card {
