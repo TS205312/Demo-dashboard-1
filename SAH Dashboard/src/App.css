@@ -1,21 +1,25 @@
-/* ===== CSS VARIABLES - ZIPLINE-INSPIRED DARK THEME ===== */
+/* ===== CSS VARIABLES - LIQUID GLASS THEME (iOS-style, applied app-wide) ===== */
 :root {
-  --bg-main: #0d1117;
-  --bg-panel: #161b22;
-  --bg-card: #1c2128;
-  --bg-hover: #21262d;
-  --accent: #10b981;
+  --bg-main: rgba(255, 255, 255, 0.045);
+  --bg-panel: rgba(255, 255, 255, 0.10);
+  --bg-card: rgba(255, 255, 255, 0.13);
+  --bg-hover: rgba(255, 255, 255, 0.20);
+  --accent: #10B981;
   --accent-rgb: 16, 185, 129;
-  --success: #3fb950;
-  --warning: #d29922;
-  --danger: #f85149;
-  --text-main: #e6edf3;
-  --text-secondary: #8b949e;
-  --text-muted: #484f58;
-  --border: #30363d;
-  --border-light: #21262d;
---font-display: 'Times New Roman', Georgia, serif;
-  --font-mono: 'Times New Roman', 'Courier New', monospace;
+  --success: #34D399;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --text-main: #F1F5F9;
+  --text-secondary: rgba(241, 245, 249, 0.78);
+  --text-muted: rgba(241, 245, 249, 0.5);
+  --border: rgba(255, 255, 255, 0.22);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
+
+  /* Glass surface helpers */
+  --glass-bg: linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.07) 100%);
+  --glass-border: rgba(255,255,255,0.24);
 }
 
 /* ===== RESET & GLOBAL ===== */
@@ -34,11 +38,18 @@ html, body, #root {
 }
 
 body {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans, var(--font-display));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-main);
+  background: var(--color-void, #0B0F19);
   color: var(--text-main);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(14, 165, 233, 0.35), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.32), transparent 45%),
+    radial-gradient(circle at 20% 85%, rgba(16, 185, 129, 0.30), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.28), transparent 45%),
+    linear-gradient(160deg, #0E2A47 0%, #1E1B4B 35%, #134E4A 70%, #0B0F19 100%);
+  background-attachment: fixed;
 }
 
 #root {
@@ -52,25 +63,33 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: rgba(255, 255, 255, 0.22);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 /* ===== SELECTION ===== */
 ::selection {
-  background: rgba(var(--accent-rgb), 0.3);
+  background: rgba(var(--accent-rgb), 0.4);
   color: #fff;
 }
 
-/* ===== SAH-TECH LOGO GLOW & PULSE (DARK THEME) ===== */
+/* ===== FROSTED SURFACE UTILITY ===== */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+}
+
+/* ===== SAH-TECH LOGO GLOW & PULSE ===== */
 .sah-logo-glow {
   position: relative;
   display: inline-flex;
@@ -82,7 +101,7 @@ body {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, transparent 70%);
   animation: sah-logo-pulse-ring 2s ease-in-out infinite;
   pointer-events: none;
 }
@@ -91,18 +110,18 @@ body {
   position: absolute;
   inset: -2px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 60%);
   animation: sah-logo-pulse-ring 2s ease-in-out infinite 0.5s;
   pointer-events: none;
 }
 .sah-logo-pulse {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)) drop-shadow(0 0 16px rgba(16, 185, 129, 0.2));
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.45)) drop-shadow(0 0 16px rgba(16, 185, 129, 0.22));
   transition: filter 0.3s ease;
 }
 .sah-logo-pulse:hover {
-  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.3));
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.35));
 }
 
 @keyframes sah-logo-pulse-ring {
@@ -111,15 +130,15 @@ body {
   100% { transform: scale(0.95); opacity: 0.7; }
 }
 
-/* Logo glow in auth card (dashboard login) */
+/* Logo glow in auth card */
 .auth-logo-glow {
-  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25));
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.55)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.30));
   animation: sah-logo-auth-pulse 3s ease-in-out infinite;
 }
 
 @keyframes sah-logo-auth-pulse {
-  0% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25)); }
-  50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.7)) drop-shadow(0 0 40px rgba(16, 185, 129, 0.35)); }
-  100% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.25)); }
+  0% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.55)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.30)); }
+  50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.75)) drop-shadow(0 0 40px rgba(16, 185, 129, 0.40)); }
+  100% { filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.55)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.30)); }
 }
 
