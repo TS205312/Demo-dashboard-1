@@ -162,6 +162,28 @@ function Dashboard({ user, onLogout }) {
             <p className="header-subtitle">Giám sát và điều khiển đội bay</p>
           </div>
         </div>
+
+        {/* Page tabs - same row as logo */}
+        <nav className="header-tabs">
+          <button
+            className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
+            onClick={() => setActiveTab('fleet')}
+          >
+            <i className="fa-solid fa-helicopter"></i> Fleet
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
+            onClick={() => setActiveTab('commandcenter')}
+          >
+            <i className="fa-solid fa-tower-broadcast"></i> Command Center
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+            onClick={() => setActiveTab('orders')}
+          >
+            <i className="fa-solid fa-clipboard-list"></i> Đơn hàng
+          </button>
+        </nav>
         <div className="header-right">
           <div className="header-datetime">
             {new Date().toLocaleDateString('vi-VN', {
@@ -182,28 +204,6 @@ function Dashboard({ user, onLogout }) {
           )}
         </div>
       </header>
-
-      {/* Tab Navigation */}
-      <div className="tab-bar">
-        <button
-          className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
-          onClick={() => setActiveTab('fleet')}
-        >
-          <i className="fa-solid fa-helicopter"></i> Fleet
-        </button>
-<button
-          className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
-          onClick={() => setActiveTab('commandcenter')}
-        >
-          <i className="fa-solid fa-tower-broadcast"></i> Command Center
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
-          onClick={() => setActiveTab('orders')}
-        >
-          <i className="fa-solid fa-clipboard-list"></i> Đơn hàng
-        </button>
-      </div>
 
       {/* Tab Content */}
       <div className="tab-content-enter" key={activeTab}>

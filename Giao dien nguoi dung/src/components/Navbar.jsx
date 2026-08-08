@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export default function Navbar({ user, onLogout }) {
+export default function Navbar({ user, onLogout, tabBar }) {
   const navbarRef = useRef(null);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function Navbar({ user, onLogout }) {
   return (
     <nav className="navbar" id="navbar" ref={navbarRef}>
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-[76px] items-center justify-between">
+        <div className="flex min-h-[76px] flex-wrap items-center justify-between">
           {/* Logo / Brand */}
           <div className="flex min-w-0 items-center gap-3.5">
             <div className="sah-logo-glow shrink-0">
@@ -36,6 +36,9 @@ export default function Navbar({ user, onLogout }) {
               <p className="text-[11px] text-white/50 font-medium leading-tight">Cổng đặt hàng Y tế</p>
             </div>
           </div>
+
+          {/* Page tabs - same row as logo */}
+          <div className="zl-navbar-center">{tabBar}</div>
 
           {/* Right: Doctor info & status */}
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
