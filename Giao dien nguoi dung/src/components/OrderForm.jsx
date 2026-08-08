@@ -10,22 +10,22 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
   };
 
   return (
-    <div className="glass-card p-5 sm:p-6">
-      <div className="flex items-center gap-2 mb-5">
-        <i className="fa-solid fa-clipboard-list text-medical-500 text-lg"></i>
-        <h2 className="text-base font-bold text-slate-800">Thông tin đơn hàng</h2>
+    <div className="glass-card relative overflow-hidden p-5 sm:p-6">
+      <div className="mb-5 flex items-center gap-3 border-b border-white/10 pb-4">
+        <i className="fa-solid fa-clipboard-list inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 text-lg text-medical-500 ring-1 ring-emerald-300/15"></i>
+        <h2 className="text-base font-bold text-ink">Thông tin đơn hàng</h2>
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         {/* Mặt hàng y tế */}
         <div>
-          <label htmlFor="medicalItem" className="block text-xs font-semibold text-slate-600 mb-1.5">
-            <i className="fa-solid fa-syringe mr-1 text-medical-400"></i> Mặt hàng y tế <span className="text-red-500">*</span>
+          <label htmlFor="medicalItem" className="form-label tracking-[0.01em]">
+            <i className="fa-solid fa-syringe mr-1 text-medical-500"></i> Mặt hàng y tế <span className="text-red-400">*</span>
           </label>
           <select
             id="medicalItem"
             name="medicalItem"
-            className="form-select w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-medical-300 focus:border-medical-400 transition-shadow"
+            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
             required
           >
             <option value="" disabled selected>-- Chọn mặt hàng --</option>
@@ -42,13 +42,13 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
 
         {/* Điểm nhận */}
         <div>
-          <label htmlFor="destination" className="block text-xs font-semibold text-slate-600 mb-1.5">
-            <i className="fa-solid fa-location-dot mr-1 text-red-400"></i> Điểm nhận <span className="text-red-500">*</span>
+          <label htmlFor="destination" className="form-label tracking-[0.01em]">
+            <i className="fa-solid fa-location-dot mr-1 text-red-400"></i> Điểm nhận <span className="text-red-400">*</span>
           </label>
           <select
             id="destination"
             name="destination"
-            className="form-select w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-medical-300 focus:border-medical-400 transition-shadow"
+            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
             required
           >
             <option value="" disabled selected>-- Chọn bệnh viện / điểm nhận --</option>
@@ -65,13 +65,13 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
 
         {/* Mức độ khẩn cấp */}
         <div>
-          <label htmlFor="urgency" className="block text-xs font-semibold text-slate-600 mb-1.5">
-            <i className="fa-solid fa-triangle-exclamation mr-1 text-amber-500"></i> Mức độ khẩn cấp <span className="text-red-500">*</span>
+          <label htmlFor="urgency" className="form-label tracking-[0.01em]">
+            <i className="fa-solid fa-triangle-exclamation mr-1 text-amber-400"></i> Mức độ khẩn cấp <span className="text-red-400">*</span>
           </label>
           <select
             id="urgency"
             name="urgency"
-            className="form-select w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-medical-300 focus:border-medical-400 transition-shadow"
+            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
             required
             onChange={onUrgencyChange}
           >
@@ -83,14 +83,14 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
 
         {/* Ghi chú (optional) */}
         <div>
-          <label htmlFor="notes" className="block text-xs font-semibold text-slate-600 mb-1.5">
-            <i className="fa-regular fa-note-sticky mr-1 text-slate-400"></i> Ghi chú thêm
+          <label htmlFor="notes" className="form-label tracking-[0.01em]">
+            <i className="fa-regular fa-note-sticky mr-1 text-ink-muted"></i> Ghi chú thêm
           </label>
           <textarea
             id="notes"
             name="notes"
             rows="2"
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-medical-300 focus:border-medical-400 transition-shadow resize-none"
+            className="form-glass resize-none shadow-inner shadow-black/10 hover:border-white/25"
             placeholder="Ví dụ: Cần giữ lạnh, kèm theo chỉ dẫn đặc biệt..."
           ></textarea>
         </div>
@@ -99,7 +99,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         <button
           type="submit"
           id="submitBtn"
-          className="btn-primary"
+          className="btn-primary rounded-2xl !py-3 shadow-[0_18px_42px_rgba(16,185,129,0.22)]"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -114,11 +114,10 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
           )}
         </button>
 
-        <p className="text-[11px] text-slate-400 text-center mt-1">
-          <i className="fa-regular fa-clock mr-1"></i> Thời gian giao hàng ước tính: <strong className="text-slate-600">{estTime}</strong>
+        <p className="mt-1 rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-center text-[11px] text-ink-muted">
+          <i className="fa-regular fa-clock mr-1"></i> Thời gian giao hàng ước tính: <strong className="text-ink-soft">{estTime}</strong>
         </p>
       </form>
     </div>
   );
 }
-
