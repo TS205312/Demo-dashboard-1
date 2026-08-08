@@ -10,7 +10,6 @@ import TrackingMap from './components/TrackingMap';
 import OrderHistory from './components/OrderHistory';
 import SuccessModal from './components/SuccessModal';
 import Toast from './components/Toast';
-import Demo from './components/ui/demo';
 
 import './App.css';
 
@@ -25,6 +24,8 @@ function App() {
       return null;
     }
   });
+
+  const [activeTab, setActiveTab] = useState('create'); // 'create' | 'track' | 'history'
 
   const {
     orders,
@@ -85,6 +86,7 @@ function App() {
 
   const handleSelectOrder = useCallback((orderId) => {
     setActiveOrder(orderId);
+    setActiveTab('track');
     setToast({ message: `📋 Đang theo dõi đơn hàng #SAH-${String(orderId).padStart(4, '0')}`, type: 'info' });
   }, [setActiveOrder, setToast]);
 
@@ -97,56 +99,104 @@ function App() {
     return <DoctorAuth onLogin={handleLogin} />;
   }
 
+  const renderTabBar = () => (
+    <div className="tab-bar">
+      <button
+        className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
+        onClick={() => setActiveTab('create')}
+      >
+        <i className="fa-solid fa-clipboard-list"></i> Tạo đơn
+      </button>
+      <button
+        className={`tab-btn ${activeTab === 'track' ? 'active' : ''}`}
+        onClick={() => setActiveTab('track')}
+      >
+        <i className="fa-solid fa-map-location-dot"></i> Theo dõi
+      </button>
+      <button
+        className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+        onClick={() => setActiveTab('history')}
+      >
+        <i className="fa-solid fa-clock-rotate-left"></i> Lịch sử
+      </button>
+    </div>
+  );
+
   return (
     <>
       <Navbar user={user} onLogout={handleLogout} />
 
-      <main className="page-transition max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
               <i className="fa-solid fa-truck-medical text-medical-500"></i>
               Đặt hàng vận chuyển cấp cứu
             </h1>
-            <p className="text-sm text-slate-400 mt-0.5">Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone</p>
+            <p className="text-sm text-ink-muted mt-0.5">Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone</p>
           </div>
-          <div className="text-xs text-slate-400 bg-white px-3 py-1.5 rounded-full border border-slate-200 inline-flex items-center gap-1.5 self-start">
+          <div className="text-xs text-ink-soft bg-white/10 px-3 py-1.5 rounded-full border border-white/15 inline-flex items-center gap-1.5 self-start backdrop-blur-md">
             <i className="fa-regular fa-clock"></i>
             <span>{liveTime}</span>
           </div>
         </div>
 
-        {/* Grid: Form + Map */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Col 1-2: Order Form + Timeline */}
-          <div className="lg:col-span-2">
-            <OrderForm
-              onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
-              onUrgencyChange={handleUrgencyChange}
-              estTime={estTime}
-            />
-            <OrderTimeline activeOrder={activeOrder} />
-          </div>
+        {/* Tab Bar */}
+        {renderTabBar()}
 
-          {/* Col 3-5: Map + History */}
-          <div className="lg:col-span-3 space-y-6">
-            <TrackingMap activeOrder={activeOrder} />
-            <OrderHistory
-              orders={orders}
-              onSelectOrder={handleSelectOrder}
-              onRefresh={handleRefresh}
-            />
-            <div className="mt-4">
-              <Demo />
+        {/* Tab Content */}
+        <div className="tab-content-enter py-6" key={activeTab}>
+          {activeTab === 'create' && (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+              {/* Col 1-2: Order Form + Timeline */}
+              <div className="lg:col-span-2">
+                <OrderForm
+                  onSubmit={handleSubmit}
+                  isSubmitting={isSubmitting}
+                  onUrgencyChange={handleUrgencyChange}
+                  estTime={estTime}
+                />
+                <OrderTimeline activeOrder={activeOrder} />
+              </div>
+
+              {/* Col 3-5: Map */}
+              <div className="lg:col-span-3 space-y-6">
+                <TrackingMap activeOrder={activeOrder} />
+              </div>
             </div>
-          </div>
+          )}
+
+          {activeTab === 'track' && (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+              <div className="lg:col-span-3 space-y-6">
+                <TrackingMap activeOrder={activeOrder} />
+              </div>
+              <div className="lg:col-span-2 space-y-6">
+                <OrderTimeline activeOrder={activeOrder} />
+                <OrderHistory
+                  orders={orders}
+                  onSelectOrder={handleSelectOrder}
+                  onRefresh={handleRefresh}
+                />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'history' && (
+            <div className="max-w-4xl mx-auto">
+              <OrderHistory
+                orders={orders}
+                onSelectOrder={handleSelectOrder}
+                onRefresh={handleRefresh}
+              />
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <footer className="mt-10 text-center text-xs text-slate-400 border-t border-slate-100 pt-6">
-          <p>&copy; 2025 <strong className="text-slate-500">SAH-TECH Medical Drone Logistics</strong>. Tất cả quyền được bảo lưu.</p>
+        <footer className="mt-10 text-center text-xs text-ink-muted border-t border-white/10 pt-6">
+          <p>&copy; 2025 <strong className="text-ink-soft">SAH-TECH Medical Drone Logistics</strong>. Tất cả quyền được bảo lưu.</p>
           <p className="mt-0.5">
             Hệ thống vận chuyển y tế khẩn cấp bằng Drone &mdash;
             <span className="text-medical-500"> Vì sức khỏe cộng đồng</span>
@@ -172,4 +222,3 @@ function App() {
 }
 
 export default App;
-
