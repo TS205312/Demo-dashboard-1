@@ -160,9 +160,9 @@ function App() {
         {/* Tab Content */}
         <div className="tab-content-enter" key={activeTab}>
           {activeTab === 'create' && (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
-              {/* Col 1-2: Order Form */}
-              <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              {/* Col 1: Order form */}
+              <div className="space-y-6">
                 <OrderForm
                   onSubmit={handleSubmit}
                   isSubmitting={isSubmitting}
@@ -171,8 +171,8 @@ function App() {
                 />
               </div>
 
-              {/* Col 3-5: Map + Timeline */}
-              <div className="lg:col-span-3 space-y-6">
+              {/* Col 2: Drone map */}
+              <div className="space-y-6">
                 <TrackingMap activeOrder={activeOrder} />
                 <OrderTimeline activeOrder={activeOrder} />
               </div>
