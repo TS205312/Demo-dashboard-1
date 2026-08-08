@@ -21,10 +21,9 @@ export default function Toast({ message, type = 'info', onClose }) {
   const tint = COLOR_MAP[type] || COLOR_MAP.info;
 
   return (
-    <div className={`toast glass fade-slide-up ${tint}`}>
+    <div className={`toast fade-slide-up ${tint}`}>
       <i className="fa-solid fa-circle-info text-white/80"></i>
       {message}
     </div>
   );
 }
-
