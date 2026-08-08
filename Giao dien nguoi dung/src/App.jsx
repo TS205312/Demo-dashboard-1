@@ -100,22 +100,28 @@ function App() {
   }
 
   const renderTabBar = () => (
-    <div className="tab-bar">
+    <div className="zl-tabbar" role="tablist">
       <button
-        className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
+        className={`zl-tab ${activeTab === 'create' ? 'active' : ''}`}
         onClick={() => setActiveTab('create')}
+        role="tab"
+        aria-selected={activeTab === 'create'}
       >
         <i className="fa-solid fa-clipboard-list"></i> Tạo đơn
       </button>
       <button
-        className={`tab-btn ${activeTab === 'track' ? 'active' : ''}`}
+        className={`zl-tab ${activeTab === 'track' ? 'active' : ''}`}
         onClick={() => setActiveTab('track')}
+        role="tab"
+        aria-selected={activeTab === 'track'}
       >
         <i className="fa-solid fa-map-location-dot"></i> Theo dõi
       </button>
       <button
-        className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+        className={`zl-tab ${activeTab === 'history' ? 'active' : ''}`}
         onClick={() => setActiveTab('history')}
+        role="tab"
+        aria-selected={activeTab === 'history'}
       >
         <i className="fa-solid fa-clock-rotate-left"></i> Lịch sử
       </button>
@@ -126,27 +132,33 @@ function App() {
     <>
       <Navbar user={user} onLogout={handleLogout} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-ink flex items-center gap-2">
-              <i className="fa-solid fa-truck-medical text-medical-500"></i>
-              Đặt hàng vận chuyển cấp cứu
-            </h1>
-            <p className="text-sm text-ink-muted mt-0.5">Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone</p>
-          </div>
-          <div className="text-xs text-ink-soft bg-white/10 px-3 py-1.5 rounded-full border border-white/15 inline-flex items-center gap-1.5 self-start backdrop-blur-md">
+      {/* Zipline-style hero band */}
+      <header className="zl-hero">
+        <div className="zl-hero__inner max-w-[1440px] mx-auto">
+          <h1 className="zl-display">
+            <span className="zl-hero__line"><span>Đặt hàng vận chuyển</span></span>
+            <span className="zl-hero__line"><span style={{ color: '#8b5cf6' }}>cấp cứu</span></span>
+          </h1>
+          <p className="zl-hero__sub">
+            Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone SAH-TECH.
+            Giao nhanh, chính xác và đúng lúc — như chính bạn đang bay.
+          </p>
+          <div className="zl-hero__chip">
             <i className="fa-regular fa-clock"></i>
             <span>{liveTime}</span>
           </div>
         </div>
+        <svg className="zl-hero__wave" viewBox="0 0 1448 200" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M1447.8,0c-2.6,8.9-9.2,16.6-19.9,19.7l-505.5,147c-129.7,37.7-267.2,37.7-396.9,0L20.1,19.7h.1C9.5,16.6,2.9,8.8.3,0h-.3v199.7h1448V0h-.2Z"></path>
+        </svg>
+      </header>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tab Bar */}
         {renderTabBar()}
 
         {/* Tab Content */}
-        <div className="tab-content-enter py-6" key={activeTab}>
+        <div className="tab-content-enter" key={activeTab}>
           {activeTab === 'create' && (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               {/* Col 1-2: Order Form + Timeline */}
@@ -195,11 +207,11 @@ function App() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-10 text-center text-xs text-ink-muted border-t border-white/10 pt-6">
-          <p>&copy; 2025 <strong className="text-ink-soft">SAH-TECH Medical Drone Logistics</strong>. Tất cả quyền được bảo lưu.</p>
-          <p className="mt-0.5">
+        <footer className="zl-footer">
+          <p>&copy; 2025 <strong>SAH-TECH Medical Drone Logistics</strong>. Tất cả quyền được bảo lưu.</p>
+          <p className="mt-1">
             Hệ thống vận chuyển y tế khẩn cấp bằng Drone &mdash;
-            <span className="text-medical-500"> Vì sức khỏe cộng đồng</span>
+            <span className="zl-footer-accent font-semibold"> Vì sức khỏe cộng đồng</span>
           </p>
         </footer>
       </main>

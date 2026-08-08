@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { DEFAULT_CENTER, HOSPITAL_POS, DESTINATIONS, STATUS_LABEL_MAP } from '../utils/constants';
+import useReveal from '../hooks/useReveal';
 
 export default function TrackingMap({ activeOrder }) {
   const mapRef = useRef(null);
+  const revealRef = useReveal();
   const mapInstanceRef = useRef(null);
   const droneMarkerRef = useRef(null);
   const hospitalMarkerRef = useRef(null);
@@ -15,7 +17,7 @@ export default function TrackingMap({ activeOrder }) {
 
     const L = window.L;
 
-    const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    const tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
     const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
     const map = L.map(mapRef.current, {
@@ -36,7 +38,7 @@ export default function TrackingMap({ activeOrder }) {
 
     // Hospital marker
     const hospIcon = L.divIcon({
-      html: '<div style="background:#2563EB;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;box-shadow:0 2px 12px rgba(37,99,235,0.4);border:2px solid #fff;"><i class="fa-solid fa-hospital"></i></div>',
+      html: '<div style="background:#643aed;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 2px 14px rgba(100,58,237,0.5);border:2px solid #fff;"><i class="fa-solid fa-hospital"></i></div>',
       className: '',
       iconSize: [32, 32],
       iconAnchor: [16, 16],
@@ -111,7 +113,7 @@ export default function TrackingMap({ activeOrder }) {
 
     // Add destination marker
     const destIcon = L.divIcon({
-      html: '<div style="background:#10B981;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 2px 10px rgba(16,185,129,0.4);border:2px solid #fff;"><i class="fa-solid fa-flag-checkered"></i></div>',
+      html: '<div style="background:#10b981;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 2px 12px rgba(16,185,129,0.45);border:2px solid #fff;"><i class="fa-solid fa-flag-checkered"></i></div>',
       className: '',
       iconSize: [28, 28],
       iconAnchor: [14, 14],
@@ -168,27 +170,30 @@ export default function TrackingMap({ activeOrder }) {
   }, [activeOrder]);
 
   return (
-    <div className="glass-card p-5 sm:p-6">
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h2 className="text-base font-bold text-ink flex items-center gap-2">
-          <i className="fa-solid fa-map-location-dot text-medical-500"></i>
+    <div className="zl-card zl-card--hover zl-reveal zl-reveal--d3 zl-cover" ref={revealRef}>
+      <div className="zl-card__head flex-wrap">
+        <h2 className="zl-card__title">
+          <i className="fa-solid fa-map-location-dot zl-card__icon"></i>
           Bản đồ theo dõi Drone
         </h2>
-        <div className="flex items-center gap-3 text-xs">
-          <span className="flex items-center gap-1.5 text-ink-soft">
-            <span className="w-2.5 h-2.5 rounded-full bg-medical-600 inline-block"></span>
+        <span className="zl-legend shrink-0">
+          <span>
+            <span className="dot dot--violet"></span>
             Bệnh viện
           </span>
-          <span className="flex items-center gap-1.5 text-ink-soft">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block pulse-blue"></span>
-            Drone
+          <span>
+            <span className="dot dot--emerald"></span>
+            Điểm nhận
           </span>
-        </div>
+          <span>🛸 Drone</span>
+        </span>
       </div>
+
       <div id="trackingMap" ref={mapRef}></div>
-      <div className="mt-3 flex items-center justify-between text-xs text-ink-muted">
-        <span><i className="fa-regular fa-circle-check text-emerald-500 mr-1"></i> Điểm xuất phát: SAH-TECH Hub</span>
-        <span id="droneStatusText">
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
+        <span><i className="fa-regular fa-circle-check text-success mr-1"></i> Điểm xuất phát: SAH-TECH Hub</span>
+        <span id="droneStatusText" className="font-semibold text-ink-soft">
           {activeOrder ? (
             <>
               {(activeOrder.status === 'delivered' ? '✅' : (activeOrder.status === 'inflight' || activeOrder.status === 'departed') ? '🛸' : '⏳')}
@@ -202,4 +207,3 @@ export default function TrackingMap({ activeOrder }) {
     </div>
   );
 }
-

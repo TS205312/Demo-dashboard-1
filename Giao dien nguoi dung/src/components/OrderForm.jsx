@@ -1,7 +1,9 @@
 import { useRef } from 'react';
+import useReveal from '../hooks/useReveal';
 
 export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, estTime }) {
   const formRef = useRef(null);
+  const revealRef = useReveal();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -10,22 +12,24 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
   };
 
   return (
-    <div className="glass-card relative overflow-hidden p-5 sm:p-6">
-      <div className="mb-5 flex items-center gap-3 border-b border-white/10 pb-4">
-        <i className="fa-solid fa-clipboard-list inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 text-lg text-medical-500 ring-1 ring-emerald-300/15"></i>
-        <h2 className="text-base font-bold text-ink">Thông tin đơn hàng</h2>
+    <div className="zl-card zl-card--hover zl-reveal zl-reveal--d1" ref={revealRef}>
+      <div className="zl-card__head">
+        <h2 className="zl-card__title">
+          <i className="fa-solid fa-clipboard-list zl-card__icon"></i>
+          Thông tin đơn hàng
+        </h2>
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         {/* Mặt hàng y tế */}
         <div>
           <label htmlFor="medicalItem" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-syringe mr-1 text-medical-500"></i> Mặt hàng y tế <span className="text-red-400">*</span>
+            <i className="fa-solid fa-syringe mr-1 text-violet"></i> Mặt hàng y tế <span className="text-danger">*</span>
           </label>
           <select
             id="medicalItem"
             name="medicalItem"
-            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
+            className="form-glass form-select"
             required
           >
             <option value="" disabled selected>-- Chọn mặt hàng --</option>
@@ -43,12 +47,12 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         {/* Điểm nhận */}
         <div>
           <label htmlFor="destination" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-location-dot mr-1 text-red-400"></i> Điểm nhận <span className="text-red-400">*</span>
+            <i className="fa-solid fa-location-dot mr-1 text-danger"></i> Điểm nhận <span className="text-danger">*</span>
           </label>
           <select
             id="destination"
             name="destination"
-            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
+            className="form-glass form-select"
             required
           >
             <option value="" disabled selected>-- Chọn bệnh viện / điểm nhận --</option>
@@ -66,12 +70,12 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         {/* Mức độ khẩn cấp */}
         <div>
           <label htmlFor="urgency" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-triangle-exclamation mr-1 text-amber-400"></i> Mức độ khẩn cấp <span className="text-red-400">*</span>
+            <i className="fa-solid fa-triangle-exclamation mr-1 text-warning"></i> Mức độ khẩn cấp <span className="text-danger">*</span>
           </label>
           <select
             id="urgency"
             name="urgency"
-            className="form-glass form-select shadow-inner shadow-black/10 hover:border-white/25"
+            className="form-glass form-select"
             required
             onChange={onUrgencyChange}
           >
@@ -90,7 +94,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
             id="notes"
             name="notes"
             rows="2"
-            className="form-glass resize-none shadow-inner shadow-black/10 hover:border-white/25"
+            className="form-glass resize-none"
             placeholder="Ví dụ: Cần giữ lạnh, kèm theo chỉ dẫn đặc biệt..."
           ></textarea>
         </div>
@@ -99,7 +103,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         <button
           type="submit"
           id="submitBtn"
-          className="btn-primary rounded-2xl !py-3 shadow-[0_18px_42px_rgba(16,185,129,0.22)]"
+          className="zl-btn zl-btn--dark zl-btn--block zl-btn--lg"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
@@ -110,12 +114,13 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
             <>
               <i className="fa-solid fa-rocket"></i>
               YÊU CẦU PHÁT HÀNG DRONE
+              <i className="fa-solid fa-arrow-up-right-from-square zl-btn__arrow"></i>
             </>
           )}
         </button>
 
-        <p className="mt-1 rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-center text-[11px] text-ink-muted">
-          <i className="fa-regular fa-clock mr-1"></i> Thời gian giao hàng ước tính: <strong className="text-ink-soft">{estTime}</strong>
+        <p className="zl-est">
+          <i className="fa-regular fa-clock mr-1"></i> Thời gian giao hàng ước tính: <strong>{estTime}</strong>
         </p>
       </form>
     </div>

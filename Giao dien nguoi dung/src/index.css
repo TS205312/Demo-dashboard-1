@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
@@ -7,23 +7,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== ZIPLINE-STYLE TOKENS ===== */
 :root {
-  --color-void: #0B0F19;
-  --color-ink: #F8FAFC;
-  --color-ink-soft: rgba(248, 250, 252, 0.78);
-  --color-ink-muted: rgba(248, 250, 252, 0.55);
-  --color-glass: rgba(255, 255, 255, 0.10);
-  --color-glass-strong: rgba(255, 255, 255, 0.18);
-  --color-glass-border: rgba(255, 255, 255, 0.22);
-  --color-glass-border-soft: rgba(255, 255, 255, 0.12);
-  --color-accent: #10B981;
-  --color-accent-soft: #34D399;
-  --color-emerald: #10B981;
-  --color-cyan: #06B6D4;
-  --color-violet: #8B5CF6;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-cream: #f7f4e8;
+  --color-ink: #000000;
+  --color-ink-soft: rgba(0, 0, 0, 0.78);
+  --color-ink-muted: rgba(0, 0, 0, 0.55);
+  --color-stone: #c6c3ba;
+  --color-violet: #643aed;
+  --color-violet-soft: rgba(100, 58, 237, 0.08);
+  --color-violet-border: rgba(100, 58, 237, 0.24);
+  --color-card: #ffffff;
+  --color-surface: #fdfbf4;
+  --color-accent: #643aed;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-info: #1d4ed8;
+  --font-sans: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Anton', 'Archivo', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
-  --shadow-glass: 0 18px 55px rgba(0, 0, 0, 0.28);
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.12);
 }
 
 * {
@@ -42,13 +49,14 @@ body,
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background: radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.22), transparent 28%),
-              radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.20), transparent 25%),
-              radial-gradient(circle at 20% 85%, rgba(16, 185, 129, 0.20), transparent 28%),
-              radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.18), transparent 28%),
-              linear-gradient(160deg, #0B0F19 0%, #131D31 45%, #0B1524 100%);
+  background-color: var(--color-cream);
+  background-image:
+    radial-gradient(circle at 82% 8%, rgba(100, 58, 237, 0.06), transparent 34%),
+    radial-gradient(circle at 8% 92%, rgba(100, 58, 237, 0.05), transparent 34%);
   background-attachment: fixed;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -56,7 +64,7 @@ body {
 }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.34);
+  background: rgba(100, 58, 237, 0.28);
   color: #fff;
 }
 
@@ -66,24 +74,26 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(0, 0, 0, 0.08);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(0, 0, 0, 0.34);
 }
 
 h1,
-h2 {
-  font-family: var(--font-sans);
-  font-weight: 700;
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
   color: var(--color-ink);
+  letter-spacing: 0.005em;
 }
 
 p {
@@ -92,7 +102,7 @@ p {
 
 @layer base {
   .theme {
-    --font-heading: var(--font-sans);
+    --font-heading: var(--font-display);
     --font-sans: 'Geist Variable', sans-serif;
   }
   :root {
