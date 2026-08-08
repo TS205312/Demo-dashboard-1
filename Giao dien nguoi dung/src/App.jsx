@@ -99,10 +99,10 @@ function App() {
     return <DoctorAuth onLogin={handleLogin} />;
   }
 
-  const renderTabBar = () => (
-    <div className="zl-tabbar" role="tablist">
+  const renderNavTabs = () => (
+    <nav className="zl-nav-tabs" role="tablist">
       <button
-        className={`zl-tab ${activeTab === 'create' ? 'active' : ''}`}
+        className={`zl-nav-tab ${activeTab === 'create' ? 'active' : ''}`}
         onClick={() => setActiveTab('create')}
         role="tab"
         aria-selected={activeTab === 'create'}
@@ -110,7 +110,7 @@ function App() {
         <i className="fa-solid fa-clipboard-list"></i> Tạo đơn
       </button>
       <button
-        className={`zl-tab ${activeTab === 'track' ? 'active' : ''}`}
+        className={`zl-nav-tab ${activeTab === 'track' ? 'active' : ''}`}
         onClick={() => setActiveTab('track')}
         role="tab"
         aria-selected={activeTab === 'track'}
@@ -118,19 +118,19 @@ function App() {
         <i className="fa-solid fa-map-location-dot"></i> Theo dõi
       </button>
       <button
-        className={`zl-tab ${activeTab === 'history' ? 'active' : ''}`}
+        className={`zl-nav-tab ${activeTab === 'history' ? 'active' : ''}`}
         onClick={() => setActiveTab('history')}
         role="tab"
         aria-selected={activeTab === 'history'}
       >
         <i className="fa-solid fa-clock-rotate-left"></i> Lịch sử
       </button>
-    </div>
+    </nav>
   );
 
   return (
     <>
-      <Navbar user={user} onLogout={handleLogout} />
+      <Navbar user={user} onLogout={handleLogout} activeTab={activeTab} onTabChange={setActiveTab} tabBar={renderNavTabs()} />
 
       {/* Zipline-style hero band */}
       <header className="zl-hero">
@@ -154,9 +154,6 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tab Bar */}
-        {renderTabBar()}
-
         {/* Tab Content */}
         <div className="tab-content-enter" key={activeTab}>
           {activeTab === 'create' && (
