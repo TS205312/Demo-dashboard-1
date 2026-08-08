@@ -82,24 +82,14 @@
   scrollbar-gutter: stable;
   padding-right: 0.3rem;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .doctor-auth-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.doctor-auth-scroll::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 999px;
-}
-
-.doctor-auth-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.22);
-  border-radius: 999px;
-}
-
-.doctor-auth-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.34);
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .doctor-auth-brand {

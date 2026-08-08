@@ -72,17 +72,34 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
           <label htmlFor="urgency" className="form-label tracking-[0.01em]">
             <i className="fa-solid fa-triangle-exclamation mr-1 text-warning"></i> Mức độ khẩn cấp <span className="text-danger">*</span>
           </label>
-          <select
-            id="urgency"
-            name="urgency"
-            className="form-glass form-select"
-            required
-            onChange={onUrgencyChange}
-          >
-            <option value="" disabled selected>-- Chọn mức độ --</option>
-            <option value="Bình thường">✅ Bình thường (Giao trong 60 phút)</option>
-            <option value="Cấp cứu khẩn">🚨 Cấp cứu khẩn (Giao trong 15 phút)</option>
-          </select>
+          <div className="zl-options">
+            <label className="zl-options__item">
+              <input
+                type="radio"
+                name="urgency"
+                id="urgency"
+                value="Bình thường"
+                required
+                onChange={onUrgencyChange}
+              />
+              <span className="zl-options__label">
+                ✅ Bình thường
+                <small>Giao trong 60 phút</small>
+              </span>
+            </label>
+            <label className="zl-options__item">
+              <input
+                type="radio"
+                name="urgency"
+                value="Cấp cứu khẩn"
+                onChange={onUrgencyChange}
+              />
+              <span className="zl-options__label zl-options__label--urgent">
+                🚨 Cấp cứu khẩn
+                <small>Giao trong 15 phút</small>
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Ghi chú (optional) */}

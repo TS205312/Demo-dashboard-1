@@ -11,7 +11,7 @@ export default function OrderTimeline({ activeOrder }) {
   const badgeText = status ? (STATUS_LABEL_MAP[status] || 'Chưa có đơn') : 'Chưa có đơn';
 
   return (
-    <div className="zl-card zl-card--hover zl-reveal zl-reveal--d2 mt-6" ref={revealRef}>
+    <div className="zl-card zl-card--hover zl-reveal zl-reveal--d2" ref={revealRef}>
       <div className="zl-card__head">
         <h2 className="zl-card__title">
           <i className="fa-solid fa-list-check zl-card__icon"></i>
