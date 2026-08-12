@@ -4,7 +4,6 @@
  */
 export default function SAHLogo({ size = 64, variant = 'default' }) {
   const isLight = variant === 'light'; // dùng trên nền tối
-  const ringColor = isLight ? '#fff' : '#2563EB';
   const accent = isLight ? '#fff' : '#2563EB';
   const accent2 = isLight ? '#93C5FD' : '#1D4ED8';
   const dot = isLight ? '#0B1120' : '#fff';
