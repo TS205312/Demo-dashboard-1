@@ -1,4 +1,21 @@
 import { useState } from 'react';
+import {
+  Building2,
+  CircleAlert,
+  CircleCheckBig,
+  Hospital,
+  IdCard,
+  Info,
+  KeyRound,
+  Lock,
+  LogIn,
+  Mail,
+  Phone,
+  ShieldCheck,
+  Stethoscope,
+  User,
+  UserPlus,
+} from 'lucide-react';
 import { apiLogin, apiRegister } from '../utils/api';
 import '../styles/doctorAuth.css';
 
@@ -150,25 +167,25 @@ export default function DoctorAuth({ onLogin }) {
             className={`doctor-auth-tab ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => switchTab('login')}
           >
-            <i className="fa-regular fa-right-to-bracket"></i> Đăng nhập
+            <LogIn /> Đăng nhập
           </button>
           <button
             className={`doctor-auth-tab ${activeTab === 'register' ? 'active' : ''}`}
             onClick={() => switchTab('register')}
           >
-            <i className="fa-regular fa-user-plus"></i> Đăng ký
+            <UserPlus /> Đăng ký
           </button>
         </div>
 
         {/* Messages */}
         {error && (
           <div className="doctor-auth-error">
-            <i className="fa-regular fa-circle-exclamation"></i> {error}
+            <CircleAlert /> {error}
           </div>
         )}
         {success && (
           <div className="doctor-auth-success">
-            <i className="fa-regular fa-circle-check"></i> {success}
+            <CircleCheckBig /> {success}
           </div>
         )}
 
@@ -178,7 +195,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Email công việc</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-envelope"></i>
+                <Mail className="doctor-input-icon" />
                 <input
                   type="text"
                   name="loginEmail"
@@ -194,7 +211,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Mật khẩu</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-lock"></i>
+                <Lock className="doctor-input-icon" />
                 <input
                   type="password"
                   name="loginPassword"
@@ -214,7 +231,7 @@ export default function DoctorAuth({ onLogin }) {
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-user-md"></i> Đăng nhập
+                  <Stethoscope /> Đăng nhập
                 </>
               )}
             </button>
@@ -227,7 +244,7 @@ export default function DoctorAuth({ onLogin }) {
             </p>
 
             <div className="doctor-demo-hint">
-              <i className="fa-solid fa-flask"></i>
+              <Info style={{ width: '0.85rem', height: '0.85rem', marginRight: '0.35rem', verticalAlign: '-1px' }} />
               Tài khoản demo: <strong>bs.an@sah.tech</strong> / <strong>doctor123</strong>
             </div>
           </form>
@@ -239,7 +256,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Họ và tên bác sĩ</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-user"></i>
+                <User className="doctor-input-icon" />
                 <input
                   type="text"
                   name="regName"
@@ -254,7 +271,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Email công việc</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-envelope"></i>
+                <Mail className="doctor-input-icon" />
                 <input
                   type="email"
                   name="regEmail"
@@ -270,7 +287,7 @@ export default function DoctorAuth({ onLogin }) {
               <div className="doctor-input-group">
                 <label className="doctor-label">Mã bác sĩ</label>
                 <div className="doctor-input-wrapper">
-                  <i className="doctor-input-icon fa-regular fa-id-card"></i>
+                  <IdCard className="doctor-input-icon" />
                   <input
                     type="text"
                     name="regDoctorId"
@@ -284,7 +301,7 @@ export default function DoctorAuth({ onLogin }) {
               <div className="doctor-input-group">
                 <label className="doctor-label">Khoa / Phòng</label>
                 <div className="doctor-input-wrapper">
-                  <i className="doctor-input-icon fa-regular fa-hospital"></i>
+                  <Hospital className="doctor-input-icon" />
                   <input
                     type="text"
                     name="regDepartment"
@@ -300,7 +317,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Bệnh viện công tác</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-building"></i>
+                <Building2 className="doctor-input-icon" />
                 <input
                   type="text"
                   name="regHospital"
@@ -315,7 +332,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Số điện thoại liên hệ</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-phone"></i>
+                <Phone className="doctor-input-icon" />
                 <input
                   type="text"
                   name="regPhone"
@@ -330,7 +347,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Mật khẩu</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-lock"></i>
+                <Lock className="doctor-input-icon" />
                 <input
                   type="password"
                   name="regPassword"
@@ -345,7 +362,7 @@ export default function DoctorAuth({ onLogin }) {
             <div className="doctor-input-group">
               <label className="doctor-label">Xác nhận mật khẩu</label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-lock"></i>
+                <Lock className="doctor-input-icon" />
                 <input
                   type="password"
                   name="regConfirmPassword"
@@ -360,10 +377,10 @@ export default function DoctorAuth({ onLogin }) {
             {/* OTP công ty */}
             <div className="doctor-input-group doctor-otp-group">
               <label className="doctor-label">
-                <i className="fa-solid fa-key"></i> Mã OTP công ty <span className="doctor-required">*</span>
+                <KeyRound style={{ width: '0.85rem', height: '0.85rem', marginRight: '0.3rem', verticalAlign: '-1px' }} /> Mã OTP công ty <span className="doctor-required">*</span>
               </label>
               <div className="doctor-input-wrapper">
-                <i className="doctor-input-icon fa-regular fa-shield-halved"></i>
+                <ShieldCheck className="doctor-input-icon" />
                 <input
                   type="text"
                   name="regOtp"
@@ -385,7 +402,7 @@ export default function DoctorAuth({ onLogin }) {
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-user-plus"></i> Đăng ký tài khoản
+                  <UserPlus /> Đăng ký tài khoản
                 </>
               )}
             </button>
@@ -407,4 +424,3 @@ export default function DoctorAuth({ onLogin }) {
     </div>
   );
 }
-

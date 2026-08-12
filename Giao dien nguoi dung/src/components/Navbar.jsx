@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Activity, LogOut, Stethoscope } from 'lucide-react';
 
 export default function Navbar({ user, onLogout, tabBar }) {
   const navbarRef = useRef(null);
@@ -32,8 +33,8 @@ export default function Navbar({ user, onLogout, tabBar }) {
               <img src="/sah-logo.png" alt="SAH-TECH" className="sah-logo-pulse" style={{ width: 40, height: 40, objectFit: 'contain' }} />
             </div>
             <div className="hidden min-w-0 sm:block">
-              <p className="text-sm font-extrabold text-white leading-tight tracking-tight">SAH-TECH Medical</p>
-              <p className="text-[11px] text-white/50 font-medium leading-tight">Cổng đặt hàng Y tế</p>
+              <p className="text-sm font-extrabold text-[#134e4a] leading-tight tracking-tight">SAH-TECH Medical</p>
+              <p className="text-[11px] text-[#64748b] font-medium leading-tight">Cổng đặt hàng Y tế</p>
             </div>
           </div>
 
@@ -42,22 +43,22 @@ export default function Navbar({ user, onLogout, tabBar }) {
 
           {/* Right: Doctor info & status */}
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
-            <div className="hidden items-center gap-2 rounded-full border border-white/20 bg-white/[0.06] px-3 py-1.5 text-xs text-white/80 backdrop-blur-md sm:flex">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block pulse-blue"></span>
+            <div className="hidden items-center gap-2 rounded-full border border-[#d1fae5] bg-[#ecfdf5] px-3 py-1.5 text-xs text-[#15803d] sm:flex">
+              <Activity className="w-3.5 h-3.5 pulse-blue" />
               Hệ thống trực tuyến
             </div>
 
             {/* Logged-in doctor */}
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#643aed] text-xs font-bold text-white shadow-lg shadow-violet-600/30 ring-1 ring-white/20">
-                <i className="fa-solid fa-user-md"></i>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0891b2] text-white shadow-md shadow-cyan-600/30 ring-1 ring-white/50">
+                <Stethoscope className="w-4 h-4" />
               </div>
               <div className="hidden text-right sm:block">
-                <p className="text-xs font-bold text-white leading-tight">
+                <p className="text-xs font-bold text-[#134e4a] leading-tight">
                   {displayName}
-                  {doctorId ? <span className="text-[10px] text-violet-300 ml-1 font-mono">({doctorId})</span> : null}
+                  {doctorId ? <span className="text-[10px] text-[#0891b2] ml-1 font-mono">({doctorId})</span> : null}
                 </p>
-                <p className="text-[10px] text-white/50 leading-tight">{department}</p>
+                <p className="text-[10px] text-[#64748b] leading-tight">{department}</p>
               </div>
             </div>
 
@@ -65,9 +66,9 @@ export default function Navbar({ user, onLogout, tabBar }) {
             <button
               onClick={onLogout}
               title="Đăng xuất"
-              className="flex items-center gap-1.5 rounded-full border border-white/25 bg-transparent px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-white hover:text-black"
+              className="flex items-center gap-1.5 rounded-full border border-[#cbd5e1] bg-white px-4 py-2 text-xs font-bold text-[#134e4a] transition-colors hover:bg-[#f0fdfa] hover:border-[#0891b2] hover:text-[#0e7490] cursor-pointer"
             >
-              <i className="fa-solid fa-right-from-bracket"></i>
+              <LogOut className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Đăng xuất</span>
             </button>
           </div>

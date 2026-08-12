@@ -1,4 +1,15 @@
 import { useRef } from 'react';
+import {
+  ArrowUpRight,
+  ClipboardList,
+  Clock,
+  MapPin,
+  NotebookText,
+  Rocket,
+  ShieldCheck,
+  Siren,
+  Syringe,
+} from 'lucide-react';
 import useReveal from '../hooks/useReveal';
 
 export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, estTime }) {
@@ -15,7 +26,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
     <div className="zl-card zl-card--hover zl-reveal zl-reveal--d1" ref={revealRef}>
       <div className="zl-card__head">
         <h2 className="zl-card__title">
-          <i className="fa-solid fa-clipboard-list zl-card__icon"></i>
+          <ClipboardList className="zl-card__icon" size={20} />
           Thông tin đơn hàng
         </h2>
       </div>
@@ -24,7 +35,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         {/* Mặt hàng y tế */}
         <div>
           <label htmlFor="medicalItem" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-syringe mr-1 text-violet"></i> Mặt hàng y tế <span className="text-danger">*</span>
+            <Syringe size={14} className="mr-1 text-[#0891b2] inline" /> Mặt hàng y tế <span className="text-danger">*</span>
           </label>
           <select
             id="medicalItem"
@@ -33,21 +44,21 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
             required
           >
             <option value="" disabled selected>-- Chọn mặt hàng --</option>
-            <option value="Túi máu O-">🩸 Túi máu O- (500ml)</option>
-            <option value="Vắc-xin dại">💉 Vắc-xin dại (Verorab)</option>
-            <option value="Huyết thanh kháng nọc rắn">🐍 Huyết thanh kháng nọc rắn</option>
-            <option value="Insulin">💊 Insulin (Humalog 100UI/ml)</option>
-            <option value="Thuốc chống đông máu">🩹 Thuốc chống đông máu (Heparin)</option>
-            <option value="Dung dịch cao phân tử">🧪 Dung dịch cao phân tử (Haes-steril)</option>
-            <option value="Mẫu bệnh phẩm sinh học">🔬 Mẫu bệnh phẩm sinh học</option>
-            <option value="Thuốc giảm đau gây mê">💊 Thuốc giảm đau gây mê (Fentanyl)</option>
+            <option value="Túi máu O-">Túi máu O- (500ml)</option>
+            <option value="Vắc-xin dại">Vắc-xin dại (Verorab)</option>
+            <option value="Huyết thanh kháng nọc rắn">Huyết thanh kháng nọc rắn</option>
+            <option value="Insulin">Insulin (Humalog 100UI/ml)</option>
+            <option value="Thuốc chống đông máu">Thuốc chống đông máu (Heparin)</option>
+            <option value="Dung dịch cao phân tử">Dung dịch cao phân tử (Haes-steril)</option>
+            <option value="Mẫu bệnh phẩm sinh học">Mẫu bệnh phẩm sinh học</option>
+            <option value="Thuốc giảm đau gây mê">Thuốc giảm đau gây mê (Fentanyl)</option>
           </select>
         </div>
 
         {/* Điểm nhận */}
         <div>
           <label htmlFor="destination" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-location-dot mr-1 text-danger"></i> Điểm nhận <span className="text-danger">*</span>
+            <MapPin size={14} className="mr-1 text-[#b91c1c] inline" /> Điểm nhận <span className="text-danger">*</span>
           </label>
           <select
             id="destination"
@@ -56,21 +67,21 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
             required
           >
             <option value="" disabled selected>-- Chọn bệnh viện / điểm nhận --</option>
-            <option value="Bệnh viện Chợ Rẫy">🏥 Bệnh viện Chợ Rẫy</option>
-            <option value="Bệnh viện Từ Dũ">🏥 Bệnh viện Từ Dũ</option>
-            <option value="Bệnh viện Nhi Đồng 1">🏥 Bệnh viện Nhi Đồng 1</option>
-            <option value="Bệnh viện Nhi Đồng 2">🏥 Bệnh viện Nhi Đồng 2</option>
-            <option value="Bệnh viện Đại học Y Dược">🏥 Bệnh viện Đại học Y Dược</option>
-            <option value="Bệnh viện Nhân dân 115">🏥 Bệnh viện Nhân dân 115</option>
-            <option value="Bệnh viện Thống Nhất">🏥 Bệnh viện Thống Nhất</option>
-            <option value="Trạm y tế quận Bình Thạnh">🏪 Trạm y tế quận Bình Thạnh</option>
+            <option value="Bệnh viện Chợ Rẫy">Bệnh viện Chợ Rẫy</option>
+            <option value="Bệnh viện Từ Dũ">Bệnh viện Từ Dũ</option>
+            <option value="Bệnh viện Nhi Đồng 1">Bệnh viện Nhi Đồng 1</option>
+            <option value="Bệnh viện Nhi Đồng 2">Bệnh viện Nhi Đồng 2</option>
+            <option value="Bệnh viện Đại học Y Dược">Bệnh viện Đại học Y Dược</option>
+            <option value="Bệnh viện Nhân dân 115">Bệnh viện Nhân dân 115</option>
+            <option value="Bệnh viện Thống Nhất">Bệnh viện Thống Nhất</option>
+            <option value="Trạm y tế quận Bình Thạnh">Trạm y tế quận Bình Thạnh</option>
           </select>
         </div>
 
         {/* Mức độ khẩn cấp */}
         <div>
           <label htmlFor="urgency" className="form-label tracking-[0.01em]">
-            <i className="fa-solid fa-triangle-exclamation mr-1 text-warning"></i> Mức độ khẩn cấp <span className="text-danger">*</span>
+            <Siren size={14} className="mr-1 text-[#b45309] inline" /> Mức độ khẩn cấp <span className="text-danger">*</span>
           </label>
           <div className="zl-options">
             <label className="zl-options__item">
@@ -83,7 +94,8 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
                 onChange={onUrgencyChange}
               />
               <span className="zl-options__label">
-                ✅ Bình thường
+                <ShieldCheck size={20} className="mb-1" />
+                Bình thường
                 <small>Giao trong 60 phút</small>
               </span>
             </label>
@@ -95,7 +107,8 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
                 onChange={onUrgencyChange}
               />
               <span className="zl-options__label zl-options__label--urgent">
-                🚨 Cấp cứu khẩn
+                <Siren size={20} className="mb-1" />
+                Cấp cứu khẩn
                 <small>Giao trong 15 phút</small>
               </span>
             </label>
@@ -105,7 +118,7 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
         {/* Ghi chú (optional) */}
         <div>
           <label htmlFor="notes" className="form-label tracking-[0.01em]">
-            <i className="fa-regular fa-note-sticky mr-1 text-ink-muted"></i> Ghi chú thêm
+            <NotebookText size={14} className="mr-1 text-ink-muted inline" /> Ghi chú thêm
           </label>
           <textarea
             id="notes"
@@ -129,15 +142,15 @@ export default function OrderForm({ onSubmit, isSubmitting, onUrgencyChange, est
             </>
           ) : (
             <>
-              <i className="fa-solid fa-rocket"></i>
+              <Rocket size={18} />
               YÊU CẦU PHÁT HÀNG DRONE
-              <i className="fa-solid fa-arrow-up-right-from-square zl-btn__arrow"></i>
+              <ArrowUpRight className="zl-btn__arrow" size={18} />
             </>
           )}
         </button>
 
         <p className="zl-est">
-          <i className="fa-regular fa-clock mr-1"></i> Thời gian giao hàng ước tính: <strong>{estTime}</strong>
+          <Clock size={14} className="mr-1 inline" /> Thời gian giao hàng ước tính: <strong>{estTime}</strong>
         </p>
       </form>
     </div>
