@@ -10,6 +10,10 @@ import OrderTimeline from './components/OrderTimeline';
 import TrackingMap from './components/TrackingMap';
 import OrderHistory from './components/OrderHistory';
 import ProfilePage from './components/ProfilePage';
+import HeroDrone from './components/HeroDrone';
+import StatsBar from './components/StatsBar';
+import BackgroundFX from './components/BackgroundFX';
+import ScrollProgress from './components/ScrollProgress';
 import SuccessModal from './components/SuccessModal';
 import Toast from './components/Toast';
 
@@ -145,6 +149,8 @@ function App() {
 
   return (
     <>
+      <ScrollProgress />
+      <BackgroundFX />
       <Navbar user={user} onLogout={handleLogout} activeTab={activeTab} onTabChange={setActiveTab} tabBar={renderNavTabs()} />
 
       {/* Hero band */}
@@ -152,6 +158,7 @@ function App() {
         <div className="zl-hero__orb zl-hero__orb--1" aria-hidden="true"></div>
         <div className="zl-hero__orb zl-hero__orb--2" aria-hidden="true"></div>
         <div className="zl-hero__orb zl-hero__orb--3" aria-hidden="true"></div>
+        <HeroDrone />
         <div className="zl-hero__inner max-w-[1440px] mx-auto">
           <h1 className="zl-display">
             <span className="zl-hero__line"><span>Đặt hàng vận chuyển</span></span>
@@ -173,6 +180,9 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats row */}
+        <StatsBar orders={orders} />
+
         {/* Tab Content */}
         <div className="tab-content-enter" key={activeTab}>
           {activeTab === 'create' && (
