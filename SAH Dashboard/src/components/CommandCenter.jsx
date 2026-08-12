@@ -45,7 +45,7 @@ function CommandCenter({ onBackToFleet, drones = [] }) {
   const [droneAlt, setDroneAlt] = useState(0);
   const [droneSpeed, setDroneSpeed] = useState(0);
   const [droneBattery, setDroneBattery] = useState(100);
-  const [sparkHistory, setSparkHistory] = useState({ speed: [], alt: [], batt: [] }); // eslint-disable-line no-unused-vars
+  const [sparkHistory, setSparkHistory] = useState({ speed: [], alt: [], batt: [] });
   const [flightPathCoords, setFlightPathCoords] = useState([]);
   const [targetNodeIndex, setTargetNodeIndex] = useState(0);
   const [currentTargetHospital, setCurrentTargetHospital] = useState("");
@@ -477,7 +477,7 @@ function CommandCenter({ onBackToFleet, drones = [] }) {
   }, []);
 
   useEffect(() => {
-    syncOrdersFromBackend();
+    syncOrdersFromBackend(); // eslint-disable-line react-hooks/set-state-in-effect
     apiFetchDrones().then(dronesList => {
       if (dronesList && dronesList.length > 0) {
         setAvailableDrones(dronesList);

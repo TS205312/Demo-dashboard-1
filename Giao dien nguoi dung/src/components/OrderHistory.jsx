@@ -1,59 +1,33 @@
-import { ClipboardList, History, RefreshCw, ShieldCheck, Siren } from 'lucide-react';
+import { ClipboardList, RefreshCw, ShieldCheck, Siren } from 'lucide-react';
 import { STATUS_BADGE_MAP, STATUS_LABEL_MAP } from '../utils/constants';
-import useReveal from '../hooks/useReveal';
 
+/**
+ * OrderHistory — bảng lịch sử đơn hàng (content-only, đã được bọc card/modal bên ngoài)
+ */
 export default function OrderHistory({ orders, onSelectOrder, onRefresh }) {
-  const revealRef = useReveal();
-  const delayClass = orders && orders.length ? 'zl-reveal--d2' : 'zl-reveal--d1';
-  const header = (
-    <div className="zl-card__head">
-      <h2 className="zl-card__title">
-        <History className="zl-card__icon" size={20} />
-        Lịch sử đơn hàng
-      </h2>
-      <button
-        onClick={onRefresh}
-        className="flex items-center gap-1.5 rounded-full border border-[#cbd5e1] bg-white px-3.5 py-1.5 text-xs font-bold text-[#134e4a] transition-colors hover:bg-[#f0fdfa] hover:border-[#0891b2] hover:text-[#0e7490] cursor-pointer"
-      >
-        <RefreshCw size={13} /> Làm mới
-      </button>
-    </div>
-  );
-
   if (!orders || orders.length === 0) {
     return (
-      <div className={`zl-card zl-reveal ${delayClass} zl-cover`} ref={revealRef}>
-        {header}
-        <div className="overflow-x-auto -mx-1">
-          <table className="history-table min-w-[480px]">
-            <thead>
-              <tr>
-                <th>Mã đơn</th>
-                <th>Mặt hàng</th>
-                <th>Điểm nhận</th>
-                <th>Mức độ</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan="5" className="text-center text-sm text-ink-muted py-8">
-                  <ClipboardList size={28} className="mx-auto mb-2 opacity-40" />
-                  Chưa có đơn hàng nào. Hãy tạo đơn hàng đầu tiên!
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <ClipboardList size={30} className="mb-3 opacity-30 text-cyan-300" />
+        <p className="text-sm font-semibold text-ink-soft">Chưa có đơn hàng nào</p>
+        <p className="mt-1 text-xs text-ink-muted">Hãy tạo đơn hàng đầu tiên!</p>
       </div>
     );
   }
 
-  const displayOrders = orders.slice(0, 10);
-
   return (
-    <div className={`zl-card zl-reveal ${delayClass} zl-cover`} ref={revealRef}>
-      {header}
+    <div>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="text-xs font-bold text-ink-muted">
+          {orders.length} đơn hàng
+        </p>
+        <button
+          onClick={onRefresh}
+          className="flex items-center gap-1.5 rounded-full border border-[#24334f] bg-[rgba(13,21,38,0.6)] px-3.5 py-1.5 text-xs font-bold text-ink-soft transition-colors hover:border-[#22d3ee] hover:text-[#67e8f9] cursor-pointer"
+        >
+          <RefreshCw size={13} /> Làm mới
+        </button>
+      </div>
 
       <div className="overflow-x-auto -mx-1">
         <table className="history-table min-w-[480px]">
@@ -67,20 +41,20 @@ export default function OrderHistory({ orders, onSelectOrder, onRefresh }) {
             </tr>
           </thead>
           <tbody>
-            {displayOrders.map(order => {
+            {orders.map(order => {
               const statusKey = order.status || 'pending';
               const badgeClass = STATUS_BADGE_MAP[statusKey] || 'badge-pending';
               const label = STATUS_LABEL_MAP[statusKey] || 'Chưa xác định';
               const isUrgent = order.urgency === 'Cấp cứu khẩn';
-              const urgencyClass = isUrgent ? 'text-danger font-semibold' : 'text-ink-soft';
+              const urgencyClass = isUrgent ? 'text-[#fda4af] font-semibold' : 'text-ink-soft';
 
               return (
                 <tr
                   key={order.id}
                   className="transition-colors"
-                  onClick={() => onSelectOrder(order.id)}
+                  onClick={() => onSelectOrder?.(order.id)}
                 >
-                  <td className="font-mono text-xs font-bold text-[#0891b2]">
+                  <td className="font-mono text-xs font-bold text-[#67e8f9]">
                     #{order.code || `SAH-${String(order.id).padStart(4, '0')}`}
                   </td>
                   <td className="text-sm font-semibold text-ink">{order.item || '--'}</td>

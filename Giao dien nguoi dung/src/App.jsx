@@ -1,17 +1,16 @@
 import { useState, useCallback } from 'react';
-import { ClipboardList, Clock, History, MapPinned, UserCog } from 'lucide-react';
+import { Plus, Rocket } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { useOrders } from './hooks/useOrders';
 
 import DoctorAuth from './components/DoctorAuth';
 import Navbar from './components/Navbar';
-import OrderForm from './components/OrderForm';
-import OrderTimeline from './components/OrderTimeline';
-import TrackingMap from './components/TrackingMap';
-import OrderHistory from './components/OrderHistory';
-import ProfilePage from './components/ProfilePage';
+import CommandCenter from './components/CommandCenter';
+import CreateOrderModal from './components/CreateOrderModal';
+import OrderDetailModal from './components/OrderDetailModal';
+import HistoryModal from './components/HistoryModal';
+import AccountModal from './components/AccountModal';
 import HeroDrone from './components/HeroDrone';
-import StatsBar from './components/StatsBar';
 import BackgroundFX from './components/BackgroundFX';
 import ScrollProgress from './components/ScrollProgress';
 import SuccessModal from './components/SuccessModal';
@@ -22,7 +21,6 @@ import './App.css';
 function App() {
   const liveTime = useClock();
   const [user, setUser] = useState(() => {
-    // Khôi phục phiên đăng nhập từ localStorage
     try {
       const saved = localStorage.getItem('sah_current_user');
       return saved ? JSON.parse(saved) : null;
@@ -31,7 +29,8 @@ function App() {
     }
   });
 
-  const [activeTab, setActiveTab] = useState('create'); // 'create' | 'track' | 'history'
+  // modal: null | 'create' | 'detail' | 'history' | 'account'
+  const [modal, setModal] = useState(null);
 
   const {
     orders,
@@ -56,15 +55,12 @@ function App() {
   const handleLogout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('sah_current_user');
-    // Clear form state
-    const form = document.getElementById('orderForm');
-    if (form) form.reset();
+    setModal(null);
     setEstTime('--');
   }, []);
 
   const handleUserUpdated = useCallback((userData) => {
     setUser(userData);
-    setActiveTab('account');
   }, []);
 
   const handleUrgencyChange = useCallback((e) => {
@@ -88,157 +84,52 @@ function App() {
   const handleSubmit = useCallback(async (formData) => {
     const success = await submitOrder(formData, user);
     if (success) {
-      // Reset form
       const form = document.getElementById('orderForm');
       if (form) form.reset();
       setEstTime('--');
+      setModal(null);
     }
   }, [submitOrder, user]);
 
   const handleSelectOrder = useCallback((orderId) => {
     setActiveOrder(orderId);
-    setActiveTab('track');
-    setToast({ message: `📋 Đang theo dõi đơn hàng #SAH-${String(orderId).padStart(4, '0')}`, type: 'info' });
+    setModal('detail');
+    setToast({ message: `📋 Đang xem đơn hàng #SAH-${String(orderId).padStart(4, '0')}`, type: 'info' });
   }, [setActiveOrder, setToast]);
 
   const handleRefresh = useCallback(() => {
     setToast({ message: '🔄 Đã làm mới danh sách đơn hàng', type: 'info' });
   }, [setToast]);
 
-  // Nếu chưa đăng nhập → hiển thị trang đăng nhập bác sĩ
+  const handleOpenCreate = useCallback(() => {
+    setModal('create');
+  }, []);
+
+  // Chưa đăng nhập → trang đăng nhập bác sĩ
   if (!user) {
     return <DoctorAuth onLogin={handleLogin} />;
   }
-
-  const renderNavTabs = () => (
-    <nav className="zl-nav-tabs" role="tablist">
-      <button
-        className={`zl-nav-tab ${activeTab === 'create' ? 'active' : ''}`}
-        onClick={() => setActiveTab('create')}
-        role="tab"
-        aria-selected={activeTab === 'create'}
-      >
-        <ClipboardList size={15} /> Tạo đơn
-      </button>
-      <button
-        className={`zl-nav-tab ${activeTab === 'track' ? 'active' : ''}`}
-        onClick={() => setActiveTab('track')}
-        role="tab"
-        aria-selected={activeTab === 'track'}
-      >
-        <MapPinned size={15} /> Theo dõi
-      </button>
-      <button
-        className={`zl-nav-tab ${activeTab === 'history' ? 'active' : ''}`}
-        onClick={() => setActiveTab('history')}
-        role="tab"
-        aria-selected={activeTab === 'history'}
-      >
-        <History size={15} /> Lịch sử
-      </button>
-      <button
-        className={`zl-nav-tab ${activeTab === 'account' ? 'active' : ''}`}
-        onClick={() => setActiveTab('account')}
-        role="tab"
-        aria-selected={activeTab === 'account'}
-      >
-        <UserCog size={15} /> Tài khoản
-      </button>
-    </nav>
-  );
 
   return (
     <>
       <ScrollProgress />
       <BackgroundFX />
-      <Navbar user={user} onLogout={handleLogout} activeTab={activeTab} onTabChange={setActiveTab} tabBar={renderNavTabs()} />
+      <Navbar
+        user={user}
+        onLogout={handleLogout}
+        onOpenHistory={() => setModal('history')}
+        onOpenAccount={() => setModal('account')}
+      />
 
-      {/* Hero band */}
-      <header className="zl-hero">
-        <div className="zl-hero__orb zl-hero__orb--1" aria-hidden="true"></div>
-        <div className="zl-hero__orb zl-hero__orb--2" aria-hidden="true"></div>
-        <div className="zl-hero__orb zl-hero__orb--3" aria-hidden="true"></div>
-        <HeroDrone />
-        <div className="zl-hero__inner max-w-[1440px] mx-auto">
-          <h1 className="zl-display">
-            <span className="zl-hero__line"><span>Đặt hàng vận chuyển</span></span>
-            <span className="zl-hero__line"><span style={{ color: '#2dd4bf' }}>cấp cứu</span></span>
-          </h1>
-          <p className="zl-hero__sub">
-            Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone SAH-TECH.
-            Giao nhanh, chính xác và đúng lúc — như chính bạn đang bay.
-          </p>
-          <div className="zl-hero__chip">
-            <span className="hero-chip-dot"></span>
-            <Clock size={15} />
-            <span>{liveTime}</span>
-          </div>
-        </div>
-        <svg className="zl-hero__wave" viewBox="0 0 1448 200" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M1447.8,0c-2.6,8.9-9.2,16.6-19.9,19.7l-505.5,147c-129.7,37.7-267.2,37.7-396.9,0L20.1,19.7h.1C9.5,16.6,2.9,8.8.3,0h-.3v199.7h1448V0h-.2Z"></path>
-        </svg>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats row */}
-        <StatsBar orders={orders} />
-
-        {/* Tab Content */}
-        <div className="tab-content-enter" key={activeTab}>
-          {activeTab === 'create' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              {/* Col 1: Order form */}
-              <div className="space-y-6">
-                <OrderForm
-                  onSubmit={handleSubmit}
-                  isSubmitting={isSubmitting}
-                  onUrgencyChange={handleUrgencyChange}
-                  estTime={estTime}
-                />
-              </div>
-
-              {/* Col 2: Drone map */}
-              <div className="space-y-6">
-                <TrackingMap activeOrder={activeOrder} />
-                <OrderTimeline activeOrder={activeOrder} />
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'track' && (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              <div className="lg:col-span-3 space-y-6">
-                <TrackingMap activeOrder={activeOrder} />
-              </div>
-              <div className="lg:col-span-2 space-y-6">
-                <OrderTimeline activeOrder={activeOrder} />
-                <OrderHistory
-                  orders={orders}
-                  onSelectOrder={handleSelectOrder}
-                  onRefresh={handleRefresh}
-                />
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'history' && (
-            <div className="max-w-4xl mx-auto">
-              <OrderHistory
-                orders={orders}
-                onSelectOrder={handleSelectOrder}
-                onRefresh={handleRefresh}
-              />
-            </div>
-          )}
-
-          {activeTab === 'account' && (
-            <ProfilePage
-              user={user}
-              onUpdated={handleUserUpdated}
-              onNotify={setToast}
-            />
-          )}
-        </div>
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <CommandCenter
+          user={user}
+          liveTime={liveTime}
+          orders={orders}
+          activeOrder={activeOrder}
+          onOpenCreate={handleOpenCreate}
+          onSelectOrder={handleSelectOrder}
+        />
 
         {/* Footer */}
         <footer className="zl-footer">
@@ -249,6 +140,46 @@ function App() {
           </p>
         </footer>
       </main>
+
+      {/* FAB create order */}
+      {!modal && (
+        <button
+          onClick={handleOpenCreate}
+          className="cc-fab"
+          title="Tạo đơn vận chuyển"
+        >
+          <Plus size={20} /> Tạo đơn
+        </button>
+      )}
+
+      {/* Modals */}
+      <CreateOrderModal
+        show={modal === 'create'}
+        onClose={() => setModal(null)}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        onUrgencyChange={handleUrgencyChange}
+        estTime={estTime}
+      />
+      <OrderDetailModal
+        show={modal === 'detail'}
+        onClose={() => setModal(null)}
+        order={activeOrder}
+      />
+      <HistoryModal
+        show={modal === 'history'}
+        onClose={() => setModal(null)}
+        orders={orders}
+        onSelectOrder={handleSelectOrder}
+        onRefresh={handleRefresh}
+      />
+      <AccountModal
+        show={modal === 'account'}
+        onClose={() => setModal(null)}
+        user={user}
+        onUpdated={handleUserUpdated}
+        onNotify={setToast}
+      />
 
       {/* Success Modal */}
       <SuccessModal

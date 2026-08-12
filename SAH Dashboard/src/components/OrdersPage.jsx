@@ -29,7 +29,7 @@ function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    loadOrders();
+    loadOrders(); // eslint-disable-line react-hooks/set-state-in-effect
     // Poll every 5s for real-time updates from User Interface
     const interval = setInterval(loadOrders, 5000);
     return () => clearInterval(interval);
