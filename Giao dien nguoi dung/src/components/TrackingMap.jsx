@@ -1,24 +1,23 @@
 import { useEffect, useRef } from 'react';
-import { CheckCircle2, Clock, Drone, MapPinned } from 'lucide-react';
+import { CheckCircle2, Clock, Drone } from 'lucide-react';
 import { DEFAULT_CENTER, HOSPITAL_POS, DESTINATIONS, STATUS_LABEL_MAP } from '../utils/constants';
-import useReveal from '../hooks/useReveal';
 
+/**
+ * TrackingMap — bản đồ dark (CARTO dark_all) + hub radar sweep + marker drone
+ */
 export default function TrackingMap({ activeOrder }) {
   const mapRef = useRef(null);
-  const revealRef = useReveal();
   const mapInstanceRef = useRef(null);
   const droneMarkerRef = useRef(null);
-  const hospitalMarkerRef = useRef(null);
   const destinationMarkerRef = useRef(null);
 
   useEffect(() => {
-    // Chỉ khởi tạo map một lần
     if (mapInstanceRef.current) return;
     if (!window.L) return;
 
     const L = window.L;
 
-    const tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+    const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
     const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
     const map = L.map(mapRef.current, {
@@ -37,24 +36,23 @@ export default function TrackingMap({ activeOrder }) {
 
     mapInstanceRef.current = map;
 
-    // Hospital marker
+    // Hospital marker (dark hub)
     const hospIcon = L.divIcon({
-      html: '<div style="background:#0891b2;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 2px 14px rgba(8,145,178,0.5);border:2px solid #fff;"><i class="fa-solid fa-hospital"></i></div>',
+      html: '<div style="background:#22d3ee;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#04181c;font-size:15px;box-shadow:0 0 0 4px rgba(34,211,238,0.25),0 4px 20px rgba(34,211,238,0.6);border:2px solid #0d1526;"><i class="fa-solid fa-hospital"></i></div>',
       className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -20],
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -22],
     });
 
     const hospMarker = L.marker(HOSPITAL_POS, { icon: hospIcon })
       .addTo(map)
       .bindPopup(`
-        <div style="text-align:center;font-weight:600;font-size:13px;">
+        <div style="text-align:center;font-weight:600;font-size:13px;color:#e6edf7;">
           SAH-TECH Hub<br>
-          <span style="font-weight:400;color:#64748B;font-size:11px;">Trung tâm điều phối Drone</span>
+          <span style="font-weight:400;color:#64748c;font-size:11px;">Trung tâm điều phối Drone</span>
         </div>
       `);
-    hospitalMarkerRef.current = hospMarker;
 
     // Drone marker
     const droneIcon = L.divIcon({
@@ -68,13 +66,29 @@ export default function TrackingMap({ activeOrder }) {
     const droneM = L.marker(HOSPITAL_POS, { icon: droneIcon, zIndexOffset: 1000 })
       .addTo(map)
       .bindPopup(`
-        <div style="text-align:center;font-weight:600;font-size:13px;">
+        <div style="text-align:center;font-weight:600;font-size:13px;color:#e6edf7;">
           Drone SAH-0000<br>
-          <span style="font-weight:400;color:#64748B;font-size:11px;">Đang chờ</span>
+          <span style="font-weight:400;color:#64748c;font-size:11px;">Đang chờ</span>
         </div>
       `);
     droneM.setOpacity(0);
     droneMarkerRef.current = droneM;
+
+    // Radar sweep overlay at hub
+    const radar = L.divIcon({
+      html: `
+        <div class="map-radar">
+          <div class="map-radar__sweep"></div>
+          <div class="map-radar__ring"></div>
+          <div class="map-radar__ring map-radar__ring--2"></div>
+          <div class="map-radar__ring map-radar__ring--3"></div>
+        </div>
+      `,
+      className: '',
+      iconSize: [120, 120],
+      iconAnchor: [60, 60],
+    });
+    L.marker(HOSPITAL_POS, { icon: radar, interactive: false }).addTo(map);
 
     // Fit bounds
     map.fitBounds([
@@ -107,31 +121,29 @@ export default function TrackingMap({ activeOrder }) {
     const destName = activeOrder.destination || 'Bệnh viện Chợ Rẫy';
     const destPos = DESTINATIONS[destName] || DEFAULT_CENTER;
 
-    // Remove old destination marker
     if (destinationMarkerRef.current) {
       map.removeLayer(destinationMarkerRef.current);
     }
 
-    // Add destination marker
     const destIcon = L.divIcon({
-      html: '<div style="background:#16a34a;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 2px 12px rgba(22,163,74,0.45);border:2px solid #fff;"><i class="fa-solid fa-flag-checkered"></i></div>',
+      html: '<div style="background:#34d399;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#04181c;font-size:12px;box-shadow:0 0 0 4px rgba(52,211,153,0.25),0 4px 18px rgba(52,211,153,0.55);border:2px solid #0d1526;"><i class="fa-solid fa-flag-checkered"></i></div>',
       className: '',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
-      popupAnchor: [0, -16],
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+      popupAnchor: [0, -18],
     });
 
     const destMarker = L.marker(destPos, { icon: destIcon })
       .addTo(map)
       .bindPopup(`
-        <div style="text-align:center;font-weight:600;font-size:13px;">
+        <div style="text-align:center;font-weight:600;font-size:13px;color:#e6edf7;">
           ${destName}<br>
-          <span style="font-weight:400;color:#64748B;font-size:11px;">Điểm nhận hàng</span>
+          <span style="font-weight:400;color:#64748c;font-size:11px;">Điểm nhận hàng</span>
         </div>
       `);
     destinationMarkerRef.current = destMarker;
 
-    // Determine drone position based on status
+    // Drone position theo status
     let dronePos;
     const status = activeOrder.status || 'pending';
 
@@ -152,45 +164,23 @@ export default function TrackingMap({ activeOrder }) {
 
     droneM.setLatLng(dronePos);
 
-    // Update popup content
     const popup = droneM.getPopup();
     if (popup) {
-      const content = `
-        <div style="text-align:center;font-weight:600;font-size:13px;">
+      popup.setContent(`
+        <div style="text-align:center;font-weight:600;font-size:13px;color:#e6edf7;">
           Drone ${activeOrder.code || `SAH-${String(activeOrder.id).padStart(4, '0')}`}<br>
-          <span style="font-weight:400;color:#64748B;font-size:11px;">${STATUS_LABEL_MAP[status] || 'Đang chờ'}</span>
+          <span style="font-weight:400;color:#64748c;font-size:11px;">${STATUS_LABEL_MAP[status] || 'Đang chờ'}</span>
         </div>
-      `;
-      popup.setContent(content);
+      `);
     }
 
-    // Fit bounds
     const bounds = L.latLngBounds([HOSPITAL_POS, destPos]);
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
-
   }, [activeOrder]);
 
   return (
-    <div className="zl-card zl-card--hover zl-reveal zl-reveal--d3 zl-cover" ref={revealRef}>
-      <div className="zl-card__head flex-wrap">
-        <h2 className="zl-card__title">
-          <MapPinned className="zl-card__icon" size={20} />
-          Bản đồ theo dõi Drone
-        </h2>
-        <span className="zl-legend shrink-0">
-          <span>
-            <span className="dot dot--violet"></span>
-            Bệnh viện
-          </span>
-          <span>
-            <span className="dot dot--emerald"></span>
-            Điểm nhận
-          </span>
-          <span>Drone</span>
-        </span>
-      </div>
-
-      <div id="trackingMap" ref={mapRef}></div>
+    <div>
+      <div ref={mapRef} style={{ height: '100%', minHeight: '320px', borderRadius: '16px' }}></div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
         <span>
@@ -202,13 +192,13 @@ export default function TrackingMap({ activeOrder }) {
               {(activeOrder.status === 'delivered'
                 ? <CheckCircle2 size={14} className="text-success" />
                 : (activeOrder.status === 'inflight' || activeOrder.status === 'departed')
-                  ? <Drone size={14} className="text-[#0891b2]" />
-                  : <Clock size={14} className="text-[#b45309]" />)}
+                  ? <Drone size={14} className="text-[#22d3ee]" />
+                  : <Clock size={14} className="text-[#fbbf24]" />)}
               {' '}Drone: {STATUS_LABEL_MAP[activeOrder.status] || 'Chưa khởi tạo'}
             </>
           ) : (
             <>
-              <Drone size={14} className="text-[#0891b2]" /> Drone: Chưa khởi tạo
+              <Drone size={14} className="text-[#22d3ee]" /> Drone: Chưa khởi tạo
             </>
           )}
         </span>

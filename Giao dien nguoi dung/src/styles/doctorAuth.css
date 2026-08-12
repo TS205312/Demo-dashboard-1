@@ -1,4 +1,4 @@
-/* ===== DOCTOR AUTH — CLEAN MEDICAL STYLE ===== */
+/* ===== DOCTOR AUTH — DARK COMMAND CENTER ===== */
 
 .doctor-auth-container {
   min-height: 100vh;
@@ -9,10 +9,10 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 18% 18%, rgba(8, 145, 178, 0.12), transparent 42%),
-    radial-gradient(circle at 84% 16%, rgba(34, 211, 238, 0.1), transparent 40%),
-    radial-gradient(circle at 20% 88%, rgba(22, 163, 74, 0.08), transparent 40%),
-    linear-gradient(160deg, #ecfdf5 0%, #f0fdfa 55%, #e0f2fe 100%);
+    radial-gradient(circle at 18% 18%, rgba(34, 211, 238, 0.12), transparent 42%),
+    radial-gradient(circle at 84% 16%, rgba(56, 189, 248, 0.1), transparent 40%),
+    radial-gradient(circle at 20% 88%, rgba(45, 212, 191, 0.08), transparent 40%),
+    linear-gradient(160deg, #050a16 0%, #070d1a 55%, #0a1628 100%);
   background-attachment: fixed;
 }
 
@@ -21,10 +21,12 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(15, 118, 110, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 82%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 82%);
 }
 
 .doctor-auth-glow {
@@ -45,7 +47,7 @@
 .doctor-auth-glow-1 {
   width: 420px;
   height: 420px;
-  background: rgba(8, 145, 178, 0.35);
+  background: rgba(34, 211, 238, 0.3);
   top: -140px;
   left: -140px;
 }
@@ -53,7 +55,7 @@
 .doctor-auth-glow-2 {
   width: 360px;
   height: 360px;
-  background: rgba(22, 163, 74, 0.25);
+  background: rgba(45, 212, 191, 0.22);
   bottom: -120px;
   right: -120px;
   animation-delay: -6s;
@@ -66,11 +68,11 @@
   max-width: 520px;
   border-radius: 24px;
   padding: 36px 34px;
-  background: rgba(255, 255, 255, 0.94);
+  background: linear-gradient(170deg, rgba(16, 26, 48, 0.94), rgba(10, 17, 32, 0.96));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--color-border-light);
-  box-shadow: 0 30px 80px rgba(15, 118, 110, 0.2);
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
   animation: authSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
@@ -120,23 +122,23 @@
   width: 88px;
   height: 88px;
   border-radius: 24px;
-  background: linear-gradient(150deg, #0f766e, #0891b2, #22d3ee);
+  background: linear-gradient(150deg, #0e7490, #0891b2, #22d3ee);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.1rem;
-  box-shadow: 0 18px 44px rgba(8, 145, 178, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 44px rgba(34, 211, 238, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
 .doctor-auth-logo-wrap:hover {
   transform: translateY(-3px);
-  box-shadow: 0 24px 50px rgba(8, 145, 178, 0.42);
+  box-shadow: 0 24px 50px rgba(34, 211, 238, 0.38);
 }
 
 .doctor-auth-logo-wrap img {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.5));
 }
 
 .doctor-auth-title {
@@ -158,8 +160,8 @@
 
 .doctor-auth-tabs {
   display: flex;
-  background: #f1f5f9;
-  border: 1px solid var(--color-border-light);
+  background: rgba(11, 18, 34, 0.8);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
   padding: 4px;
   margin-bottom: 1.5rem;
@@ -189,10 +191,10 @@
 }
 
 .doctor-auth-tab.active {
-  background: #ffffff;
-  border-color: var(--color-border-light);
-  color: #0e7490;
-  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.16);
+  background: rgba(34, 211, 238, 0.14);
+  border-color: rgba(34, 211, 238, 0.4);
+  color: #67e8f9;
+  box-shadow: 0 6px 18px rgba(34, 211, 238, 0.16);
 }
 
 .doctor-auth-tab svg {
@@ -213,15 +215,15 @@
 }
 
 .doctor-auth-error {
-  background: rgba(220, 38, 38, 0.08);
-  color: #b91c1c;
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  background: rgba(251, 113, 133, 0.1);
+  color: #fda4af;
+  border: 1px solid rgba(251, 113, 133, 0.35);
 }
 
 .doctor-auth-success {
-  background: rgba(22, 163, 74, 0.1);
-  color: #15803d;
-  border: 1px solid rgba(22, 163, 74, 0.3);
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.35);
 }
 
 .doctor-auth-error svg,
@@ -294,23 +296,23 @@
   font-family: var(--font-sans);
   font-size: 0.96rem;
   color: var(--color-ink);
-  background: #ffffff;
+  background: rgba(11, 18, 34, 0.7);
   transition: all 0.2s ease;
   outline: none;
   box-sizing: border-box;
 }
 
 .doctor-input:hover {
-  border-color: #94a3b8;
+  border-color: rgba(34, 211, 238, 0.45);
 }
 
 .doctor-input:focus {
-  border-color: #0891b2;
-  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.18);
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
 }
 
 .doctor-input::placeholder {
-  color: #94a3b8;
+  color: #55637d;
 }
 
 .doctor-input-row {
@@ -332,12 +334,12 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: #04181c;
   background: var(--grad-brand);
   cursor: pointer;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.22s ease;
-  box-shadow: 0 14px 32px rgba(8, 145, 178, 0.34);
+  box-shadow: 0 14px 32px rgba(34, 211, 238, 0.24);
   margin-top: 0.5rem;
 }
 
@@ -348,7 +350,7 @@
   left: -80%;
   width: 45%;
   height: 100%;
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: skewX(-20deg);
   transition: left 0.55s ease;
   pointer-events: none;
@@ -356,7 +358,7 @@
 
 .doctor-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 20px 42px rgba(8, 145, 178, 0.44);
+  box-shadow: 0 20px 42px rgba(34, 211, 238, 0.34);
 }
 .doctor-submit-btn:hover:not(:disabled)::after { left: 130%; }
 
@@ -373,7 +375,7 @@
 .doctor-spinner {
   width: 18px;
   height: 18px;
-  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: doctor-spin 0.7s linear infinite;
@@ -392,7 +394,7 @@
 }
 
 .doctor-link {
-  color: #0891b2;
+  color: #22d3ee;
   font-weight: 700;
   cursor: pointer;
 }
@@ -402,8 +404,8 @@
 }
 
 .doctor-demo-hint {
-  background: rgba(8, 145, 178, 0.06);
-  border: 1px solid rgba(8, 145, 178, 0.22);
+  background: rgba(34, 211, 238, 0.06);
+  border: 1px solid rgba(34, 211, 238, 0.25);
   border-radius: 12px;
   padding: 0.9rem 1rem;
   font-size: 0.82rem;
@@ -414,12 +416,12 @@
 
 .doctor-demo-hint strong {
   font-family: var(--font-mono);
-  color: #0e7490;
+  color: #67e8f9;
 }
 
 .doctor-otp-group {
-  background: rgba(8, 145, 178, 0.05);
-  border: 1px dashed rgba(8, 145, 178, 0.4);
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px dashed rgba(34, 211, 238, 0.4);
   border-radius: 14px;
   padding: 1rem;
 }
@@ -432,7 +434,7 @@
 }
 
 .doctor-required {
-  color: #b91c1c;
+  color: #fb7185;
 }
 
 .doctor-auth-version {

@@ -17,17 +17,11 @@ import {
   UserRound,
 } from 'lucide-react';
 import { apiUpdateProfile } from '../utils/api';
-import useReveal from '../hooks/useReveal';
 
 /**
- * Trang "Sửa tài khoản" — cập nhật hồ sơ bác sĩ + đổi mật khẩu
+ * Tài khoản — cập nhật hồ sơ bác sĩ + đổi mật khẩu (trong modal)
  */
 export default function ProfilePage({ user, onUpdated, onNotify }) {
-  const summaryRef = useReveal();
-  const tipRef = useReveal();
-  const infoRef = useReveal();
-  const pwdRef = useReveal();
-
   const [form, setForm] = useState({
     name: user?.name || '',
     doctor_id: user?.doctor_id || '',
@@ -136,254 +130,229 @@ export default function ProfilePage({ user, onUpdated, onNotify }) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
-      {/* Profile summary card */}
-      <div className="lg:col-span-2 space-y-6">
-        <div className="profile-summary zl-card zl-card--hover zl-reveal" ref={summaryRef}>
-          <div className="profile-avatar-wrap">
-            <div className="profile-avatar">
-              <Stethoscope size={38} />
-            </div>
-            <span className="profile-status-dot" title="Đang hoạt động"></span>
+    <div className="space-y-6">
+      {/* Profile summary */}
+      <div className="flex items-center gap-4 rounded-2xl border border-[#24334f] bg-[rgba(13,21,38,0.6)] p-4">
+        <div className="profile-avatar-wrap m-0">
+          <div className="profile-avatar" style={{ width: 64, height: 64, borderRadius: 20 }}>
+            <Stethoscope size={30} />
           </div>
-          <h2 className="profile-name">{user?.name || 'Bác sĩ'}</h2>
-          <p className="profile-role">
-            <BadgeCheck size={14} /> Tài khoản đã xác thực
-          </p>
-
-          <div className="profile-meta">
-            <div className="profile-meta__row">
-              <Mail size={15} />
-              <span>{user?.email || '--'}</span>
-            </div>
-            <div className="profile-meta__row">
-              <IdCard size={15} />
-              <span>{user?.doctor_id || 'Chưa có mã bác sĩ'}</span>
-            </div>
-            <div className="profile-meta__row">
-              <Building2 size={15} />
-              <span>{user?.department || '--'}</span>
-            </div>
-            <div className="profile-meta__row">
-              <Hospital size={15} />
-              <span>{user?.hospital || '--'}</span>
-            </div>
-            <div className="profile-meta__row">
-              <Phone size={15} />
-              <span>{user?.phone || '--'}</span>
-            </div>
-          </div>
+          <span className="profile-status-dot" title="Đang hoạt động"></span>
         </div>
-
-        <div className="profile-tip zl-reveal zl-reveal--d2" ref={tipRef}>
-          <ShieldCheck size={18} />
-          <p>
-            Thông tin bác sĩ sẽ được gắn tự động vào mỗi đơn hàng vận chuyển để
-            trung tâm điều phối xác minh nhanh hơn.
+        <div className="min-w-0">
+          <h2 className="profile-name truncate">{user?.name || 'Bác sĩ'}</h2>
+          <p className="profile-role">
+            <BadgeCheck size={13} /> Tài khoản đã xác thực
           </p>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-muted">
+            <span className="inline-flex items-center gap-1"><Mail size={12} /> {user?.email || '--'}</span>
+            <span className="inline-flex items-center gap-1"><IdCard size={12} /> {user?.doctor_id || 'Chưa có mã'}</span>
+            <span className="inline-flex items-center gap-1"><Building2 size={12} /> {user?.department || '--'}</span>
+            <span className="inline-flex items-center gap-1"><Hospital size={12} /> {user?.hospital || '--'}</span>
+            <span className="inline-flex items-center gap-1"><Phone size={12} /> {user?.phone || '--'}</span>
+          </div>
         </div>
       </div>
 
-      {/* Edit forms */}
-      <div className="lg:col-span-3 space-y-6">
-        {/* Thông tin tài khoản */}
-        <div className="zl-card zl-card--hover zl-reveal zl-reveal--d1" ref={infoRef}>
-          <div className="zl-card__head">
-            <h2 className="zl-card__title">
-              <UserRound className="zl-card__icon" size={20} />
-              Thông tin tài khoản
-            </h2>
-          </div>
+      <div className="profile-tip">
+        <ShieldCheck size={18} />
+        <p>
+          Thông tin bác sĩ sẽ được gắn tự động vào mỗi đơn hàng vận chuyển để
+          trung tâm điều phối xác minh nhanh hơn.
+        </p>
+      </div>
 
-          {error && (
-            <div className="doctor-auth-error">
-              <CircleAlert /> {error}
-            </div>
-          )}
-          {success && (
-            <div className="doctor-auth-success">
-              <CircleCheckBig /> {success}
-            </div>
-          )}
-
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div className="doctor-input-group">
-              <label className="doctor-label">Họ và tên bác sĩ</label>
-              <div className="doctor-input-wrapper">
-                <User className="doctor-input-icon" />
-                <input
-                  type="text"
-                  name="name"
-                  className="doctor-input"
-                  placeholder="VD: BS. Nguyễn Văn An"
-                  value={form.name}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="doctor-input-group">
-              <label className="doctor-label">Email công việc</label>
-              <div className="doctor-input-wrapper">
-                <Mail className="doctor-input-icon" />
-                <input
-                  type="email"
-                  className="doctor-input"
-                  value={user?.email || ''}
-                  readOnly
-                  disabled
-                />
-              </div>
-              <p className="profile-hint">Email dùng để đăng nhập, không thể thay đổi.</p>
-            </div>
-
-            <div className="doctor-input-row">
-              <div className="doctor-input-group">
-                <label className="doctor-label">Mã bác sĩ</label>
-                <div className="doctor-input-wrapper">
-                  <IdCard className="doctor-input-icon" />
-                  <input
-                    type="text"
-                    name="doctor_id"
-                    className="doctor-input"
-                    placeholder="VD: BS001"
-                    value={form.doctor_id}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="doctor-input-group">
-                <label className="doctor-label">Khoa / Phòng</label>
-                <div className="doctor-input-wrapper">
-                  <Building2 className="doctor-input-icon" />
-                  <input
-                    type="text"
-                    name="department"
-                    className="doctor-input"
-                    placeholder="VD: Khoa Cấp cứu"
-                    value={form.department}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="doctor-input-group">
-              <label className="doctor-label">Bệnh viện công tác</label>
-              <div className="doctor-input-wrapper">
-                <Hospital className="doctor-input-icon" />
-                <input
-                  type="text"
-                  name="hospital"
-                  className="doctor-input"
-                  placeholder="VD: Bệnh viện Chợ Rẫy"
-                  value={form.hospital}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="doctor-input-group">
-              <label className="doctor-label">Số điện thoại liên hệ</label>
-              <div className="doctor-input-wrapper">
-                <Phone className="doctor-input-icon" />
-                <input
-                  type="text"
-                  name="phone"
-                  className="doctor-input"
-                  placeholder="VD: 0901234567"
-                  value={form.phone}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="zl-btn zl-btn--dark zl-btn--block zl-btn--lg" disabled={isSaving}>
-              {isSaving ? (
-                <>
-                  <span className="spinner"></span> Đang lưu...
-                </>
-              ) : (
-                <>
-                  <Save size={18} /> Lưu thông tin
-                </>
-              )}
-            </button>
-          </form>
+      {error && (
+        <div className="doctor-auth-error">
+          <CircleAlert /> {error}
         </div>
+      )}
+      {success && (
+        <div className="doctor-auth-success">
+          <CircleCheckBig /> {success}
+        </div>
+      )}
 
-        {/* Đổi mật khẩu */}
-        <div className="zl-card zl-card--hover zl-reveal zl-reveal--d2" ref={pwdRef}>
-          <div className="zl-card__head">
-            <h2 className="zl-card__title">
-              <KeyRound className="zl-card__icon" size={20} />
-              Đổi mật khẩu
-            </h2>
+      {/* Edit info */}
+      <div>
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-ink">
+          <UserRound size={16} className="text-[#22d3ee]" /> Thông tin tài khoản
+        </h3>
+
+        <form onSubmit={handleSaveProfile} className="space-y-4">
+          <div className="doctor-input-group">
+            <label className="doctor-label">Họ và tên bác sĩ</label>
+            <div className="doctor-input-wrapper">
+              <User className="doctor-input-icon" />
+              <input
+                type="text"
+                name="name"
+                className="doctor-input"
+                placeholder="VD: BS. Nguyễn Văn An"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <form onSubmit={handleChangePassword} className="space-y-4">
+          <div className="doctor-input-group">
+            <label className="doctor-label">Email công việc</label>
+            <div className="doctor-input-wrapper">
+              <Mail className="doctor-input-icon" />
+              <input
+                type="email"
+                className="doctor-input"
+                value={user?.email || ''}
+                readOnly
+                disabled
+              />
+            </div>
+            <p className="profile-hint">Email dùng để đăng nhập, không thể thay đổi.</p>
+          </div>
+
+          <div className="doctor-input-row">
             <div className="doctor-input-group">
-              <label className="doctor-label">Mật khẩu hiện tại</label>
+              <label className="doctor-label">Mã bác sĩ</label>
+              <div className="doctor-input-wrapper">
+                <IdCard className="doctor-input-icon" />
+                <input
+                  type="text"
+                  name="doctor_id"
+                  className="doctor-input"
+                  placeholder="VD: BS001"
+                  value={form.doctor_id}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="doctor-input-group">
+              <label className="doctor-label">Khoa / Phòng</label>
+              <div className="doctor-input-wrapper">
+                <Building2 className="doctor-input-icon" />
+                <input
+                  type="text"
+                  name="department"
+                  className="doctor-input"
+                  placeholder="VD: Khoa Cấp cứu"
+                  value={form.department}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="doctor-input-group">
+            <label className="doctor-label">Bệnh viện công tác</label>
+            <div className="doctor-input-wrapper">
+              <Hospital className="doctor-input-icon" />
+              <input
+                type="text"
+                name="hospital"
+                className="doctor-input"
+                placeholder="VD: Bệnh viện Chợ Rẫy"
+                value={form.hospital}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="doctor-input-group">
+            <label className="doctor-label">Số điện thoại liên hệ</label>
+            <div className="doctor-input-wrapper">
+              <Phone className="doctor-input-icon" />
+              <input
+                type="text"
+                name="phone"
+                className="doctor-input"
+                placeholder="VD: 0901234567"
+                value={form.phone}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="zl-btn zl-btn--dark zl-btn--block zl-btn--lg" disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <span className="spinner"></span> Đang lưu...
+              </>
+            ) : (
+              <>
+                <Save size={18} /> Lưu thông tin
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+
+      {/* Change password */}
+      <div>
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-ink">
+          <KeyRound size={16} className="text-[#22d3ee]" /> Đổi mật khẩu
+        </h3>
+
+        <form onSubmit={handleChangePassword} className="space-y-4">
+          <div className="doctor-input-group">
+            <label className="doctor-label">Mật khẩu hiện tại</label>
+            <div className="doctor-input-wrapper">
+              <Lock className="doctor-input-icon" />
+              <input
+                type="password"
+                name="currentPassword"
+                className="doctor-input"
+                placeholder="Nhập mật khẩu hiện tại"
+                value={pwd.currentPassword}
+                onChange={handlePwdChange}
+                autoComplete="current-password"
+              />
+            </div>
+          </div>
+
+          <div className="doctor-input-row">
+            <div className="doctor-input-group">
+              <label className="doctor-label">Mật khẩu mới</label>
               <div className="doctor-input-wrapper">
                 <Lock className="doctor-input-icon" />
                 <input
                   type="password"
-                  name="currentPassword"
+                  name="newPassword"
                   className="doctor-input"
-                  placeholder="Nhập mật khẩu hiện tại"
-                  value={pwd.currentPassword}
+                  placeholder="Ít nhất 6 ký tự"
+                  value={pwd.newPassword}
                   onChange={handlePwdChange}
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
               </div>
             </div>
-
-            <div className="doctor-input-row">
-              <div className="doctor-input-group">
-                <label className="doctor-label">Mật khẩu mới</label>
-                <div className="doctor-input-wrapper">
-                  <Lock className="doctor-input-icon" />
-                  <input
-                    type="password"
-                    name="newPassword"
-                    className="doctor-input"
-                    placeholder="Ít nhất 6 ký tự"
-                    value={pwd.newPassword}
-                    onChange={handlePwdChange}
-                    autoComplete="new-password"
-                  />
-                </div>
-              </div>
-              <div className="doctor-input-group">
-                <label className="doctor-label">Xác nhận mật khẩu mới</label>
-                <div className="doctor-input-wrapper">
-                  <Lock className="doctor-input-icon" />
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    className="doctor-input"
-                    placeholder="Nhập lại mật khẩu mới"
-                    value={pwd.confirmPassword}
-                    onChange={handlePwdChange}
-                    autoComplete="new-password"
-                  />
-                </div>
+            <div className="doctor-input-group">
+              <label className="doctor-label">Xác nhận mật khẩu mới</label>
+              <div className="doctor-input-wrapper">
+                <Lock className="doctor-input-icon" />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  className="doctor-input"
+                  placeholder="Nhập lại mật khẩu mới"
+                  value={pwd.confirmPassword}
+                  onChange={handlePwdChange}
+                  autoComplete="new-password"
+                />
               </div>
             </div>
+          </div>
 
-            <button type="submit" className="zl-btn zl-btn--violet zl-btn--block zl-btn--lg" disabled={isChangingPwd}>
-              {isChangingPwd ? (
-                <>
-                  <span className="spinner"></span> Đang đổi mật khẩu...
-                </>
-              ) : (
-                <>
-                  <KeyRound size={18} /> Đổi mật khẩu
-                </>
-              )}
-            </button>
-          </form>
-        </div>
+          <button type="submit" className="zl-btn zl-btn--violet zl-btn--block zl-btn--lg" disabled={isChangingPwd}>
+            {isChangingPwd ? (
+              <>
+                <span className="spinner"></span> Đang đổi mật khẩu...
+              </>
+            ) : (
+              <>
+                <KeyRound size={18} /> Đổi mật khẩu
+              </>
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -7,39 +7,39 @@
 @tailwind utilities;
 
 /* ============================================================
-   SAH MEDICAL PORTAL — "CLINICAL PRECISION"
-   Premium medical teal (#0891B2) + cyan (#22D3EE) + emerald
-   Light, glassy surfaces, animated ambience, high contrast
+   SAH COMMAND CENTER — DARK THEME
+   Deep navy control-room + cyan/teal telemetry accents.
+   Glassy dark panels, HUD corner brackets, radar ambience.
    ============================================================ */
 
 :root {
-  --color-background: #f0fdfa;
-  --color-surface: #ffffff;
-  --color-surface-soft: #f7fdfc;
-  --color-ink: #0f172a;
-  --color-ink-soft: #334155;
-  --color-ink-muted: #64748b;
-  --color-primary: #0891b2;
-  --color-primary-strong: #0e7490;
-  --color-primary-soft: rgba(8, 145, 178, 0.09);
-  --color-primary-border: rgba(8, 145, 178, 0.3);
-  --color-secondary: #22d3ee;
-  --color-success: #15803d;
-  --color-success-soft: rgba(34, 197, 94, 0.12);
-  --color-warning: #b45309;
-  --color-warning-soft: rgba(217, 119, 6, 0.12);
-  --color-danger: #b91c1c;
-  --color-danger-soft: rgba(220, 38, 38, 0.1);
-  --color-border: #cbd5e1;
-  --color-border-light: #e2e8f0;
+  --color-background: #060b18;
+  --color-surface: #0d1526;
+  --color-surface-soft: #0a1120;
+  --color-ink: #e6edf7;
+  --color-ink-soft: #9fb0c8;
+  --color-ink-muted: #64748c;
+  --color-primary: #22d3ee;
+  --color-primary-strong: #38bdf8;
+  --color-primary-soft: rgba(34, 211, 238, 0.1);
+  --color-primary-border: rgba(34, 211, 238, 0.28);
+  --color-secondary: #2dd4bf;
+  --color-success: #34d399;
+  --color-success-soft: rgba(52, 211, 153, 0.12);
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgba(251, 191, 36, 0.12);
+  --color-danger: #fb7185;
+  --color-danger-soft: rgba(251, 113, 133, 0.12);
+  --color-border: #24334f;
+  --color-border-light: #1b2840;
   --font-sans: 'Noto Sans', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Figtree', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
-  --radius-card: 20px;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
+  --radius-card: 18px;
   --radius-pill: 999px;
-  --shadow-card: 0 8px 30px rgba(15, 118, 110, 0.07);
-  --shadow-card-hover: 0 22px 55px rgba(15, 118, 110, 0.16);
-  --grad-brand: linear-gradient(135deg, #0f766e 0%, #0891b2 55%, #22d3ee 130%);
+  --shadow-card: 0 12px 42px rgba(0, 0, 0, 0.45);
+  --shadow-card-hover: 0 26px 64px rgba(0, 0, 0, 0.58);
+  --grad-brand: linear-gradient(135deg, #22d3ee 0%, #2dd4bf 55%, #34d399 130%);
 }
 
 * {
@@ -62,15 +62,29 @@ html {
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background-color: #f6fdfb;
+  background-color: #060b18;
   background-image:
-    radial-gradient(circle at 88% -4%, rgba(34, 211, 238, 0.14), transparent 42%),
-    radial-gradient(circle at -4% 18%, rgba(16, 185, 129, 0.1), transparent 38%),
-    radial-gradient(circle at 50% 110%, rgba(8, 145, 178, 0.08), transparent 44%);
+    radial-gradient(circle at 85% -8%, rgba(34, 211, 238, 0.12), transparent 46%),
+    radial-gradient(circle at -6% 16%, rgba(45, 212, 191, 0.09), transparent 42%),
+    radial-gradient(circle at 50% 112%, rgba(56, 189, 248, 0.07), transparent 46%);
   background-attachment: fixed;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.035) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 78%);
 }
 
 #root {
@@ -78,8 +92,8 @@ body {
 }
 
 ::selection {
-  background: rgba(8, 145, 178, 0.25);
-  color: #042f2e;
+  background: rgba(34, 211, 238, 0.3);
+  color: #eafffe;
 }
 
 ::-webkit-scrollbar {
@@ -88,17 +102,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 118, 110, 0.05);
+  background: rgba(10, 17, 32, 0.6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 118, 110, 0.28);
+  background: rgba(34, 211, 238, 0.25);
   border-radius: 999px;
-  border: 2px solid rgba(15, 118, 110, 0.06);
+  border: 2px solid rgba(10, 17, 32, 0.6);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 118, 110, 0.42);
+  background: rgba(34, 211, 238, 0.4);
 }
 
 h1,
@@ -120,31 +134,31 @@ p {
     --font-sans: var(--font-sans);
   }
   :root {
-    --background: #f0fdfa;
-    --foreground: #0f172a;
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    --popover: #ffffff;
-    --popover-foreground: #0f172a;
-    --primary: #0891b2;
-    --primary-foreground: #ffffff;
-    --secondary: #ccfbf1;
-    --secondary-foreground: #134e4a;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
-    --accent: #ccfbf1;
-    --accent-foreground: #134e4a;
-    --destructive: #dc2626;
-    --border: #e2e8f0;
-    --input: #cbd5e1;
-    --ring: #0891b2;
+    --background: #060b18;
+    --foreground: #e6edf7;
+    --card: #0d1526;
+    --card-foreground: #e6edf7;
+    --popover: #0d1526;
+    --popover-foreground: #e6edf7;
+    --primary: #22d3ee;
+    --primary-foreground: #06292e;
+    --secondary: #0f2433;
+    --secondary-foreground: #bae6fd;
+    --muted: #0e1a2e;
+    --muted-foreground: #64748c;
+    --accent: #0f2433;
+    --accent-foreground: #bae6fd;
+    --destructive: #fb7185;
+    --border: #24334f;
+    --input: #24334f;
+    --ring: #22d3ee;
     --radius: 0.625rem;
   }
 }
 
 /* ===== ACCESSIBILITY ===== */
 :focus-visible {
-  outline: 3px solid rgba(8, 145, 178, 0.45);
+  outline: 3px solid rgba(34, 211, 238, 0.5);
   outline-offset: 2px;
   border-radius: 6px;
 }
