@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { CheckCircle2, Clock, Drone, MapPinned } from 'lucide-react';
 import { DEFAULT_CENTER, HOSPITAL_POS, DESTINATIONS, STATUS_LABEL_MAP } from '../utils/constants';
 import useReveal from '../hooks/useReveal';
 
@@ -38,7 +39,7 @@ export default function TrackingMap({ activeOrder }) {
 
     // Hospital marker
     const hospIcon = L.divIcon({
-      html: '<div style="background:#643aed;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 2px 14px rgba(100,58,237,0.5);border:2px solid #fff;"><i class="fa-solid fa-hospital"></i></div>',
+      html: '<div style="background:#0891b2;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 2px 14px rgba(8,145,178,0.5);border:2px solid #fff;"><i class="fa-solid fa-hospital"></i></div>',
       className: '',
       iconSize: [32, 32],
       iconAnchor: [16, 16],
@@ -49,7 +50,7 @@ export default function TrackingMap({ activeOrder }) {
       .addTo(map)
       .bindPopup(`
         <div style="text-align:center;font-weight:600;font-size:13px;">
-          🏥 SAH-TECH Hub<br>
+          SAH-TECH Hub<br>
           <span style="font-weight:400;color:#64748B;font-size:11px;">Trung tâm điều phối Drone</span>
         </div>
       `);
@@ -68,7 +69,7 @@ export default function TrackingMap({ activeOrder }) {
       .addTo(map)
       .bindPopup(`
         <div style="text-align:center;font-weight:600;font-size:13px;">
-          🛸 Drone SAH-0000<br>
+          Drone SAH-0000<br>
           <span style="font-weight:400;color:#64748B;font-size:11px;">Đang chờ</span>
         </div>
       `);
@@ -113,7 +114,7 @@ export default function TrackingMap({ activeOrder }) {
 
     // Add destination marker
     const destIcon = L.divIcon({
-      html: '<div style="background:#10b981;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 2px 12px rgba(16,185,129,0.45);border:2px solid #fff;"><i class="fa-solid fa-flag-checkered"></i></div>',
+      html: '<div style="background:#16a34a;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;box-shadow:0 2px 12px rgba(22,163,74,0.45);border:2px solid #fff;"><i class="fa-solid fa-flag-checkered"></i></div>',
       className: '',
       iconSize: [28, 28],
       iconAnchor: [14, 14],
@@ -124,7 +125,7 @@ export default function TrackingMap({ activeOrder }) {
       .addTo(map)
       .bindPopup(`
         <div style="text-align:center;font-weight:600;font-size:13px;">
-          📍 ${destName}<br>
+          ${destName}<br>
           <span style="font-weight:400;color:#64748B;font-size:11px;">Điểm nhận hàng</span>
         </div>
       `);
@@ -156,7 +157,7 @@ export default function TrackingMap({ activeOrder }) {
     if (popup) {
       const content = `
         <div style="text-align:center;font-weight:600;font-size:13px;">
-          🛸 Drone ${activeOrder.code || `SAH-${String(activeOrder.id).padStart(4, '0')}`}<br>
+          Drone ${activeOrder.code || `SAH-${String(activeOrder.id).padStart(4, '0')}`}<br>
           <span style="font-weight:400;color:#64748B;font-size:11px;">${STATUS_LABEL_MAP[status] || 'Đang chờ'}</span>
         </div>
       `;
@@ -173,7 +174,7 @@ export default function TrackingMap({ activeOrder }) {
     <div className="zl-card zl-card--hover zl-reveal zl-reveal--d3 zl-cover" ref={revealRef}>
       <div className="zl-card__head flex-wrap">
         <h2 className="zl-card__title">
-          <i className="fa-solid fa-map-location-dot zl-card__icon"></i>
+          <MapPinned className="zl-card__icon" size={20} />
           Bản đồ theo dõi Drone
         </h2>
         <span className="zl-legend shrink-0">
@@ -185,22 +186,30 @@ export default function TrackingMap({ activeOrder }) {
             <span className="dot dot--emerald"></span>
             Điểm nhận
           </span>
-          <span>🛸 Drone</span>
+          <span>Drone</span>
         </span>
       </div>
 
       <div id="trackingMap" ref={mapRef}></div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
-        <span><i className="fa-regular fa-circle-check text-success mr-1"></i> Điểm xuất phát: SAH-TECH Hub</span>
-        <span id="droneStatusText" className="font-semibold text-ink-soft">
+        <span>
+          <CheckCircle2 size={13} className="text-success mr-1 inline" /> Điểm xuất phát: SAH-TECH Hub
+        </span>
+        <span id="droneStatusText" className="font-semibold text-ink-soft inline-flex items-center gap-1.5">
           {activeOrder ? (
             <>
-              {(activeOrder.status === 'delivered' ? '✅' : (activeOrder.status === 'inflight' || activeOrder.status === 'departed') ? '🛸' : '⏳')}
+              {(activeOrder.status === 'delivered'
+                ? <CheckCircle2 size={14} className="text-success" />
+                : (activeOrder.status === 'inflight' || activeOrder.status === 'departed')
+                  ? <Drone size={14} className="text-[#0891b2]" />
+                  : <Clock size={14} className="text-[#b45309]" />)}
               {' '}Drone: {STATUS_LABEL_MAP[activeOrder.status] || 'Chưa khởi tạo'}
             </>
           ) : (
-            '🛸 Drone: Chưa khởi tạo'
+            <>
+              <Drone size={14} className="text-[#0891b2]" /> Drone: Chưa khởi tạo
+            </>
           )}
         </span>
       </div>

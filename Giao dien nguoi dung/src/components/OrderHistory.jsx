@@ -1,3 +1,4 @@
+import { ClipboardList, History, RefreshCw, ShieldCheck, Siren } from 'lucide-react';
 import { STATUS_BADGE_MAP, STATUS_LABEL_MAP } from '../utils/constants';
 import useReveal from '../hooks/useReveal';
 
@@ -7,14 +8,14 @@ export default function OrderHistory({ orders, onSelectOrder, onRefresh }) {
   const header = (
     <div className="zl-card__head">
       <h2 className="zl-card__title">
-        <i className="fa-solid fa-clock-rotate-left zl-card__icon"></i>
+        <History className="zl-card__icon" size={20} />
         Lịch sử đơn hàng
       </h2>
       <button
         onClick={onRefresh}
-        className="flex items-center gap-1.5 rounded-full border border-black px-3.5 py-1.5 text-xs font-bold text-black transition-colors hover:bg-black hover:text-white"
+        className="flex items-center gap-1.5 rounded-full border border-[#cbd5e1] bg-white px-3.5 py-1.5 text-xs font-bold text-[#134e4a] transition-colors hover:bg-[#f0fdfa] hover:border-[#0891b2] hover:text-[#0e7490] cursor-pointer"
       >
-        <i className="fa-solid fa-rotate"></i> Làm mới
+        <RefreshCw size={13} /> Làm mới
       </button>
     </div>
   );
@@ -37,7 +38,7 @@ export default function OrderHistory({ orders, onSelectOrder, onRefresh }) {
             <tbody>
               <tr>
                 <td colSpan="5" className="text-center text-sm text-ink-muted py-8">
-                  <i className="fa-regular fa-rectangle-list text-2xl mb-2 block"></i>
+                  <ClipboardList size={28} className="mx-auto mb-2 opacity-40" />
                   Chưa có đơn hàng nào. Hãy tạo đơn hàng đầu tiên!
                 </td>
               </tr>
@@ -70,21 +71,23 @@ export default function OrderHistory({ orders, onSelectOrder, onRefresh }) {
               const statusKey = order.status || 'pending';
               const badgeClass = STATUS_BADGE_MAP[statusKey] || 'badge-pending';
               const label = STATUS_LABEL_MAP[statusKey] || 'Chưa xác định';
-              const urgencyIcon = order.urgency === 'Cấp cứu khẩn' ? '🚨' : '✅';
-              const urgencyClass = order.urgency === 'Cấp cứu khẩn' ? 'text-danger font-semibold' : 'text-ink-soft';
+              const isUrgent = order.urgency === 'Cấp cứu khẩn';
+              const urgencyClass = isUrgent ? 'text-danger font-semibold' : 'text-ink-soft';
 
               return (
                 <tr
                   key={order.id}
-                  className="cursor-pointer transition-colors"
+                  className="transition-colors"
                   onClick={() => onSelectOrder(order.id)}
                 >
-                  <td className="font-mono text-xs font-bold text-violet">
+                  <td className="font-mono text-xs font-bold text-[#0891b2]">
                     #{order.code || `SAH-${String(order.id).padStart(4, '0')}`}
                   </td>
                   <td className="text-sm font-semibold text-ink">{order.item || '--'}</td>
                   <td className="text-sm text-ink-soft">{order.destination || '--'}</td>
-                  <td className={`text-sm ${urgencyClass}`}>{urgencyIcon} {order.urgency || '--'}</td>
+                  <td className={`text-sm inline-flex items-center gap-1 ${urgencyClass}`}>
+                    {isUrgent ? <Siren size={14} /> : <ShieldCheck size={14} />} {order.urgency || '--'}
+                  </td>
                   <td><span className={`badge ${badgeClass}`}>{label}</span></td>
                 </tr>
               );

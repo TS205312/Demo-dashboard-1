@@ -1,10 +1,18 @@
 import { useEffect } from 'react';
+import { AlertTriangle, CircleAlert, CircleCheckBig, Info } from 'lucide-react';
 
 const COLOR_MAP = {
   info: 'toast-info',
   success: 'toast-success',
   error: 'toast-error',
   warning: 'toast-warning',
+};
+
+const ICON_MAP = {
+  info: Info,
+  success: CircleCheckBig,
+  error: CircleAlert,
+  warning: AlertTriangle,
 };
 
 export default function Toast({ message, type = 'info', onClose }) {
@@ -19,10 +27,11 @@ export default function Toast({ message, type = 'info', onClose }) {
   if (!message) return null;
 
   const tint = COLOR_MAP[type] || COLOR_MAP.info;
+  const Icon = ICON_MAP[type] || Info;
 
   return (
     <div className={`toast fade-slide-up ${tint}`}>
-      <i className="fa-solid fa-circle-info text-white/80"></i>
+      <Icon size={16} />
       {message}
     </div>
   );

@@ -1,4 +1,4 @@
-/* ===== DOCTOR AUTH — ZIPLINE STYLE ===== */
+/* ===== DOCTOR AUTH — CLEAN MEDICAL STYLE ===== */
 
 .doctor-auth-container {
   min-height: 100vh;
@@ -9,10 +9,10 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 18% 18%, rgba(100, 58, 237, 0.4), transparent 42%),
-    radial-gradient(circle at 84% 16%, rgba(100, 58, 237, 0.16), transparent 40%),
-    radial-gradient(circle at 20% 88%, rgba(255, 255, 255, 0.05), transparent 40%),
-    linear-gradient(160deg, #000000 0%, #0a0a0a 60%, #131021 100%);
+    radial-gradient(circle at 18% 18%, rgba(8, 145, 178, 0.12), transparent 42%),
+    radial-gradient(circle at 84% 16%, rgba(34, 211, 238, 0.1), transparent 40%),
+    radial-gradient(circle at 20% 88%, rgba(22, 163, 74, 0.08), transparent 40%),
+    linear-gradient(160deg, #ecfdf5 0%, #f0fdfa 55%, #e0f2fe 100%);
   background-attachment: fixed;
 }
 
@@ -21,8 +21,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(15, 118, 110, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
 }
@@ -30,8 +30,8 @@
 .doctor-auth-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.35;
+  filter: blur(110px);
+  opacity: 0.4;
   pointer-events: none;
   z-index: 0;
 }
@@ -39,7 +39,7 @@
 .doctor-auth-glow-1 {
   width: 420px;
   height: 420px;
-  background: rgba(100, 58, 237, 0.5);
+  background: rgba(8, 145, 178, 0.35);
   top: -140px;
   left: -140px;
 }
@@ -47,7 +47,7 @@
 .doctor-auth-glow-2 {
   width: 360px;
   height: 360px;
-  background: rgba(139, 92, 246, 0.32);
+  background: rgba(22, 163, 74, 0.25);
   bottom: -120px;
   right: -120px;
 }
@@ -59,16 +59,16 @@
   max-width: 520px;
   border-radius: 24px;
   padding: 36px 34px;
-  background: #f7f4e8;
-  border: 1px solid #000;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
-  animation: authSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff;
+  border: 1px solid var(--color-border-light);
+  box-shadow: 0 30px 70px rgba(15, 118, 110, 0.18);
+  animation: authSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes authSlideUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(26px);
   }
   to {
     opacity: 1;
@@ -101,38 +101,37 @@
   width: 88px;
   height: 88px;
   border-radius: 22px;
-  background: #000;
+  background: linear-gradient(150deg, #0f766e, #0891b2);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.1rem;
-  box-shadow: 0 18px 50px rgba(100, 58, 237, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 18px 40px rgba(8, 145, 178, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .doctor-auth-logo-wrap:hover {
   transform: translateY(-3px);
-  box-shadow: 0 24px 60px rgba(100, 58, 237, 0.55);
+  box-shadow: 0 24px 50px rgba(8, 145, 178, 0.42);
 }
 
 .doctor-auth-logo-wrap img {
-  filter: drop-shadow(0 0 10px rgba(100, 58, 237, 0.6));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
 }
 
 .doctor-auth-title {
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  color: #000;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
   margin: 0;
 }
 
 .doctor-auth-subtitle {
   font-size: 0.95rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-ink-muted);
   margin-top: 0.35rem;
   line-height: 1.5;
   font-weight: 500;
@@ -140,9 +139,9 @@
 
 .doctor-auth-tabs {
   display: flex;
-  background: #fdfbf4;
-  border: 1px solid #000;
-  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
   padding: 4px;
   margin-bottom: 1.5rem;
   gap: 0.25rem;
@@ -150,31 +149,36 @@
 
 .doctor-auth-tab {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   border: 1.5px solid transparent;
   background: transparent;
   padding: 0.75rem 0.8rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-ink-muted);
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .doctor-auth-tab:hover {
-  color: #000;
+  color: var(--color-ink);
 }
 
 .doctor-auth-tab.active {
-  background: #000;
-  border-color: #000;
-  color: #fff;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  border-color: var(--color-border-light);
+  color: #0e7490;
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.16);
 }
 
-.doctor-auth-tab i {
-  margin-right: 0.5rem;
+.doctor-auth-tab svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .doctor-auth-error,
@@ -185,20 +189,25 @@
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.9rem 1rem;
-  border-radius: 14px;
+  border-radius: 12px;
   margin-bottom: 1rem;
 }
 
 .doctor-auth-error {
-  background: rgba(185, 28, 28, 0.08);
+  background: rgba(220, 38, 38, 0.08);
   color: #b91c1c;
-  border: 1px solid rgba(185, 28, 28, 0.35);
+  border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
 .doctor-auth-success {
-  background: rgba(21, 128, 61, 0.08);
+  background: rgba(22, 163, 74, 0.1);
   color: #15803d;
-  border: 1px solid rgba(21, 128, 61, 0.35);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.doctor-auth-error svg,
+.doctor-auth-success svg {
+  flex-shrink: 0;
 }
 
 .doctor-auth-form {
@@ -207,10 +216,10 @@
   gap: 1rem;
 }
 
-/* Zipline-style staggered entrance for the form */
+/* Staggered entrance for the form */
 .doctor-auth-form > * {
   opacity: 0;
-  animation: doctorFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: doctorFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .doctor-auth-form > *:nth-child(1) { animation-delay: 0.05s; }
 .doctor-auth-form > *:nth-child(2) { animation-delay: 0.12s; }
@@ -226,7 +235,7 @@
 .doctor-auth-form > *:nth-child(12) { animation-delay: 0.82s; }
 
 @keyframes doctorFadeUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -238,7 +247,7 @@
 .doctor-label {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #000;
+  color: var(--color-ink-soft);
   margin-bottom: 0.45rem;
 }
 
@@ -251,33 +260,38 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 0.95rem;
+  color: var(--color-ink-muted);
+  width: 1rem;
+  height: 1rem;
   z-index: 1;
+  pointer-events: none;
 }
 
 .doctor-input {
   width: 100%;
   padding: 0.92rem 1rem 0.92rem 3rem;
-  border: 1.5px solid #000;
-  border-radius: 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
   font-family: var(--font-sans);
   font-size: 0.96rem;
-  color: #000;
-  background: #fdfbf4;
+  color: var(--color-ink);
+  background: #ffffff;
   transition: all 0.2s ease;
   outline: none;
   box-sizing: border-box;
 }
 
+.doctor-input:hover {
+  border-color: #94a3b8;
+}
+
 .doctor-input:focus {
-  border-color: #643aed;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(100, 58, 237, 0.18);
+  border-color: #0891b2;
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.18);
 }
 
 .doctor-input::placeholder {
-  color: rgba(0, 0, 0, 0.38);
+  color: #94a3b8;
 }
 
 .doctor-input-row {
@@ -293,26 +307,32 @@
   gap: 0.65rem;
   padding: 1rem 1rem;
   border: 1.5px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-family: var(--font-sans);
   font-size: 1rem;
   font-weight: 700;
   color: #fff;
-  background: #000;
+  background: #0891b2;
   cursor: pointer;
-  transition: all 0.22s ease;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+  transition: all 0.2s ease;
+  box-shadow: 0 14px 30px rgba(8, 145, 178, 0.3);
   margin-top: 0.5rem;
 }
 
 .doctor-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.36);
+  background: #0e7490;
+  box-shadow: 0 18px 38px rgba(8, 145, 178, 0.4);
 }
 
 .doctor-submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.doctor-submit-btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .doctor-spinner {
@@ -332,12 +352,12 @@
 .doctor-footer-text {
   text-align: center;
   font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-ink-muted);
   margin: 0.75rem 0 0;
 }
 
 .doctor-link {
-  color: #643aed;
+  color: #0891b2;
   font-weight: 700;
   cursor: pointer;
 }
@@ -347,30 +367,31 @@
 }
 
 .doctor-demo-hint {
-  background: rgba(100, 58, 237, 0.08);
-  border: 1px solid rgba(100, 58, 237, 0.3);
-  border-radius: 14px;
+  background: rgba(8, 145, 178, 0.06);
+  border: 1px solid rgba(8, 145, 178, 0.22);
+  border-radius: 12px;
   padding: 0.9rem 1rem;
   font-size: 0.82rem;
-  color: rgba(0, 0, 0, 0.75);
+  color: var(--color-ink-soft);
   text-align: center;
   font-weight: 500;
 }
 
 .doctor-demo-hint strong {
   font-family: var(--font-mono);
+  color: #0e7490;
 }
 
 .doctor-otp-group {
-  background: rgba(100, 58, 237, 0.06);
-  border: 1px dashed rgba(100, 58, 237, 0.45);
+  background: rgba(8, 145, 178, 0.05);
+  border: 1px dashed rgba(8, 145, 178, 0.4);
   border-radius: 14px;
   padding: 1rem;
 }
 
 .doctor-otp-hint {
   font-size: 0.72rem;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--color-ink-muted);
   margin-top: 0.5rem;
   line-height: 1.5;
 }
@@ -382,7 +403,7 @@
 .doctor-auth-version {
   text-align: center;
   font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--color-ink-muted);
   margin-top: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.05em;

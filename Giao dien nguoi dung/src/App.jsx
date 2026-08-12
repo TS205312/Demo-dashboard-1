@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { ClipboardList, Clock, History, MapPinned } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { useOrders } from './hooks/useOrders';
 
@@ -107,7 +108,7 @@ function App() {
         role="tab"
         aria-selected={activeTab === 'create'}
       >
-        <i className="fa-solid fa-clipboard-list"></i> Tạo đơn
+        <ClipboardList size={15} /> Tạo đơn
       </button>
       <button
         className={`zl-nav-tab ${activeTab === 'track' ? 'active' : ''}`}
@@ -115,7 +116,7 @@ function App() {
         role="tab"
         aria-selected={activeTab === 'track'}
       >
-        <i className="fa-solid fa-map-location-dot"></i> Theo dõi
+        <MapPinned size={15} /> Theo dõi
       </button>
       <button
         className={`zl-nav-tab ${activeTab === 'history' ? 'active' : ''}`}
@@ -123,7 +124,7 @@ function App() {
         role="tab"
         aria-selected={activeTab === 'history'}
       >
-        <i className="fa-solid fa-clock-rotate-left"></i> Lịch sử
+        <History size={15} /> Lịch sử
       </button>
     </nav>
   );
@@ -137,14 +138,14 @@ function App() {
         <div className="zl-hero__inner max-w-[1440px] mx-auto">
           <h1 className="zl-display">
             <span className="zl-hero__line"><span>Đặt hàng vận chuyển</span></span>
-            <span className="zl-hero__line"><span style={{ color: '#8b5cf6' }}>cấp cứu</span></span>
+            <span className="zl-hero__line"><span style={{ color: '#2dd4bf' }}>cấp cứu</span></span>
           </h1>
           <p className="zl-hero__sub">
             Gửi yêu cầu trực tiếp đến trung tâm điều phối Drone SAH-TECH.
             Giao nhanh, chính xác và đúng lúc — như chính bạn đang bay.
           </p>
           <div className="zl-hero__chip">
-            <i className="fa-regular fa-clock"></i>
+            <Clock size={15} />
             <span>{liveTime}</span>
           </div>
         </div>

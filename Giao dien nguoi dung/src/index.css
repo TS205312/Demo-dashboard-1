@@ -1,36 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ===== ZIPLINE-STYLE TOKENS ===== */
+/* ============================================================
+   SAH MEDICAL PORTAL — CLEAN MEDICAL STYLE
+   Medical teal (#0891B2) + health green (#22C55E)
+   Light background, accessible, WCAG-friendly, high contrast
+   ============================================================ */
+
 :root {
-  --color-cream: #f7f4e8;
-  --color-ink: #000000;
-  --color-ink-soft: rgba(0, 0, 0, 0.78);
-  --color-ink-muted: rgba(0, 0, 0, 0.55);
-  --color-stone: #c6c3ba;
-  --color-violet: #643aed;
-  --color-violet-soft: rgba(100, 58, 237, 0.08);
-  --color-violet-border: rgba(100, 58, 237, 0.24);
-  --color-card: #ffffff;
-  --color-surface: #fdfbf4;
-  --color-accent: #643aed;
+  --color-background: #f0fdfa;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7fdfc;
+  --color-ink: #134e4a;
+  --color-ink-soft: #334155;
+  --color-ink-muted: #64748b;
+  --color-primary: #0891b2;
+  --color-primary-strong: #0e7490;
+  --color-primary-soft: rgba(8, 145, 178, 0.09);
+  --color-primary-border: rgba(8, 145, 178, 0.3);
+  --color-secondary: #22d3ee;
   --color-success: #15803d;
+  --color-success-soft: rgba(34, 197, 94, 0.12);
   --color-warning: #b45309;
+  --color-warning-soft: rgba(217, 119, 6, 0.12);
   --color-danger: #b91c1c;
-  --color-info: #1d4ed8;
-  --font-sans: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Anton', 'Archivo', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
-  --radius-card: 20px;
+  --color-danger-soft: rgba(220, 38, 38, 0.1);
+  --color-border: #cbd5e1;
+  --color-border-light: #e2e8f0;
+  --font-sans: 'Noto Sans', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Figtree', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
+  --radius-card: 18px;
   --radius-pill: 999px;
-  --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.08);
-  --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 6px 24px rgba(15, 118, 110, 0.08);
+  --shadow-card-hover: 0 18px 44px rgba(15, 118, 110, 0.14);
 }
 
 * {
@@ -49,10 +57,10 @@ body,
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background-color: var(--color-cream);
+  background-color: var(--color-background);
   background-image:
-    radial-gradient(circle at 82% 8%, rgba(100, 58, 237, 0.06), transparent 34%),
-    radial-gradient(circle at 8% 92%, rgba(100, 58, 237, 0.05), transparent 34%);
+    radial-gradient(circle at 85% 0%, rgba(34, 211, 238, 0.1), transparent 36%),
+    radial-gradient(circle at 5% 100%, rgba(16, 185, 129, 0.08), transparent 34%);
   background-attachment: fixed;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -64,8 +72,8 @@ body {
 }
 
 ::selection {
-  background: rgba(100, 58, 237, 0.28);
-  color: #fff;
+  background: rgba(8, 145, 178, 0.25);
+  color: #0b1f1e;
 }
 
 ::-webkit-scrollbar {
@@ -74,26 +82,26 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(15, 118, 110, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.22);
+  background: rgba(15, 118, 110, 0.25);
   border-radius: 999px;
-  border: 2px solid rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(15, 118, 110, 0.08);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.34);
+  background: rgba(15, 118, 110, 0.38);
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   color: var(--color-ink);
-  letter-spacing: 0.005em;
+  letter-spacing: -0.01em;
 }
 
 p {
@@ -103,80 +111,44 @@ p {
 @layer base {
   .theme {
     --font-heading: var(--font-display);
-    --font-sans: 'Geist Variable', sans-serif;
+    --font-sans: var(--font-sans);
   }
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    --background: #f0fdfa;
+    --foreground: #134e4a;
+    --card: #ffffff;
+    --card-foreground: #134e4a;
+    --popover: #ffffff;
+    --popover-foreground: #134e4a;
+    --primary: #0891b2;
+    --primary-foreground: #ffffff;
+    --secondary: #ccfbf1;
+    --secondary-foreground: #134e4a;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #ccfbf1;
+    --accent-foreground: #134e4a;
+    --destructive: #dc2626;
+    --border: #e2e8f0;
+    --input: #cbd5e1;
+    --ring: #0891b2;
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
   }
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
-  }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-  }
-  html {
-    font-family: var(--font-sans);
+}
+
+/* ===== ACCESSIBILITY ===== */
+:focus-visible {
+  outline: 3px solid rgba(8, 145, 178, 0.45);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
   }
 }
