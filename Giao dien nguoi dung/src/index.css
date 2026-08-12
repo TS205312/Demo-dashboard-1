@@ -7,16 +7,16 @@
 @tailwind utilities;
 
 /* ============================================================
-   SAH MEDICAL PORTAL — CLEAN MEDICAL STYLE
-   Medical teal (#0891B2) + health green (#22C55E)
-   Light background, accessible, WCAG-friendly, high contrast
+   SAH MEDICAL PORTAL — "CLINICAL PRECISION"
+   Premium medical teal (#0891B2) + cyan (#22D3EE) + emerald
+   Light, glassy surfaces, animated ambience, high contrast
    ============================================================ */
 
 :root {
   --color-background: #f0fdfa;
   --color-surface: #ffffff;
   --color-surface-soft: #f7fdfc;
-  --color-ink: #134e4a;
+  --color-ink: #0f172a;
   --color-ink-soft: #334155;
   --color-ink-muted: #64748b;
   --color-primary: #0891b2;
@@ -35,10 +35,11 @@
   --font-sans: 'Noto Sans', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Figtree', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'JetBrains Mono', 'Consolas', monospace;
-  --radius-card: 18px;
+  --radius-card: 20px;
   --radius-pill: 999px;
-  --shadow-card: 0 6px 24px rgba(15, 118, 110, 0.08);
-  --shadow-card-hover: 0 18px 44px rgba(15, 118, 110, 0.14);
+  --shadow-card: 0 8px 30px rgba(15, 118, 110, 0.07);
+  --shadow-card-hover: 0 22px 55px rgba(15, 118, 110, 0.16);
+  --grad-brand: linear-gradient(135deg, #0f766e 0%, #0891b2 55%, #22d3ee 130%);
 }
 
 * {
@@ -57,10 +58,11 @@ body,
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background-color: var(--color-background);
+  background-color: #f6fdfb;
   background-image:
-    radial-gradient(circle at 85% 0%, rgba(34, 211, 238, 0.1), transparent 36%),
-    radial-gradient(circle at 5% 100%, rgba(16, 185, 129, 0.08), transparent 34%);
+    radial-gradient(circle at 88% -4%, rgba(34, 211, 238, 0.14), transparent 42%),
+    radial-gradient(circle at -4% 18%, rgba(16, 185, 129, 0.1), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgba(8, 145, 178, 0.08), transparent 44%);
   background-attachment: fixed;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -73,7 +75,7 @@ body {
 
 ::selection {
   background: rgba(8, 145, 178, 0.25);
-  color: #0b1f1e;
+  color: #042f2e;
 }
 
 ::-webkit-scrollbar {
@@ -86,13 +88,13 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 118, 110, 0.25);
+  background: rgba(15, 118, 110, 0.28);
   border-radius: 999px;
-  border: 2px solid rgba(15, 118, 110, 0.08);
+  border: 2px solid rgba(15, 118, 110, 0.06);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 118, 110, 0.38);
+  background: rgba(15, 118, 110, 0.42);
 }
 
 h1,
@@ -115,11 +117,11 @@ p {
   }
   :root {
     --background: #f0fdfa;
-    --foreground: #134e4a;
+    --foreground: #0f172a;
     --card: #ffffff;
-    --card-foreground: #134e4a;
+    --card-foreground: #0f172a;
     --popover: #ffffff;
-    --popover-foreground: #134e4a;
+    --popover-foreground: #0f172a;
     --primary: #0891b2;
     --primary-foreground: #ffffff;
     --secondary: #ccfbf1;

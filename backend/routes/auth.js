@@ -110,6 +110,62 @@ router.post('/register', async (req, res) => {
 });
 
 /**
+ * PUT /api/auth/profile/:id
+ * Cập nhật thông tin tài khoản + đổi mật khẩu (tùy chọn)
+ * Body: { name?, doctor_id?, department?, hospital?, phone?, currentPassword?, newPassword? }
+ */
+router.put('/profile/:id', async (req, res) => {
+  try {
+    const {
+      name, doctor_id, department, hospital, phone,
+      currentPassword, newPassword,
+    } = req.body;
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản' });
+    }
+
+    if (name !== undefined) user.name = String(name).trim() || user.name;
+    if (doctor_id !== undefined) user.doctor_id = String(doctor_id).trim();
+    if (department !== undefined) user.department = String(department).trim();
+    if (hospital !== undefined) user.hospital = String(hospital).trim();
+    if (phone !== undefined) user.phone = String(phone).trim();
+
+    // Đổi mật khẩu nếu có yêu cầu
+    if (newPassword) {
+      if (String(newPassword).length < 6) {
+        return res.status(400).json({ success: false, message: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+      }
+      if (!currentPassword || currentPassword !== user.password) {
+        return res.status(401).json({ success: false, message: 'Mật khẩu hiện tại không đúng' });
+      }
+      user.password = String(newPassword);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Cập nhật tài khoản thành công',
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        doctor_id: user.doctor_id || '',
+        department: user.department || '',
+        hospital: user.hospital || '',
+        phone: user.phone || '',
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+});
+
+/**
  * GET /api/auth/users
  * Lấy danh sách users (admin only)
  */

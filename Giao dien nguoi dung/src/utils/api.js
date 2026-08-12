@@ -109,6 +109,25 @@ export async function apiGetOrder(id) {
 }
 
 /**
+ * Cập nhật thông tin tài khoản (hồ sơ bác sĩ)
+ * @param {string} id - ID người dùng
+ * @param {Object} payload - { name?, doctor_id?, department?, hospital?, phone?, currentPassword?, newPassword? }
+ */
+export async function apiUpdateProfile(id, payload) {
+  try {
+    const response = await fetch(`${API_BASE}/auth/profile/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('apiUpdateProfile error:', error);
+    return { success: false, message: 'Lỗi kết nối server' };
+  }
+}
+
+/**
  * Lưu orders vào localStorage (fallback local)
  */
 export function saveOrders(updatedOrders) {

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ClipboardList, Clock, History, MapPinned } from 'lucide-react';
+import { ClipboardList, Clock, History, MapPinned, UserCog } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { useOrders } from './hooks/useOrders';
 
@@ -9,6 +9,7 @@ import OrderForm from './components/OrderForm';
 import OrderTimeline from './components/OrderTimeline';
 import TrackingMap from './components/TrackingMap';
 import OrderHistory from './components/OrderHistory';
+import ProfilePage from './components/ProfilePage';
 import SuccessModal from './components/SuccessModal';
 import Toast from './components/Toast';
 
@@ -55,6 +56,11 @@ function App() {
     const form = document.getElementById('orderForm');
     if (form) form.reset();
     setEstTime('--');
+  }, []);
+
+  const handleUserUpdated = useCallback((userData) => {
+    setUser(userData);
+    setActiveTab('account');
   }, []);
 
   const handleUrgencyChange = useCallback((e) => {
@@ -126,6 +132,14 @@ function App() {
       >
         <History size={15} /> Lịch sử
       </button>
+      <button
+        className={`zl-nav-tab ${activeTab === 'account' ? 'active' : ''}`}
+        onClick={() => setActiveTab('account')}
+        role="tab"
+        aria-selected={activeTab === 'account'}
+      >
+        <UserCog size={15} /> Tài khoản
+      </button>
     </nav>
   );
 
@@ -133,8 +147,11 @@ function App() {
     <>
       <Navbar user={user} onLogout={handleLogout} activeTab={activeTab} onTabChange={setActiveTab} tabBar={renderNavTabs()} />
 
-      {/* Zipline-style hero band */}
+      {/* Hero band */}
       <header className="zl-hero">
+        <div className="zl-hero__orb zl-hero__orb--1" aria-hidden="true"></div>
+        <div className="zl-hero__orb zl-hero__orb--2" aria-hidden="true"></div>
+        <div className="zl-hero__orb zl-hero__orb--3" aria-hidden="true"></div>
         <div className="zl-hero__inner max-w-[1440px] mx-auto">
           <h1 className="zl-display">
             <span className="zl-hero__line"><span>Đặt hàng vận chuyển</span></span>
@@ -145,6 +162,7 @@ function App() {
             Giao nhanh, chính xác và đúng lúc — như chính bạn đang bay.
           </p>
           <div className="zl-hero__chip">
+            <span className="hero-chip-dot"></span>
             <Clock size={15} />
             <span>{liveTime}</span>
           </div>
@@ -201,6 +219,14 @@ function App() {
                 onRefresh={handleRefresh}
               />
             </div>
+          )}
+
+          {activeTab === 'account' && (
+            <ProfilePage
+              user={user}
+              onUpdated={handleUserUpdated}
+              onNotify={setToast}
+            />
           )}
         </div>
 
