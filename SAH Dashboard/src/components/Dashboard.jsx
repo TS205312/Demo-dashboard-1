@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { LayoutGrid, TowerControl, ClipboardList, User, LogOut, CalendarDays } from 'lucide-react';
 import { apiFetchDrones } from '../data/api';
 import DroneCard from './DroneCard';
 import DroneDetail from './DroneDetail';
@@ -68,7 +69,7 @@ function Dashboard({ user, onLogout }) {
   // Render Fleet tab content
   const renderFleetTab = () => (
     <>
-      {/* Stats bar */}
+      {/* KPI chips bar */}
       <div className="stats-bar">
         <div className="stat-item stat-total">
           <span className="stat-number">{stats.total}</span>
@@ -93,7 +94,10 @@ function Dashboard({ user, onLogout }) {
         {/* Left side - Drone cards */}
         <div className="drone-list-section">
           <div className="drone-list-header">
-            <h2 className="section-title">Danh sách Drone</h2>
+            <h2 className="section-title">
+              <LayoutGrid size={14} style={{ marginRight: 6, color: 'var(--accent)' }} />
+              Danh sách Drone
+            </h2>
             <div className="filter-buttons">
               {['all', 'online', 'warning', 'offline'].map((f) => (
                 <button
@@ -169,23 +173,24 @@ function Dashboard({ user, onLogout }) {
             className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
             onClick={() => setActiveTab('fleet')}
           >
-            <i className="fa-solid fa-helicopter"></i> Fleet
+            <LayoutGrid size={13} /> Fleet
           </button>
           <button
             className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
             onClick={() => setActiveTab('commandcenter')}
           >
-            <i className="fa-solid fa-tower-broadcast"></i> Command Center
+            <TowerControl size={13} /> Command Center
           </button>
           <button
             className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => setActiveTab('orders')}
           >
-            <i className="fa-solid fa-clipboard-list"></i> Đơn hàng
+            <ClipboardList size={13} /> Đơn hàng
           </button>
         </nav>
         <div className="header-right">
           <div className="header-datetime">
+            <CalendarDays size={11} style={{ marginRight: 6 }} />
             {new Date().toLocaleDateString('vi-VN', {
               weekday: 'long',
               year: 'numeric',
@@ -195,10 +200,12 @@ function Dashboard({ user, onLogout }) {
           </div>
           {user && (
             <div className="header-user">
-              <i className="fa-regular fa-user header-user-avatar"></i>
+              <span className="header-user-avatar">
+                <User size={13} />
+              </span>
               <span className="header-user-name">{user.name}</span>
               <button className="header-logout-btn" onClick={onLogout} title="Đăng xuất">
-                <i className="fa-solid fa-right-from-bracket"></i>
+                <LogOut size={13} />
               </button>
             </div>
           )}

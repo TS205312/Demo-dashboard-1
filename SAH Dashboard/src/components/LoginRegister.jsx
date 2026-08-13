@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { User, Lock, Mail, ShieldCheck, KeyRound, CircleCheck, TriangleAlert } from 'lucide-react';
 import { apiLogin, apiRegister } from '../data/api';
 import '../styles/login.css';
 
@@ -81,9 +82,6 @@ function LoginRegister({ onLogin }) {
 
   return (
     <div className="auth-container">
-      <div className="auth-bg-glow auth-bg-glow-1" />
-      <div className="auth-bg-glow auth-bg-glow-2" />
-
       <div className="auth-card">
         {/* Logo & Branding */}
         <div className="auth-brand">
@@ -113,14 +111,14 @@ function LoginRegister({ onLogin }) {
         {/* Error message */}
         {error && (
           <div className="auth-error">
-            <i className="fa-regular fa-triangle-exclamation"></i> {error}
+            <TriangleAlert size={14} /> {error}
           </div>
         )}
 
         {/* Success message */}
         {success && (
           <div className="auth-success">
-            <i className="fa-regular fa-circle-check"></i> {success}
+            <CircleCheck size={14} /> {success}
           </div>
         )}
 
@@ -130,7 +128,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-user"></i>
+                <User size={14} className="auth-input-icon" />
                 <input
                   type="text"
                   name="loginEmail"
@@ -145,7 +143,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Mật khẩu</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-lock"></i>
+                <Lock size={14} className="auth-input-icon" />
                 <input
                   type="password"
                   name="loginPassword"
@@ -169,7 +167,7 @@ function LoginRegister({ onLogin }) {
             </p>
 
             <div className="auth-admin-hint">
-              <i className="fa-regular fa-key"></i> Admin: admin@sah.tech / admin123
+              <KeyRound size={13} /> Admin: admin@sah.tech / admin123
             </div>
           </form>
         )}
@@ -180,7 +178,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Họ và tên</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-user"></i>
+                <User size={14} className="auth-input-icon" />
                 <input
                   type="text"
                   name="regName"
@@ -195,7 +193,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Email</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-envelope"></i>
+                <Mail size={14} className="auth-input-icon" />
                 <input
                   type="email"
                   name="regEmail"
@@ -210,7 +208,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Mã OTP công ty</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-shield-halved"></i>
+                <ShieldCheck size={14} className="auth-input-icon" />
                 <input
                   type="text"
                   name="regOtp"
@@ -225,7 +223,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Mật khẩu</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-lock"></i>
+                <Lock size={14} className="auth-input-icon" />
                 <input
                   type="password"
                   name="regPassword"
@@ -240,7 +238,7 @@ function LoginRegister({ onLogin }) {
             <div className="auth-input-group">
               <label className="auth-label">Xác nhận mật khẩu</label>
               <div className="auth-input-wrapper">
-                <i className="auth-input-icon fa-regular fa-lock"></i>
+                <Lock size={14} className="auth-input-icon" />
                 <input
                   type="password"
                   name="regConfirmPassword"

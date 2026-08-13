@@ -177,22 +177,6 @@ body {
   }
 }
 
-/* ===== TAB SWITCH ANIMATION ===== */
-.tab-content-enter {
-  animation: tabSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes tabSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 /* ===== MODAL BACKDROP ANIMATION ===== */
 .modal-backdrop {
   animation: backdropFadeIn 0.25s ease;
