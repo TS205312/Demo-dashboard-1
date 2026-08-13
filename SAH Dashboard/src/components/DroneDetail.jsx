@@ -1,28 +1,21 @@
 import { X, Play, Map as MapIcon, Home, SatelliteDish } from 'lucide-react';
 import ArtificialHorizon from './ArtificialHorizon';
 
+const STATUS_TEXT = {
+  online: 'Online',
+  warning: 'Warning',
+  offline: 'Offline',
+};
+
+const OK = 'var(--success)';
+const WARN = 'var(--warning)';
+const BAD = 'var(--danger)';
+
 function DroneDetail({ drone, onClose }) {
   if (!drone) return null;
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'online': return '#4CAF50';
-      case 'warning': return '#FF9800';
-      case 'offline': return '#F44336';
-      default: return '#888';
-    }
-  };
-
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'online': return 'Online';
-      case 'warning': return 'Warning';
-      case 'offline': return 'Offline';
-      default: return 'Unknown';
-    }
-  };
-
-  const batteryColor = drone.battery > 60 ? '#4CAF50' : drone.battery > 25 ? '#FF9800' : '#F44336';
+  const status = STATUS_TEXT[drone.status] ? drone.status : 'offline';
+  const batteryColor = drone.battery > 60 ? OK : drone.battery > 25 ? WARN : BAD;
 
   return (
     <div className="drone-detail-overlay" onClick={onClose}>
@@ -34,12 +27,7 @@ function DroneDetail({ drone, onClose }) {
         <div className="detail-header">
           <div className="detail-title-row">
             <h2 className="detail-drone-name">{drone.name}</h2>
-            <span
-              className="detail-status"
-              style={{ backgroundColor: getStatusColor(drone.status) }}
-            >
-              {getStatusText(drone.status)}
-            </span>
+            <span className={`sah-badge sah-badge--${status}`}>{STATUS_TEXT[status]}</span>
           </div>
           <p className="detail-subtitle">Thông tin chi tiết trạng thái drone</p>
         </div>
@@ -125,39 +113,27 @@ function DroneDetail({ drone, onClose }) {
             {/* Arm/Disarm indicator */}
             <div className="detail-quick-status">
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{
-                  backgroundColor: drone.armed ? '#4CAF50' : '#F44336',
-                  color: drone.armed ? '#4CAF50' : '#F44336',
-                }} />
-                <span style={{ fontWeight: 600, color: drone.armed ? '#4CAF50' : '#F44336' }}>
+                <div className="quick-status-dot" style={{ backgroundColor: drone.armed ? OK : BAD }} />
+                <span style={{ fontWeight: 600, color: drone.armed ? OK : BAD }}>
                   {drone.armed ? 'ARMED' : 'DISARMED'}
                 </span>
               </div>
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{ backgroundColor: '#58a6ff', color: '#58a6ff' }} />
-                <span style={{ fontWeight: 600, color: '#58a6ff' }}>
+                <div className="quick-status-dot" style={{ backgroundColor: 'var(--info)' }} />
+                <span style={{ fontWeight: 600, color: 'var(--info)' }}>
                   {drone.mode === 'vtol' ? 'VTOL Mode' : 'PLANE Mode'}
                 </span>
               </div>
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{
-                  backgroundColor: drone.temperature < 40 ? '#4CAF50' : '#FF9800',
-                  color: drone.temperature < 40 ? '#4CAF50' : '#FF9800',
-                }} />
+                <div className="quick-status-dot" style={{ backgroundColor: drone.temperature < 40 ? OK : WARN }} />
                 <span>Nhiệt độ {drone.temperature < 40 ? 'ổn định' : 'cao'}</span>
               </div>
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{
-                  backgroundColor: drone.windSpeed < 15 ? '#4CAF50' : '#FF9800',
-                  color: drone.windSpeed < 15 ? '#4CAF50' : '#FF9800',
-                }} />
+                <div className="quick-status-dot" style={{ backgroundColor: drone.windSpeed < 15 ? OK : WARN }} />
                 <span>Gió {drone.windSpeed < 15 ? 'nhẹ' : 'mạnh'}</span>
               </div>
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{
-                  backgroundColor: drone.battery > 25 ? '#4CAF50' : '#F44336',
-                  color: drone.battery > 25 ? '#4CAF50' : '#F44336',
-                }} />
+                <div className="quick-status-dot" style={{ backgroundColor: drone.battery > 25 ? OK : BAD }} />
                 <span>Pin {drone.battery > 25 ? 'đủ' : 'yếu'}</span>
               </div>
             </div>

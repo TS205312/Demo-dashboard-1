@@ -95,8 +95,9 @@ function Dashboard({ user, onLogout }) {
         <div className="drone-list-section">
           <div className="drone-list-header">
             <h2 className="section-title">
-              <LayoutGrid size={14} style={{ marginRight: 6, color: 'var(--accent)' }} />
+              <LayoutGrid size={15} color="var(--accent)" />
               Danh sách Drone
+              <span className="section-count">{filteredDrones.length}</span>
             </h2>
             <div className="filter-buttons">
               {['all', 'online', 'warning', 'offline'].map((f) => (
@@ -112,13 +113,13 @@ function Dashboard({ user, onLogout }) {
           </div>
           <div className="drone-grid">
             {loading ? (
-              <div className="loading-state">
-                <span className="spinner"></span>
-                <p className="text-sm text-slate-500">Đang tải dữ liệu drone...</p>
-              </div>
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="sah-skeleton skeleton-card" />
+              ))
             ) : filteredDrones.length === 0 ? (
               <div className="empty-state">
-                <p className="text-sm text-slate-500">Không có drone nào</p>
+                <LayoutGrid size={26} />
+                <p>Không có drone nào trong bộ lọc này</p>
               </div>
             ) : (
               filteredDrones.map((drone) => (
@@ -173,24 +174,24 @@ function Dashboard({ user, onLogout }) {
             className={`tab-btn ${activeTab === 'fleet' ? 'active' : ''}`}
             onClick={() => setActiveTab('fleet')}
           >
-            <LayoutGrid size={13} /> Fleet
+            <LayoutGrid size={14} /> Fleet
           </button>
           <button
             className={`tab-btn ${activeTab === 'commandcenter' ? 'active' : ''}`}
             onClick={() => setActiveTab('commandcenter')}
           >
-            <TowerControl size={13} /> Command Center
+            <TowerControl size={14} /> Command Center
           </button>
           <button
             className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => setActiveTab('orders')}
           >
-            <ClipboardList size={13} /> Đơn hàng
+            <ClipboardList size={14} /> Đơn hàng
           </button>
         </nav>
         <div className="header-right">
           <div className="header-datetime">
-            <CalendarDays size={11} style={{ marginRight: 6 }} />
+            <CalendarDays size={13} />
             {new Date().toLocaleDateString('vi-VN', {
               weekday: 'long',
               year: 'numeric',
@@ -201,11 +202,16 @@ function Dashboard({ user, onLogout }) {
           {user && (
             <div className="header-user">
               <span className="header-user-avatar">
-                <User size={13} />
+                <User size={14} />
               </span>
               <span className="header-user-name">{user.name}</span>
-              <button className="header-logout-btn" onClick={onLogout} title="Đăng xuất">
-                <LogOut size={13} />
+              <button
+                className="header-logout-btn"
+                onClick={onLogout}
+                title="Đăng xuất"
+                aria-label="Đăng xuất"
+              >
+                <LogOut size={14} />
               </button>
             </div>
           )}

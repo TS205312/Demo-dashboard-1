@@ -107,19 +107,21 @@ function OrdersPage() {
       <div className="orders-controls">
         <div className="drone-list-header orders-header">
           <h2 className="section-title">
-            <ClipboardList size={14} style={{ marginRight: 6, color: 'var(--accent)' }} />
+            <ClipboardList size={15} color="var(--accent)" />
             Tất cả đơn hàng từ bác sĩ
+            <span className="section-count">{filteredOrders.length}</span>
           </h2>
           <div className="orders-filter-group">
-            <div className="map-search">
+            <div className="orders-search-wrap">
+              <Search size={14} className="orders-search-icon" />
               <input
                 type="text"
-                className="map-search-input orders-search"
+                className="orders-search"
                 placeholder="Tìm mã đơn, y phẩm, bác sĩ..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Tìm đơn hàng"
               />
-              <Search size={12} className="orders-search-icon" />
             </div>
             <div className="filter-buttons">
               {['all', 'pending', 'departed', 'delivered', 'cancelled'].map((f) => (
@@ -162,7 +164,7 @@ function OrdersPage() {
             ) : filteredOrders.length === 0 ? (
               <tr>
                 <td colSpan="8" className="orders-empty">
-                  <FolderOpen size={32} style={{ margin: '0 auto 10px', opacity: 0.5, display: 'block' }} />
+                  <FolderOpen size={30} style={{ margin: '0 auto', opacity: 0.5, display: 'block' }} />
                   <p>Không có đơn hàng nào{search ? ' phù hợp' : ''}</p>
                 </td>
               </tr>
@@ -176,20 +178,20 @@ function OrdersPage() {
                   <tr key={order._id || order.id}>
                     <td className="orders-code">#{order.code}</td>
                     <td className="orders-doctor">
-                      <Stethoscope size={12} style={{ color: '#58a6ff' }} />
+                      <Stethoscope size={13} />
                       {doctor}
                     </td>
                     <td>{order.medical_item || order.item || '--'}</td>
                     <td>{order.destination || '--'}</td>
                     <td>
                       <span className={urgent ? 'orders-urgent' : 'orders-normal'}>
-                        {urgent ? <Flame size={11} /> : <CircleCheck size={11} />}
+                        {urgent ? <Flame size={12} /> : <CircleCheck size={12} />}
                         {order.urgency || 'Bình thường'}
                       </span>
                     </td>
                     <td>{drone}</td>
                     <td className="orders-time">
-                      <Clock size={11} />
+                      <Clock size={12} />
                       {formatTime(order.createdAt)}
                     </td>
                     <td>

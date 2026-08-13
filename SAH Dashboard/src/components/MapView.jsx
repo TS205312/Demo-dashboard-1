@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+/* global L */
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, MapPin, Globe } from 'lucide-react';
 import { reverseGeocode } from '../data/api';
+
+const DEFAULT_CENTER = [10.762, 106.666];
 
 function MapView({ drones, selectedDrone, onDroneClick }) {
   const [locationNames, setLocationNames] = useState({});
@@ -8,29 +11,100 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
   const [searchResults, setSearchResults] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
 
-  const mapBounds = {
-    latMin: 10.70, latMax: 10.90,
-    lngMin: 106.55, lngMax: 106.75,
-  };
+  const mapNodeRef = useRef(null);
+  const mapRef = useRef(null);
+  const markersRef = useRef({});
+  const clickRef = useRef(onDroneClick);
 
-  const mapWidth = 100;
-  const mapHeight = 100;
+  useEffect(() => {
+    clickRef.current = onDroneClick;
+  }, [onDroneClick]);
 
-  const toMapPosition = (lat, lng) => {
-    const x = ((lng - mapBounds.lngMin) / (mapBounds.lngMax - mapBounds.lngMin)) * mapWidth;
-    const y = ((mapBounds.latMax - lat) / (mapBounds.latMax - mapBounds.latMin)) * mapHeight;
-    return { x: Math.min(Math.max(x, 2), mapWidth - 2), y: Math.min(Math.max(y, 2), mapHeight - 2) };
-  };
+  // ---- Leaflet map instance -------------------------------------------------
+  useEffect(() => {
+    if (typeof L === 'undefined' || !mapNodeRef.current || mapRef.current) return;
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'online': return '#4CAF50';
-      case 'warning': return '#FF9800';
-      case 'offline': return '#F44336';
-      default: return '#888';
-    }
-  };
+    const map = L.map(mapNodeRef.current, {
+      zoomControl: true,
+      attributionControl: true,
+    }).setView(DEFAULT_CENTER, 12);
 
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 19,
+    }).addTo(map);
+
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      markersRef.current = {};
+    };
+  }, []);
+
+  // ---- Sync drone markers ---------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || typeof L === 'undefined') return;
+
+    const seen = new Set();
+
+    drones.forEach((drone) => {
+      seen.add(drone.id);
+      const isSelected = selectedDrone && selectedDrone.id === drone.id;
+      const status = ['online', 'warning', 'offline'].includes(drone.status) ? drone.status : 'offline';
+      const location = locationNames[drone.id];
+
+      const icon = L.divIcon({
+        className: '',
+        iconSize: [13, 13],
+        iconAnchor: [6, 6],
+        html:
+          `<div class="drone-pin drone-pin--${status}${isSelected ? ' drone-pin--selected' : ''}">` +
+          (status === 'online' ? '<span class="drone-pin__ring"></span>' : '') +
+          '<span class="drone-pin__dot"></span>' +
+          `<span class="drone-pin__label">${drone.name}</span>` +
+          '</div>',
+      });
+
+      const popup =
+        `<div class="map-popup-title">${drone.name}</div>` +
+        `<div class="map-popup-meta">${location || `${drone.gps.lat.toFixed(4)}, ${drone.gps.lng.toFixed(4)}`}</div>` +
+        `<div class="map-popup-meta">Pin ${drone.battery}% · Cao độ ${drone.altitude} m</div>`;
+
+      const existing = markersRef.current[drone.id];
+      if (existing) {
+        existing.setLatLng([drone.gps.lat, drone.gps.lng]);
+        existing.setIcon(icon);
+        existing.setPopupContent(popup);
+      } else {
+        const marker = L.marker([drone.gps.lat, drone.gps.lng], { icon })
+          .addTo(map)
+          .bindPopup(popup);
+        marker.on('click', () => clickRef.current(drone));
+        markersRef.current[drone.id] = marker;
+      }
+    });
+
+    Object.keys(markersRef.current).forEach((id) => {
+      if (!seen.has(id)) {
+        map.removeLayer(markersRef.current[id]);
+        delete markersRef.current[id];
+      }
+    });
+  }, [drones, selectedDrone, locationNames]);
+
+  // ---- Pan to the selected drone -------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !selectedDrone) return;
+    map.flyTo([selectedDrone.gps.lat, selectedDrone.gps.lng], Math.max(map.getZoom(), 14), {
+      duration: 0.8,
+    });
+  }, [selectedDrone]);
+
+  // ---- Reverse geocoding (unchanged API usage) ------------------------------
   useEffect(() => {
     let cancelled = false;
     const fetchLocations = async () => {
@@ -69,23 +143,20 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     }
   }, [searchQuery]);
 
-  const gridLines = [];
-  for (let i = 0; i <= 4; i++) {
-    const y = (mapHeight / 4) * i;
-    const x = (mapWidth / 4) * i;
-    gridLines.push(
-      <line key={`h-${i}`} x1={0} y1={y} x2={mapWidth} y2={y} stroke="#334155" strokeWidth="0.5" />
-    );
-    gridLines.push(
-      <line key={`v-${i}`} x1={x} y1={0} x2={x} y2={mapHeight} stroke="#334155" strokeWidth="0.5" />
-    );
-  }
+  const handleSelectResult = (result) => {
+    setSearchQuery(result.label);
+    setShowSearch(false);
+    const map = mapRef.current;
+    if (map && result.lat != null && result.lng != null) {
+      map.flyTo([result.lat, result.lng], 14, { duration: 0.8 });
+    }
+  };
 
   return (
     <div className="map-container">
       <div className="map-header">
         <h3 className="map-title">
-          <MapPin size={14} style={{ color: 'var(--accent)' }} />
+          <MapPin size={15} color="var(--accent)" />
           Bản đồ vị trí Drone
         </h3>
         <div className="map-search">
@@ -97,127 +168,62 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <button className="map-search-btn" onClick={handleSearch} aria-label="Tìm kiếm">
-            <Search size={13} />
+          <button className="map-search-btn" onClick={handleSearch} aria-label="Tìm kiếm địa điểm">
+            <Search size={14} />
           </button>
-        </div>
-      </div>
 
-      {showSearch && searchResults.length > 0 && (
-        <div className="map-search-results">
-          {searchResults.map((r, i) => (
-            <div
-              key={i}
-              className="map-search-result-item"
-              onClick={() => {
-                setSearchQuery(r.label);
-                setShowSearch(false);
-              }}
-            >
-              <MapPin size={11} /> {r.label}
-            </div>
-          ))}
-        </div>
-      )}
-      {showSearch && searchResults.length === 0 && searchQuery && (
-        <div className="map-search-results">
-          <div className="map-search-result-item no-result">Không tìm thấy kết quả</div>
-        </div>
-      )}
-
-      <div className="map-wrapper">
-        <svg
-          viewBox={`0 0 ${mapWidth} ${mapHeight}`}
-          className="map-svg"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <rect x={0} y={0} width={mapWidth} height={mapHeight} fill="#0d1524" rx="2" />
-          {gridLines}
-          <text x={2} y={6} fill="#64748b" fontSize="2.5" fontFamily="monospace">Khu vực Bắc</text>
-          <text x={2} y={mapHeight - 2} fill="#64748b" fontSize="2.5" fontFamily="monospace">Khu vực Nam</text>
-
-          {drones.map((drone) => {
-            const pos = toMapPosition(drone.gps.lat, drone.gps.lng);
-            const isSelected = selectedDrone && selectedDrone.id === drone.id;
-            const color = getStatusColor(drone.status);
-            const location = locationNames[drone.id];
-
-            return (
-              <g
-                key={drone.id}
-                className="drone-marker"
-                onClick={() => onDroneClick(drone)}
-                style={{ cursor: 'pointer' }}
-              >
-                {drone.status === 'online' && (
-                  <circle
-                    cx={pos.x} cy={pos.y}
-                    r={isSelected ? 6 : 4}
-                    fill="none" stroke={color}
-                    strokeWidth="0.4" opacity="0.4"
-                  >
-                    <animate attributeName="r" values="3;7;3" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
-                  </circle>
-                )}
-                <circle
-                  cx={pos.x} cy={pos.y}
-                  r={isSelected ? 3 : 2}
-                  fill={color}
-                  stroke={isSelected ? '#fff' : 'none'}
-                  strokeWidth="0.5"
-                />
-                <text
-                  x={pos.x} y={pos.y - 4}
-                  textAnchor="middle"
-                  fill={isSelected ? '#fff' : '#94a3b8'}
-                  fontSize="2.5" fontFamily="monospace"
-                  fontWeight={isSelected ? 'bold' : 'normal'}
+          {showSearch && searchResults.length > 0 && (
+            <div className="map-search-results">
+              {searchResults.map((r, i) => (
+                <div
+                  key={i}
+                  className="map-search-result-item"
+                  onClick={() => handleSelectResult(r)}
                 >
-                  {drone.name}
-                </text>
-                {location && (
-                  <text
-                    x={pos.x} y={pos.y + 4}
-                    textAnchor="middle" fill="#64748b"
-                    fontSize="2" fontFamily="monospace"
-                  >
-                    {location.length > 18 ? location.substring(0, 16) + '..' : location}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-
-      {selectedDrone && (
-        <div className="map-coords-info">
-          <MapPin size={11} />
-          <span>{selectedDrone.name}: </span>
-          <span className="coord-value">{selectedDrone.gps.lat.toFixed(4)}, {selectedDrone.gps.lng.toFixed(4)}</span>
-          {locationNames[selectedDrone.id] && (
-            <span className="coord-location"> - {locationNames[selectedDrone.id]}</span>
+                  <MapPin size={12} /> {r.label}
+                </div>
+              ))}
+            </div>
+          )}
+          {showSearch && searchResults.length === 0 && searchQuery && (
+            <div className="map-search-results">
+              <div className="map-search-result-item no-result">Không tìm thấy kết quả</div>
+            </div>
           )}
         </div>
-      )}
+      </div>
 
-      <div className="map-legend">
-        <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#4CAF50', color: '#4CAF50' }}></span>
-          <span>Online</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#FF9800', color: '#FF9800' }}></span>
-          <span>Warning</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#F44336', color: '#F44336' }}></span>
-          <span>Offline</span>
-        </div>
-        <div className="legend-item" style={{ color: '#8b949e', fontSize: '10px' }}>
-          <Globe size={10} style={{ marginRight: 4 }} />
-          <span>PositionStack</span>
+      <div className="map-wrapper" ref={mapNodeRef} />
+
+      <div className="map-footer">
+        {selectedDrone ? (
+          <div className="map-coords-info">
+            <MapPin size={12} />
+            <span>{selectedDrone.name}</span>
+            <span className="coord-value">
+              {selectedDrone.gps.lat.toFixed(4)}, {selectedDrone.gps.lng.toFixed(4)}
+            </span>
+            {locationNames[selectedDrone.id] && (
+              <span className="coord-location">· {locationNames[selectedDrone.id]}</span>
+            )}
+          </div>
+        ) : (
+          <div className="map-coords-info">
+            <Globe size={12} />
+            <span className="coord-location">Chọn một drone để xem toạ độ</span>
+          </div>
+        )}
+
+        <div className="map-legend">
+          <span className="legend-item">
+            <span className="legend-dot legend-dot--online" /> Online
+          </span>
+          <span className="legend-item">
+            <span className="legend-dot legend-dot--warning" /> Warning
+          </span>
+          <span className="legend-item">
+            <span className="legend-dot legend-dot--offline" /> Offline
+          </span>
         </div>
       </div>
     </div>
