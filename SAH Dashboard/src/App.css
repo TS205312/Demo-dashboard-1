@@ -1,27 +1,27 @@
 /* ============================================================
    SAH DRONE COMMAND — APP SHELL
-   Ambient gradient backdrop + page transitions
+   Deep mission-control backdrop + page transitions
    ============================================================ */
 
 body {
   overflow: hidden;
   background-color: var(--color-void, #070B14);
   background-image:
-    radial-gradient(1100px 700px at 12% -10%, rgba(34, 211, 238, 0.20), transparent 60%),
-    radial-gradient(900px 700px at 88% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
-    radial-gradient(1000px 800px at 50% 115%, rgba(16, 185, 129, 0.18), transparent 60%),
-    linear-gradient(165deg, #0B1428 0%, #0D1224 40%, #0A1420 75%, #070B14 100%);
+    radial-gradient(1100px 720px at 12% -10%, rgba(34, 211, 238, 0.13), transparent 60%),
+    radial-gradient(900px 700px at 88% 0%, rgba(96, 165, 250, 0.12), transparent 60%),
+    radial-gradient(1000px 800px at 50% 115%, rgba(16, 185, 129, 0.10), transparent 60%),
+    linear-gradient(165deg, #0B1428 0%, #0A1120 45%, #080E1B 75%, #070B14 100%);
   background-attachment: fixed;
 }
 
-/* Subtle vignette so glass panels keep contrast at the edges */
+/* Subtle vignette so panels keep contrast at the edges */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(3, 6, 14, 0.55) 100%);
+  background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(3, 6, 14, 0.6) 100%);
 }
 
 #root {
@@ -30,12 +30,10 @@ body::after {
   overflow: hidden;
 }
 
-/* ===== GLASS UTILITY (legacy alias) ===== */
+/* ===== GLASS UTILITY (legacy alias → solid panel) ===== */
 .glass {
-  background: linear-gradient(158deg, var(--surface-3) 0%, var(--surface-1) 100%);
+  background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 100%);
   border: 1px solid var(--border);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
 }
 
 /* ===== SAH-TECH LOGO GLOW & PULSE ===== */
@@ -51,7 +49,7 @@ body::after {
   position: absolute;
   inset: -6px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.28) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.24) 0%, transparent 70%);
   animation: sah-logo-pulse-ring 2.6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -59,12 +57,12 @@ body::after {
 .sah-logo-pulse {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
   transition: filter 0.3s var(--ease);
 }
 
 .sah-logo-pulse:hover {
-  filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.6));
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.6));
 }
 
 @keyframes sah-logo-pulse-ring {
@@ -74,13 +72,13 @@ body::after {
 
 /* Logo glow in auth card */
 .auth-logo-glow {
-  filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.5));
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.5));
   animation: sah-logo-auth-pulse 3.4s ease-in-out infinite;
 }
 
 @keyframes sah-logo-auth-pulse {
-  0%, 100% { filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.5)); }
-  50%      { filter: drop-shadow(0 0 26px rgba(16, 185, 129, 0.72)); }
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.5)); }
+  50%      { filter: drop-shadow(0 0 26px rgba(34, 211, 238, 0.72)); }
 }
 
 /* ===== PAGE TRANSITION ===== */

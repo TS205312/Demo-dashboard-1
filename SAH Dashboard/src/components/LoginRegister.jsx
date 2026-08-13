@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, Mail, ShieldCheck, KeyRound, CircleCheck, TriangleAlert } from 'lucide-react';
+import { User, Lock, Mail, ShieldCheck, KeyRound, CircleCheck, TriangleAlert, Radar, PlaneTakeoff, HeartPulse } from 'lucide-react';
 import { apiLogin, apiRegister } from '../data/api';
 import '../styles/login.css';
 
@@ -82,6 +82,47 @@ function LoginRegister({ onLogin }) {
 
   return (
     <div className="auth-container">
+      {/* Brand hero (left) */}
+      <div className="auth-hero">
+        <span className="auth-hero__badge">
+          <Radar size={13} /> UAV Fleet Operations
+        </span>
+        <h1 className="auth-hero__title">
+          Trạm điều hành<br />bay vận chuyển y tế
+        </h1>
+        <p className="auth-hero__desc">
+          Giám sát thời gian thực toàn bộ đội bay, điều phối vận chuyển y tế
+          khẩn cấp và quản lý nhiệm vụ giao hàng bằng một giao diện tập trung.
+        </p>
+        <div className="auth-hero__features">
+          <div className="auth-feature">
+            <span className="auth-feature__icon"><PlaneTakeoff size={18} /></span>
+            <span className="auth-feature__text">
+              <strong>Đội bay tự động</strong>
+              <span>Điều khiển và giám sát nhiều drone cùng lúc</span>
+            </span>
+          </div>
+          <div className="auth-feature">
+            <span className="auth-feature__icon"><HeartPulse size={18} /></span>
+            <span className="auth-feature__text">
+              <strong>Vận chuyển y tế khẩn cấp</strong>
+              <span>Máu, vắc-xin, thuốc hiếm — giao đúng lúc</span>
+            </span>
+          </div>
+          <div className="auth-feature">
+            <span className="auth-feature__icon"><Radar size={18} /></span>
+            <span className="auth-feature__text">
+              <strong>Telemetry thời gian thực</strong>
+              <span>Vị trí, độ cao, tốc độ, pin của mọi chuyến bay</span>
+            </span>
+          </div>
+        </div>
+        <div className="auth-hero__footer">
+          <span className="dot" /> HỆ THỐNG ĐANG HOẠT ĐỘNG
+          <span className="dot" style={{ background: 'var(--accent)' }} /> SAH GROUND STATION v2.0
+        </div>
+      </div>
+
       <div className="auth-card">
         {/* Logo & Branding */}
         <div className="auth-brand">
