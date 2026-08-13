@@ -3,7 +3,7 @@ import {
   ArrowLeft, Volume2, VolumeX, Bell, Activity, MapPin, Gauge, BatteryCharging,
   Radio, Navigation as NavigationIcon, Home, Pause, Play,
   Video, Siren, Plus, X, Package, Rocket, TriangleAlert, Search,
-  Wind, Thermometer, Flame, Box, Shield, ShieldCheck, Plane, Droplets,
+  Wind, Thermometer, Flame, Box, Shield, ShieldCheck, Plane, Droplets, CircleCheck,
 } from 'lucide-react';
 import { apiFetchOrders, apiCreateMission, apiUpdateOrderStatus, apiCreateOrder, apiFetchDrones } from '../data/api';
 import '../styles/commandCenter.css';
@@ -1020,19 +1020,19 @@ function CommandCenter({ onBackToFleet, drones = [] }) {
 
                 {/* Quick actions */}
                 <div className="cc-quick-actions">
-                  <button className="cc-qaction cc-qaction-cyan" onClick={() => alert(`🎥 ${activeDrone.name}: Đang mở video stream...`)}>
+                  <button className="cc-qaction cc-qaction-cyan" onClick={() => alert(`${activeDrone.name}: Đang mở video stream...`)}>
                     <Video size={14} /> Live
                   </button>
-                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`✅ ${activeDrone.name}: Tiếp tục bay theo hành trình`)}>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`${activeDrone.name}: Tiếp tục bay theo hành trình`)}>
                     <Play size={14} /> Tiếp
                   </button>
-                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`⏸️ ${activeDrone.name}: Tạm dừng bay`)}>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`${activeDrone.name}: Tạm dừng bay`)}>
                     <Pause size={14} /> Pause
                   </button>
-                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`🏠 ${activeDrone.name}: Kích hoạt RTL - Return To Launch`)}>
+                  <button className="cc-qaction cc-qaction-emerald" onClick={() => alert(`${activeDrone.name}: Kích hoạt RTL - Return To Launch`)}>
                     <Home size={14} /> RTL
                   </button>
-                  <button className="cc-qaction cc-qaction-danger" onClick={() => alert(`🚨 ${activeDrone.name}: LỆNH KHẨN CẤP`)}>
+                  <button className="cc-qaction cc-qaction-danger" onClick={() => alert(`${activeDrone.name}: LỆNH KHẨN CẤP`)}>
                     <Siren size={14} /> Khẩn
                   </button>
                 </div>
@@ -1176,7 +1176,8 @@ function CommandCenter({ onBackToFleet, drones = [] }) {
               <div className="cc-dispatch-info-row">
                 <span className="cc-dispatch-info-label"><TriangleAlert size={12} /> Mức độ</span>
                 <span className="cc-dispatch-info-value" style={{ color: dispatchOrder.urgency === 'Cấp cứu khẩn' ? '#EF4444' : '#E5EAF3' }}>
-                  {dispatchOrder.urgency === 'Cấp cứu khẩn' ? '🚨 ' : '✅ '}{dispatchOrder.urgency}
+                  {dispatchOrder.urgency === 'Cấp cứu khẩn' ? <Flame size={12} className="inline mr-1" /> : <CircleCheck size={12} className="inline mr-1" />}
+                  {dispatchOrder.urgency}
                 </span>
               </div>
               {dispatchOrder.notes && (

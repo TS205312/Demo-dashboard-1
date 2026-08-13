@@ -1,3 +1,4 @@
+import { Thermometer, MapPin, Route as RouteIcon, Wind, BatteryCharging, ArrowUpFromLine } from 'lucide-react';
 import ArtificialHorizon from './ArtificialHorizon';
 
 function DroneCard({ drone, onClick, isSelected }) {
@@ -30,14 +31,7 @@ function DroneCard({ drone, onClick, isSelected }) {
         <div className="drone-name">{drone.name}</div>
         <span
           className="drone-status"
-          style={{
-            backgroundColor: getStatusColor(drone.status),
-            color: '#fff',
-            padding: '2px 8px',
-            borderRadius: '10px',
-            fontSize: '11px',
-            fontWeight: 600,
-          }}
+          style={{ backgroundColor: getStatusColor(drone.status) }}
         >
           {getStatusText(drone.status)}
         </span>
@@ -47,7 +41,7 @@ function DroneCard({ drone, onClick, isSelected }) {
         <div className="drone-card-left">
           {/* Temperature */}
           <div className="drone-metric">
-            <i className="metric-icon fa-regular fa-temperature-high"></i>
+            <Thermometer size={11} className="metric-icon" />
             <div className="metric-data">
               <span className="metric-value">{drone.temperature}°C</span>
               <span className="metric-label">Nhiệt độ</span>
@@ -56,7 +50,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* GPS */}
           <div className="drone-metric">
-            <i className="metric-icon fa-regular fa-location-dot"></i>
+            <MapPin size={11} className="metric-icon" />
             <div className="metric-data">
               <span className="metric-value">{drone.gps.lat.toFixed(2)}, {drone.gps.lng.toFixed(2)}</span>
               <span className="metric-label">GPS</span>
@@ -65,7 +59,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Distance */}
           <div className="drone-metric">
-            <i className="metric-icon fa-regular fa-route"></i>
+            <RouteIcon size={11} className="metric-icon" />
             <div className="metric-data">
               <span className="metric-value">{drone.distance} km</span>
               <span className="metric-label">Quãng đường</span>
@@ -74,7 +68,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Wind Speed */}
           <div className="drone-metric">
-            <i className="metric-icon fa-regular fa-wind"></i>
+            <Wind size={11} className="metric-icon" />
             <div className="metric-data">
               <span className="metric-value">{drone.windSpeed} km/h</span>
               <span className="metric-label">Tốc độ gió</span>
@@ -83,7 +77,7 @@ function DroneCard({ drone, onClick, isSelected }) {
 
           {/* Battery */}
           <div className="drone-metric">
-            <i className="metric-icon fa-regular fa-battery-three-quarters"></i>
+            <BatteryCharging size={11} className="metric-icon" />
             <div className="metric-data">
               <div className="battery-bar-container">
                 <div
@@ -91,6 +85,7 @@ function DroneCard({ drone, onClick, isSelected }) {
                   style={{
                     width: `${drone.battery}%`,
                     backgroundColor: batteryColor,
+                    color: batteryColor,
                   }}
                 />
               </div>
@@ -124,7 +119,7 @@ function DroneCard({ drone, onClick, isSelected }) {
             />
           </div>
           <div className="drone-altitude">
-            <i className="metric-icon fa-regular fa-arrow-up-from-bracket"></i>
+            <ArrowUpFromLine size={11} className="metric-icon" />
             <span className="metric-value">{drone.altitude}m</span>
             <span className="metric-label">Độ cao</span>
           </div>
@@ -140,4 +135,3 @@ function DroneCard({ drone, onClick, isSelected }) {
 }
 
 export default DroneCard;
-

@@ -1,3 +1,4 @@
+import { X, Play, Map as MapIcon, Home, SatelliteDish } from 'lucide-react';
 import ArtificialHorizon from './ArtificialHorizon';
 
 function DroneDetail({ drone, onClose }) {
@@ -26,21 +27,16 @@ function DroneDetail({ drone, onClose }) {
   return (
     <div className="drone-detail-overlay" onClick={onClose}>
       <div className="drone-detail-panel" onClick={(e) => e.stopPropagation()}>
-        <button className="detail-close-btn" onClick={onClose}>✕</button>
+        <button className="detail-close-btn" onClick={onClose} aria-label="Đóng">
+          <X size={16} />
+        </button>
 
         <div className="detail-header">
           <div className="detail-title-row">
             <h2 className="detail-drone-name">{drone.name}</h2>
             <span
               className="detail-status"
-              style={{
-                backgroundColor: getStatusColor(drone.status),
-                color: '#fff',
-                padding: '4px 12px',
-                borderRadius: '12px',
-                fontSize: '13px',
-                fontWeight: 600,
-              }}
+              style={{ backgroundColor: getStatusColor(drone.status) }}
             >
               {getStatusText(drone.status)}
             </span>
@@ -129,34 +125,38 @@ function DroneDetail({ drone, onClose }) {
             {/* Arm/Disarm indicator */}
             <div className="detail-quick-status">
               <div className="quick-status-item">
-                <div className={`quick-status-dot ${drone.armed ? 'dot-armed' : 'dot-disarmed'}`} style={{
-                  backgroundColor: drone.armed ? '#4CAF50' : '#F44336'
+                <div className="quick-status-dot" style={{
+                  backgroundColor: drone.armed ? '#4CAF50' : '#F44336',
+                  color: drone.armed ? '#4CAF50' : '#F44336',
                 }} />
                 <span style={{ fontWeight: 600, color: drone.armed ? '#4CAF50' : '#F44336' }}>
                   {drone.armed ? 'ARMED' : 'DISARMED'}
                 </span>
               </div>
               <div className="quick-status-item">
-                <div className="quick-status-dot" style={{ backgroundColor: '#58a6ff' }} />
+                <div className="quick-status-dot" style={{ backgroundColor: '#58a6ff', color: '#58a6ff' }} />
                 <span style={{ fontWeight: 600, color: '#58a6ff' }}>
                   {drone.mode === 'vtol' ? 'VTOL Mode' : 'PLANE Mode'}
                 </span>
               </div>
               <div className="quick-status-item">
                 <div className="quick-status-dot" style={{
-                  backgroundColor: drone.temperature < 40 ? '#4CAF50' : '#FF9800'
+                  backgroundColor: drone.temperature < 40 ? '#4CAF50' : '#FF9800',
+                  color: drone.temperature < 40 ? '#4CAF50' : '#FF9800',
                 }} />
                 <span>Nhiệt độ {drone.temperature < 40 ? 'ổn định' : 'cao'}</span>
               </div>
               <div className="quick-status-item">
                 <div className="quick-status-dot" style={{
-                  backgroundColor: drone.windSpeed < 15 ? '#4CAF50' : '#FF9800'
+                  backgroundColor: drone.windSpeed < 15 ? '#4CAF50' : '#FF9800',
+                  color: drone.windSpeed < 15 ? '#4CAF50' : '#FF9800',
                 }} />
                 <span>Gió {drone.windSpeed < 15 ? 'nhẹ' : 'mạnh'}</span>
               </div>
               <div className="quick-status-item">
                 <div className="quick-status-dot" style={{
-                  backgroundColor: drone.battery > 25 ? '#4CAF50' : '#F44336'
+                  backgroundColor: drone.battery > 25 ? '#4CAF50' : '#F44336',
+                  color: drone.battery > 25 ? '#4CAF50' : '#F44336',
                 }} />
                 <span>Pin {drone.battery > 25 ? 'đủ' : 'yếu'}</span>
               </div>
@@ -170,38 +170,38 @@ function DroneDetail({ drone, onClose }) {
           <div className="detail-controls-grid">
             <button
               className="ctrl-btn ctrl-continue"
-              onClick={() => alert(`✅ ${drone.name}: Tiếp tục bay theo hành trình`)}
+              onClick={() => alert(`${drone.name}: Tiếp tục bay theo hành trình`)}
               title="Tiếp tục bay theo hành trình đã lập trình"
             >
-              <i className="ctrl-icon fa-regular fa-play"></i>
+              <Play size={16} className="ctrl-icon" />
               <span className="ctrl-text">Tiếp tục bay</span>
             </button>
 
             <button
               className="ctrl-btn ctrl-path"
-              onClick={() => alert(`🗺️ ${drone.name}: Đang điều chỉnh đúng hành trình bay`)}
+              onClick={() => alert(`${drone.name}: Đang điều chỉnh đúng hành trình bay`)}
               title="Điều chỉnh drone bay đúng hành trình"
             >
-              <i className="ctrl-icon fa-regular fa-map"></i>
+              <MapIcon size={16} className="ctrl-icon" />
               <span className="ctrl-text">Đúng hành trình</span>
             </button>
 
             <button
               className="ctrl-btn ctrl-rth"
-              onClick={() => alert(`🏠 ${drone.name}: Kích hoạt RTH - Return To Home`)}
+              onClick={() => alert(`${drone.name}: Kích hoạt RTH - Return To Home`)}
               title="Kích hoạt chế độ tự động quay về điểm xuất phát"
             >
-              <i className="ctrl-icon fa-regular fa-house"></i>
+              <Home size={16} className="ctrl-icon" />
               <span className="ctrl-text">RTH</span>
               <span className="ctrl-badge">Mất động cơ</span>
             </button>
 
             <button
               className={`ctrl-btn ctrl-gps ${drone.status === 'offline' ? 'ctrl-pulse' : ''}`}
-              onClick={() => alert(`📡 ${drone.name}: Đang phát tín hiệu GPS tìm kiếm...`)}
+              onClick={() => alert(`${drone.name}: Đang phát tín hiệu GPS tìm kiếm...`)}
               title="Phát tín hiệu GPS để định vị máy bay khi mất tín hiệu"
             >
-              <i className="ctrl-icon fa-regular fa-satellite-dish"></i>
+              <SatelliteDish size={16} className="ctrl-icon" />
               <span className="ctrl-text">Phát GPS</span>
               <span className="ctrl-badge">Tìm máy bay</span>
             </button>
@@ -213,4 +213,3 @@ function DroneDetail({ drone, onClose }) {
 }
 
 export default DroneDetail;
-

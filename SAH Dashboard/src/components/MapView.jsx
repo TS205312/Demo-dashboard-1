@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Search, MapPin, Globe } from 'lucide-react';
 import { reverseGeocode } from '../data/api';
 
 function MapView({ drones, selectedDrone, onDroneClick }) {
@@ -73,17 +74,20 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
     const y = (mapHeight / 4) * i;
     const x = (mapWidth / 4) * i;
     gridLines.push(
-      <line key={`h-${i}`} x1={0} y1={y} x2={mapWidth} y2={y} stroke="#333" strokeWidth="0.5" />
+      <line key={`h-${i}`} x1={0} y1={y} x2={mapWidth} y2={y} stroke="#334155" strokeWidth="0.5" />
     );
     gridLines.push(
-      <line key={`v-${i}`} x1={x} y1={0} x2={x} y2={mapHeight} stroke="#333" strokeWidth="0.5" />
+      <line key={`v-${i}`} x1={x} y1={0} x2={x} y2={mapHeight} stroke="#334155" strokeWidth="0.5" />
     );
   }
 
   return (
     <div className="map-container">
       <div className="map-header">
-        <h3 className="map-title">Bản đồ vị trí Drone</h3>
+        <h3 className="map-title">
+          <MapPin size={14} style={{ color: 'var(--accent)' }} />
+          Bản đồ vị trí Drone
+        </h3>
         <div className="map-search">
           <input
             type="text"
@@ -93,8 +97,8 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <button className="map-search-btn" onClick={handleSearch}>
-            <i className="fa-regular fa-magnifying-glass"></i>
+          <button className="map-search-btn" onClick={handleSearch} aria-label="Tìm kiếm">
+            <Search size={13} />
           </button>
         </div>
       </div>
@@ -110,7 +114,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 setShowSearch(false);
               }}
             >
-              <i className="fa-regular fa-location-dot" style={{marginRight: 4}}></i> {r.label}
+              <MapPin size={11} /> {r.label}
             </div>
           ))}
         </div>
@@ -127,10 +131,10 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
           className="map-svg"
           preserveAspectRatio="xMidYMid meet"
         >
-          <rect x={0} y={0} width={mapWidth} height={mapHeight} fill="#1a2332" rx="2" />
+          <rect x={0} y={0} width={mapWidth} height={mapHeight} fill="#0d1524" rx="2" />
           {gridLines}
-          <text x={2} y={6} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Bắc</text>
-          <text x={2} y={mapHeight - 2} fill="#555" fontSize="2.5" fontFamily="monospace">Khu vực Nam</text>
+          <text x={2} y={6} fill="#64748b" fontSize="2.5" fontFamily="monospace">Khu vực Bắc</text>
+          <text x={2} y={mapHeight - 2} fill="#64748b" fontSize="2.5" fontFamily="monospace">Khu vực Nam</text>
 
           {drones.map((drone) => {
             const pos = toMapPosition(drone.gps.lat, drone.gps.lng);
@@ -166,7 +170,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 <text
                   x={pos.x} y={pos.y - 4}
                   textAnchor="middle"
-                  fill={isSelected ? '#fff' : '#aaa'}
+                  fill={isSelected ? '#fff' : '#94a3b8'}
                   fontSize="2.5" fontFamily="monospace"
                   fontWeight={isSelected ? 'bold' : 'normal'}
                 >
@@ -175,7 +179,7 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
                 {location && (
                   <text
                     x={pos.x} y={pos.y + 4}
-                    textAnchor="middle" fill="#8b949e"
+                    textAnchor="middle" fill="#64748b"
                     fontSize="2" fontFamily="monospace"
                   >
                     {location.length > 18 ? location.substring(0, 16) + '..' : location}
@@ -189,7 +193,8 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
 
       {selectedDrone && (
         <div className="map-coords-info">
-          <span><i className="fa-regular fa-location-dot" style={{marginRight: 4}}></i>{selectedDrone.name}: </span>
+          <MapPin size={11} />
+          <span>{selectedDrone.name}: </span>
           <span className="coord-value">{selectedDrone.gps.lat.toFixed(4)}, {selectedDrone.gps.lng.toFixed(4)}</span>
           {locationNames[selectedDrone.id] && (
             <span className="coord-location"> - {locationNames[selectedDrone.id]}</span>
@@ -199,19 +204,19 @@ function MapView({ drones, selectedDrone, onDroneClick }) {
 
       <div className="map-legend">
         <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#4CAF50' }}></span>
+          <span className="legend-dot" style={{ backgroundColor: '#4CAF50', color: '#4CAF50' }}></span>
           <span>Online</span>
         </div>
         <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#FF9800' }}></span>
+          <span className="legend-dot" style={{ backgroundColor: '#FF9800', color: '#FF9800' }}></span>
           <span>Warning</span>
         </div>
         <div className="legend-item">
-          <span className="legend-dot" style={{ backgroundColor: '#F44336' }}></span>
+          <span className="legend-dot" style={{ backgroundColor: '#F44336', color: '#F44336' }}></span>
           <span>Offline</span>
         </div>
         <div className="legend-item" style={{ color: '#8b949e', fontSize: '10px' }}>
-          <i className="fa-regular fa-globe" style={{marginRight: 4}}></i>
+          <Globe size={10} style={{ marginRight: 4 }} />
           <span>PositionStack</span>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { ClipboardList, Search, Stethoscope, Clock, Flame, CircleCheck, FolderOpen } from 'lucide-react';
 import { apiFetchOrders } from '../data/api';
 
 // Map backend status to display label & class
@@ -106,7 +107,7 @@ function OrdersPage() {
       <div className="orders-controls">
         <div className="drone-list-header orders-header">
           <h2 className="section-title">
-            <i className="fa-solid fa-clipboard-list" style={{ marginRight: 6 }}></i>
+            <ClipboardList size={14} style={{ marginRight: 6, color: 'var(--accent)' }} />
             Tất cả đơn hàng từ bác sĩ
           </h2>
           <div className="orders-filter-group">
@@ -118,7 +119,7 @@ function OrdersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <i className="fa-solid fa-magnifying-glass orders-search-icon"></i>
+              <Search size={12} className="orders-search-icon" />
             </div>
             <div className="filter-buttons">
               {['all', 'pending', 'departed', 'delivered', 'cancelled'].map((f) => (
@@ -161,7 +162,7 @@ function OrdersPage() {
             ) : filteredOrders.length === 0 ? (
               <tr>
                 <td colSpan="8" className="orders-empty">
-                  <i className="fa-regular fa-folder-open"></i>
+                  <FolderOpen size={32} style={{ margin: '0 auto 10px', opacity: 0.5, display: 'block' }} />
                   <p>Không có đơn hàng nào{search ? ' phù hợp' : ''}</p>
                 </td>
               </tr>
@@ -175,19 +176,20 @@ function OrdersPage() {
                   <tr key={order._id || order.id}>
                     <td className="orders-code">#{order.code}</td>
                     <td className="orders-doctor">
-                      <i className="fa-solid fa-user-doctor" style={{ marginRight: 4, color: '#58a6ff' }}></i>
+                      <Stethoscope size={12} style={{ color: '#58a6ff' }} />
                       {doctor}
                     </td>
                     <td>{order.medical_item || order.item || '--'}</td>
                     <td>{order.destination || '--'}</td>
                     <td>
                       <span className={urgent ? 'orders-urgent' : 'orders-normal'}>
-                        {urgent ? '🚨 ' : '✅ '}{order.urgency || 'Bình thường'}
+                        {urgent ? <Flame size={11} /> : <CircleCheck size={11} />}
+                        {order.urgency || 'Bình thường'}
                       </span>
                     </td>
                     <td>{drone}</td>
                     <td className="orders-time">
-                      <i className="fa-regular fa-clock" style={{ marginRight: 4 }}></i>
+                      <Clock size={11} />
                       {formatTime(order.createdAt)}
                     </td>
                     <td>
