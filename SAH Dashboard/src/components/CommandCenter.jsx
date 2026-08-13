@@ -764,11 +764,11 @@ function CommandCenter({ onBackToFleet, drones = [] }) {
       <header className="cc-header">
         <div className="flex items-center gap-3">
           <div className="cc-brand-mark">
-            <NavigationIcon size={18} className="text-emerald-400" strokeWidth={2.2} />
+            <NavigationIcon size={18} color="var(--accent)" strokeWidth={2.2} />
           </div>
           <div>
-            <div className="cc-brand-name">SAH<em>TECH</em> // DRONE COMMAND</div>
-            <div className="cc-brand-sub">UAV FLEET OPERATIONS CENTER</div>
+            <div className="cc-brand-name">Trung tâm điều hành</div>
+            <div className="cc-brand-sub">UAV FLEET OPERATIONS</div>
           </div>
         </div>
 
